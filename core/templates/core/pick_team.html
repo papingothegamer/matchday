@@ -361,7 +361,7 @@ function renderList() {
     div.onclick = () => selectPlayer(p);
     
     div.innerHTML = `
-      <div class="p-shirt" style="background:${p.color}">${p.team}</div>
+      <div class="p-shirt" style="background:${p.color}; color:${p.color2}; border: 1px solid ${p.color2};">${p.team}</div>
       <div class="p-info">
         <div class="p-name">${p.full}</div>
         <div class="p-meta">${p.pos} &middot; ${p.team}</div>

@@ -26,7 +26,7 @@
     {% if t.logo_filename %}
       <img src="/static/core/images/teams/{{ t.logo_filename }}" class="team-logo" alt="{{ t.name }}">
     {% else %}
-      <div class="team-logo-fallback" style="background: {{ t.primary_color }};">{{ t.short_name }}</div>
+      <div class="team-logo-fallback" style="background: {{ t.primary_color }}; color: {{ t.secondary_color }}; border-color: {{ t.secondary_color }};">{{ t.short_name }}</div>
     {% endif %}
     <div class="team-name">{{ t.name }}</div>
     <div class="team-stadium">{{ t.stadium }}</div>

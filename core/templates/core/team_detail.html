@@ -43,7 +43,7 @@
   {% if team.logo_filename %}
     <img src="/static/core/images/teams/{{ team.logo_filename }}" class="t-logo" alt="{{ team.name }}">
   {% else %}
-    <div class="t-logo-fb" style="background: {{ team.primary_color }};">{{ team.short_name }}</div>
+    <div class="t-logo-fb" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }}; border-color: {{ team.secondary_color }};">{{ team.short_name }}</div>
   {% endif %}
   <div class="t-info">
     <h1>{{ team.name }}</h1>
