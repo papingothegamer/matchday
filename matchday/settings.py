@@ -9,6 +9,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,3 +69,34 @@ USE_I18N = True
 USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# JAZZMIN ADMIN THEME SETTINGS
+JAZZMIN_SETTINGS = {
+    "site_title": "MatchDay Admin",
+    "site_header": "MatchDay",
+    "site_brand": "MatchDay",
+    "welcome_sign": "Welcome to the MatchDay Dashboard",
+    "search_model": ["core.Player", "core.Team"],
+    "show_ui_builder": False,
+    "topmenu_links": [
+        {"name": "App Home",  "url": "/", "permissions": ["auth.view_user"]},
+    ],
+    "icons": {
+        "core.Team": "fas fa-shield-alt",
+        "core.Player": "fas fa-user",
+        "core.Gameweek": "fas fa-calendar-alt",
+        "core.Match": "fas fa-futbol",
+        "core.FantasyTeam": "fas fa-users",
+        "core.PlayerStat": "fas fa-chart-line",
+    },
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    "dark_mode_theme": "darkly",
+    "sidebar": "sidebar-dark-success",
+    "navbar": "navbar-dark",
+    "accent": "accent-success",
+    "brand_colour": "navbar-success",
+}
