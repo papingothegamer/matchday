@@ -257,14 +257,14 @@ function renderList() {
     const div = document.createElement('div');
     div.className = 'player-item' + (isPicked ? ' selected' : '');
     div.onclick = () => selectPlayer(p);
-    div.innerHTML = 
-      <div class="p-shirt" style="background:"></div>
+    div.innerHTML = `
+      <div class="p-shirt" style="background:${p.color}">${p.team}</div>
       <div class="p-info">
-        <div class="p-name"></div>
-        <div class="p-meta"> &middot; </div>
+        <div class="p-name">${p.full}</div>
+        <div class="p-meta">${p.pos} &middot; ${p.team}</div>
       </div>
-      <div class="p-price">£m</div>
-    ;
+      <div class="p-price">£${p.price.toFixed(1)}m</div>
+    `;
     container.appendChild(div);
   });
 }
