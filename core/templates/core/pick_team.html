@@ -1,0 +1,325 @@
+﻿{% extends 'core/base.html' %}
+{% block title %}Pick Your Team — MatchDay{% endblock %}
+
+{% block extra_style %}
+.pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; }
+@media (max-width: 800px) { .pick-wrap { grid-template-columns: 1fr; } }
+.pitch-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; }
+.formation-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+.formation-bar span { font-size: 12px; color: #8b949e; margin-right: 4px; }
+.f-btn { font-size: 12px; padding: 4px 12px; border: 1px solid #30363d; border-radius: 6px; background: transparent; color: #8b949e; cursor: pointer; }
+.f-btn.active, .f-btn:hover { background: #238636; color: #fff; border-color: #238636; }
+.pitch {
+  background: #1a4a1a;
+  border-radius: 8px;
+  padding: 1rem 0.5rem;
+  position: relative;
+  min-height: 480px;
+  border: 2px solid #2a6a2a;
+}
+.pitch-lines {
+  position: absolute; top: 50%; left: 10%; right: 10%;
+  height: 1px; background: rgba(255,255,255,0.15);
+}
+.pitch-lines::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 35%; right: 35%;
+  height: 120px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+}
+.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+.pitch-row:last-child { margin-bottom: 0; }
+.player-slot {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  cursor: pointer; width: 70px;
+}
+.player-slot:hover .shirt { transform: scale(1.08); }
+.shirt {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  transition: transform 0.15s;
+  border: 2px solid rgba(255,255,255,0.2);
+  position: relative;
+}
+.shirt.empty { background: #21262d; color: #484f58; border: 2px dashed #30363d; }
+.shirt.filled { color: #fff; }
+.captain-badge {
+  position: absolute; top: -4px; right: -4px;
+  width: 16px; height: 16px; background: #f6c90e;
+  border-radius: 50%; font-size: 9px; font-weight: 700;
+  color: #000; display: flex; align-items: center; justify-content: center;
+}
+.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 70px; }
+.slot-price { font-size: 9px; color: #38a169; }
+.slot-pos { font-size: 9px; color: #484f58; }
+.selector-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; }
+.panel-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
+.pos-filter { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+.pos-btn { font-size: 11px; padding: 3px 10px; border: 1px solid #30363d; border-radius: 20px; background: transparent; color: #8b949e; cursor: pointer; }
+.pos-btn.active, .pos-btn:hover { background: #1f6feb; color: #fff; border-color: #1f6feb; }
+.player-search { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; margin-bottom: 1rem; outline: none; }
+.player-search:focus { border-color: #8b949e; }
+.player-list { max-height: 420px; overflow-y: auto; }
+.player-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 6px; cursor: pointer;
+  transition: background 0.1s;
+}
+.player-item:hover { background: #21262d; }
+.player-item.selected { background: #1a2f1a; }
+.p-shirt { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2); }
+.p-info { flex: 1; min-width: 0; }
+.p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-meta { font-size: 11px; color: #8b949e; }
+.p-price { font-size: 12px; color: #38a169; font-weight: 500; flex-shrink: 0; }
+.submit-bar { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 8px; }
+.budget-row { display: flex; justify-content: space-between; font-size: 13px; }
+.budget-label { color: #8b949e; }
+.budget-val { color: #38a169; font-weight: 600; }
+.btn-submit { width: 100%; padding: 10px; background: #238636; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.btn-submit:hover { background: #2ea043; }
+.btn-submit:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+.captain-hint { font-size: 11px; color: #8b949e; text-align: center; }
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <h2 style="font-size:20px;font-weight:600;color:#fff;">Pick your team</h2>
+  <p style="font-size:13px;color:#8b949e;margin-top:4px;">Gameweek {{ active_gameweek.number|default:"—" }} &mdash; Budget: £100.0m &mdash; Click a slot to pick, click a filled slot to captain</p>
+</div>
+
+<div class="pick-wrap">
+  <div class="pitch-panel">
+    <div class="formation-bar">
+      <span>Formation:</span>
+      <button class="f-btn active" onclick="setFormation('433',this)">4-3-3</button>
+      <button class="f-btn" onclick="setFormation('442',this)">4-4-2</button>
+      <button class="f-btn" onclick="setFormation('352',this)">3-5-2</button>
+      <button class="f-btn" onclick="setFormation('451',this)">4-5-1</button>
+    </div>
+    <div class="pitch">
+      <div class="pitch-lines"></div>
+      <div id="pitch-rows"></div>
+    </div>
+  </div>
+
+  <div class="selector-panel">
+    <div class="panel-title" id="panel-title">Select a position slot</div>
+    <div class="pos-filter">
+      <button class="pos-btn active" onclick="filterPos('ALL',this)">All</button>
+      <button class="pos-btn" onclick="filterPos('GK',this)">GK</button>
+      <button class="pos-btn" onclick="filterPos('DEF',this)">DEF</button>
+      <button class="pos-btn" onclick="filterPos('MID',this)">MID</button>
+      <button class="pos-btn" onclick="filterPos('FWD',this)">FWD</button>
+    </div>
+    <input class="player-search" type="text" placeholder="Search player..." oninput="renderList()" id="search-input">
+    <div class="player-list" id="player-list"></div>
+    <div class="submit-bar">
+      <div class="budget-row">
+        <span class="budget-label">Spent</span>
+        <span class="budget-val" id="spent-val">£0.0m</span>
+      </div>
+      <div class="budget-row">
+        <span class="budget-label">Remaining</span>
+        <span class="budget-val" id="remaining-val">£100.0m</span>
+      </div>
+      <p class="captain-hint">Click a filled shirt to toggle captain (C)</p>
+      <button class="btn-submit" id="submit-btn" disabled onclick="submitTeam()">Save team</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+const ALL_PLAYERS = [
+  {% for p in players %}
+  { id:{{ p.id }}, name:"{{ p.display_name }}", full:"{{ p.full_name }}", pos:"{{ p.position }}", team:"{{ p.team.short_name }}", price:{{ p.price }}, color:"{{ p.team.primary_color }}", color2:"{{ p.team.secondary_color }}" },
+  {% endfor %}
+];
+
+const FORMATIONS = {
+  '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'],['FWD','FWD','FWD']],
+  '442': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID'],['FWD','FWD']],
+  '352': [['GK'],['DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD','FWD']],
+  '451': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD']],
+};
+
+let formation = '433';
+let slots = [];       // {pos, player|null, captain}
+let activeSlot = null;
+let filterPosition = 'ALL';
+
+function buildSlots(f) {
+  const rows = FORMATIONS[f];
+  slots = [];
+  rows.forEach(row => row.forEach(pos => slots.push({ pos, player: null, captain: false })));
+  slots[0].captain = false;
+}
+
+function setFormation(f, btn) {
+  formation = f;
+  buildSlots(f);
+  activeSlot = null;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPitch();
+  renderList();
+  updateBudget();
+}
+
+function renderPitch() {
+  const rows = FORMATIONS[formation];
+  const container = document.getElementById('pitch-rows');
+  container.innerHTML = '';
+  let idx = 0;
+  rows.forEach(row => {
+    const div = document.createElement('div');
+    div.className = 'pitch-row';
+    row.forEach(() => {
+      const slot = slots[idx];
+      const slotIdx = idx;
+      const el = document.createElement('div');
+      el.className = 'player-slot';
+      el.onclick = () => clickSlot(slotIdx);
+      const shirt = document.createElement('div');
+      shirt.className = slot.player ? 'shirt filled' : 'shirt empty';
+      if (slot.player) {
+        shirt.style.background = slot.player.color;
+        shirt.textContent = slot.player.team;
+        if (slot.captain) {
+          const badge = document.createElement('div');
+          badge.className = 'captain-badge';
+          badge.textContent = 'C';
+          shirt.appendChild(badge);
+        }
+      } else {
+        shirt.textContent = slot.pos;
+      }
+      const name = document.createElement('div');
+      name.className = 'slot-name';
+      name.textContent = slot.player ? slot.player.name : '+';
+      const price = document.createElement('div');
+      price.className = slot.player ? 'slot-price' : 'slot-pos';
+      price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
+      el.appendChild(shirt);
+      el.appendChild(name);
+      el.appendChild(price);
+      if (activeSlot === slotIdx) el.style.outline = '2px solid #38a169';
+      div.appendChild(el);
+      idx++;
+    });
+    container.appendChild(div);
+  });
+}
+
+function clickSlot(idx) {
+  const slot = slots[idx];
+  if (slot.player) {
+    // toggle captain
+    slots.forEach(s => s.captain = false);
+    slot.captain = true;
+    renderPitch();
+    return;
+  }
+  activeSlot = idx;
+  filterPosition = slot.pos;
+  document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.pos-btn[onclick*="' + slot.pos + '"]')?.classList.add('active');
+  document.getElementById('panel-title').textContent = 'Pick a ' + slot.pos;
+  renderPitch();
+  renderList();
+}
+
+function filterPos(pos, btn) {
+  filterPosition = pos;
+  document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const pickedIds = slots.filter(s => s.player).map(s => s.player.id);
+  let list = ALL_PLAYERS.filter(p => {
+    if (filterPosition !== 'ALL' && p.pos !== filterPosition) return false;
+    if (q && !p.full.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  list.sort((a,b) => b.price - a.price);
+  const container = document.getElementById('player-list');
+  container.innerHTML = '';
+  list.slice(0, 60).forEach(p => {
+    const isPicked = pickedIds.includes(p.id);
+    const div = document.createElement('div');
+    div.className = 'player-item' + (isPicked ? ' selected' : '');
+    div.onclick = () => selectPlayer(p);
+    div.innerHTML = 
+      <div class="p-shirt" style="background:"></div>
+      <div class="p-info">
+        <div class="p-name"></div>
+        <div class="p-meta"> &middot; </div>
+      </div>
+      <div class="p-price">£m</div>
+    ;
+    container.appendChild(div);
+  });
+}
+
+function selectPlayer(p) {
+  if (activeSlot === null) return;
+  const slot = slots[activeSlot];
+  if (slot.pos !== p.pos) {
+    alert('Wrong position. This slot needs a ' + slot.pos + '.');
+    return;
+  }
+  const already = slots.find(s => s.player && s.player.id === p.id);
+  if (already) {
+    alert(p.full + ' is already in your team.');
+    return;
+  }
+  slot.player = p;
+  activeSlot = null;
+  renderPitch();
+  renderList();
+  updateBudget();
+}
+
+function updateBudget() {
+  const spent = slots.reduce((sum, s) => sum + (s.player ? s.player.price : 0), 0);
+  const rem = 100 - spent;
+  document.getElementById('spent-val').textContent = '£' + spent.toFixed(1) + 'm';
+  document.getElementById('remaining-val').textContent = '£' + rem.toFixed(1) + 'm';
+  const filled = slots.filter(s => s.player).length;
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = filled < 11;
+  if (rem < 0) {
+    document.getElementById('remaining-val').style.color = '#f85149';
+    btn.disabled = true;
+  } else {
+    document.getElementById('remaining-val').style.color = '#38a169';
+  }
+}
+
+function submitTeam() {
+  const hasCaptain = slots.some(s => s.captain);
+  if (!hasCaptain) { alert('Please select a captain by clicking a filled shirt.'); return; }
+  const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain }));
+  fetch('/pick/save/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+    body: JSON.stringify({ picks })
+  }).then(r => r.json()).then(d => {
+    if (d.ok) { window.location.href = '/'; }
+    else { alert(d.error || 'Something went wrong.'); }
+  });
+}
+
+buildSlots(formation);
+renderPitch();
+renderList();
+</script>
+{% endblock %}

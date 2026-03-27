@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MatchDay — PL Fantasy</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0d1117; color: #e6e6e6; }
+    .page { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid #21262d; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .logo { font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -0.5px; }
+    .logo span { color: #38a169; }
+    nav { display: flex; gap: 8px; }
+    nav a { font-size: 13px; color: #8b949e; text-decoration: none; padding: 5px 12px; border: 1px solid #30363d; border-radius: 6px; }
+    nav a:hover { color: #e6e6e6; border-color: #8b949e; }
+
+    .hero { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+    .hero h1 { font-size: 28px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .hero p { font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 1.5rem; }
+    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-primary { font-size: 13px; padding: 8px 18px; background: #238636; color: #fff; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; }
+    .btn-primary:hover { background: #2ea043; }
+    .btn-secondary { font-size: 13px; padding: 8px 18px; background: transparent; color: #e6e6e6; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; text-decoration: none; }
+    .btn-secondary:hover { border-color: #8b949e; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+    .stat-card { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 1rem; }
+    .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .stat-value { font-size: 26px; font-weight: 600; color: #fff; }
+
+    .section-title { font-size: 12px; font-weight: 500; color: #8b949e; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 1rem; }
+    .match-list { border: 1px solid #21262d; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; }
+    .match-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #161b22; border-bottom: 1px solid #21262d; gap: 1rem; }
+    .match-row:last-child { border-bottom: none; }
+    .match-teams { font-size: 14px; color: #e6e6e6; flex: 1; }
+    .match-score { font-size: 14px; font-weight: 600; color: #fff; background: #21262d; padding: 3px 10px; border-radius: 6px; }
+    .match-gw { font-size: 11px; color: #8b949e; }
+    .empty { font-size: 14px; color: #8b949e; padding: 2rem; text-align: center; }
+
+    .gw-banner { background: #1a2f1a; border: 1px solid #238636; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .gw-label { font-size: 13px; color: #38a169; font-weight: 500; }
+    .gw-deadline { font-size: 12px; color: #8b949e; }
+
+    .footer { padding-top: 1rem; border-top: 1px solid #21262d; font-size: 12px; color: #484f58; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="logo">Match<span>Day</span></div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/players/">Players</a>
+      <a href="/leaderboard/">Leaderboard</a>
+      <a href="/pick/">Pick Team</a>
+      <a href="/admin/">Admin</a>
+    </nav>
+  </div>
+
+  {% if active_gameweek %}
+  <div class="gw-banner">
+    <div class="gw-label">{{ active_gameweek }} is active</div>
+    <div class="gw-deadline">Deadline: {{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
+    <a href="/pick/" class="btn-primary">Pick your team</a>
+  </div>
+  {% endif %}
+
+  <div class="hero">
+    <h1>Premier League Fantasy</h1>
+    <p>Pick 11 players each gameweek. Score points based on real match performance. Climb the leaderboard.</p>
+    <div class="hero-actions">
+      <a href="/pick/" class="btn-primary">Pick team</a>
+      <a href="/leaderboard/" class="btn-secondary">Leaderboard</a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Teams</div>
+      <div class="stat-value">{{ num_teams }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Players</div>
+      <div class="stat-value">{{ num_players }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Gameweek</div>
+      <div class="stat-value">{% if active_gameweek %}{{ active_gameweek.number }}{% else %}—{% endif %}</div>
+    </div>
+  </div>
+
+  <div class="section-title">Recent results</div>
+  <div class="match-list">
+    {% for match in recent_matches %}
+    <div class="match-row">
+      <div class="match-teams">{{ match.home_team }} vs {{ match.away_team }}</div>
+      <div class="match-score">{{ match.home_score }} – {{ match.away_score }}</div>
+      <div class="match-gw">GW{{ match.gameweek.number }}</div>
+    </div>
+    {% empty %}
+    <div class="empty">No results yet.</div>
+    {% endfor %}
+  </div>
+
+  <div class="footer">MatchDay &mdash; Premier League Fantasy &mdash; University of Lodz</div>
+</div>
+</body>
+</html>

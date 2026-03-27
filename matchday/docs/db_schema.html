@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MatchDay — DB Schema & Project Plan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #fafaf8; color: #1a1a1a; padding: 2rem 1.5rem; }
+    h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+    .sub { font-size: 13px; color: #888; margin-bottom: 2rem; }
+    .section-title { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 1rem; font-size: 12px; color: #666; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+    #erd { margin-bottom: 2rem; overflow-x: auto; }
+    #erd svg { width: 100%; }
+    .phase { background: #f0efe8; border-radius: 10px; border: 0.5px solid #e0dfd8; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+    .phase-title { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; }
+    .deliverables { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { font-size: 12px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid #e0dfd8; color: #555; background: #fff; }
+    .tag.blue   { background: #E6F1FB; color: #0C447C; border-color: #B5D4F4; }
+    .tag.teal   { background: #E1F5EE; color: #085041; border-color: #9FE1CB; }
+    .tag.amber  { background: #FAEEDA; color: #633806; border-color: #FAC775; }
+    .tag.purple { background: #EEEDFE; color: #3C3489; border-color: #CECBF6; }
+  </style>
+</head>
+<body>
+  <h1>MatchDay</h1>
+  <div class="sub">Premier League Fantasy App — Database Schema &amp; Project Plan</div>
+
+  <div class="section-title">Database schema</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#B5D4F4;"></div> Core football data</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9FE1CB;"></div> Fantasy game logic</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FAC775;"></div> Scoring &amp; stats</div>
+  </div>
+
+  <div id="erd"><p style="font-size:13px;color:#888;">Rendering schema...</p></div>
+
+  <div class="section-title" style="margin-top:2rem;">Project plan</div>
+
+  <div class="phase">
+    <div class="phase-title">Week 1 — models &amp; data</div>
+    <div class="deliverables">
+      <span class="tag blue">Team model</span>
+      <span class="tag blue">Player model</span>
+      <span class="tag blue">Match model</span>
+      <span class="tag amber">PlayerStat model</span>
+      <span class="tag">Admin registration</span>
+      <span class="tag">populate_pl.py script</span>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-title">Week 2 — fantasy logic</div>
+    <div class="deliverables">
+      <span class="tag teal">Gameweek model</span>
+      <span class="tag teal">FantasyTeam model</span>
+      <span class="tag teal">FantasyPick model</span>
+      <span class="tag">Scoring engine</span>
+      <span class="tag">User auth (login/register)</span>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-title">Week 3 — views &amp; templates</div>
+    <div class="deliverables">
+      <span class="tag">Player list + search</span>
+      <span class="tag">Match results page</span>
+      <span class="tag">Leaderboard view</span>
+      <span class="tag purple">Interactive team builder</span>
+      <span class="tag purple">Pitch UI (JS)</span>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-title">Friday — presentation</div>
+    <div class="deliverables">
+      <span class="tag">DB schema slide</span>
+      <span class="tag">Live demo</span>
+      <span class="tag">Populate with PL data</span>
+      <span class="tag purple">Client-side team picker demo</span>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        fontSize: '13px',
+        fontFamily: 'system-ui, sans-serif',
+        lineColor: '#73726c',
+        textColor: '#3d3d3a',
+        primaryColor: '#E6F1FB',
+        primaryBorderColor: '#B5D4F4',
+        primaryTextColor: '#0C447C',
+      },
+    });
+
+    const diagram = `erDiagram
+      Team {
+        int id PK
+        string name
+        string short_name
+        string stadium
+        int founded_year
+      }
+      Player {
+        int id PK
+        int team_id FK
+        string first_name
+        string last_name
+        string position
+        float price
+        bool is_active
+      }
+      Match {
+        int id PK
+        int home_team_id FK
+        int away_team_id FK
+        int gameweek_id FK
+        int home_score
+        int away_score
+        date match_date
+        bool is_played
+      }
+      Gameweek {
+        int id PK
+        int number
+        date deadline
+        bool is_active
+      }
+      PlayerStat {
+        int id PK
+        int player_id FK
+        int match_id FK
+        int goals
+        int assists
+        int minutes_played
+        bool clean_sheet
+        int yellow_cards
+        int fantasy_points
+      }
+      FantasyTeam {
+        int id PK
+        int user_id FK
+        int gameweek_id FK
+        string name
+        int total_points
+      }
+      FantasyPick {
+        int id PK
+        int fantasy_team_id FK
+        int player_id FK
+        bool is_captain
+        int points_scored
+      }
+      Team ||--o{ Player : "has"
+      Team ||--o{ Match : "plays home"
+      Team ||--o{ Match : "plays away"
+      Gameweek ||--o{ Match : "contains"
+      Gameweek ||--o{ FantasyTeam : "has entries"
+      Player ||--o{ PlayerStat : "has stats"
+      Match ||--o{ PlayerStat : "produces"
+      Player ||--o{ FantasyPick : "picked in"
+      FantasyTeam ||--o{ FantasyPick : "contains"
+    `;
+
+    mermaid.render('erd-svg', diagram).then(({ svg }) => {
+      document.getElementById('erd').innerHTML = svg;
+    }).catch(err => {
+      document.getElementById('erd').innerHTML = '<p style="color:#c00;font-size:13px;">Render error: ' + err.message + '</p>';
+    });
+  </script>
+</body>
+</html>
