@@ -24,7 +24,7 @@
   {% for t in teams %}
   <a href="{% url 'team_detail' t.short_name %}" class="team-tile">
     {% if t.logo_filename %}
-      <img src="{% static 'core/images/teams/'|add:t.logo_filename %}" class="team-logo" alt="{{ t.name }}">
+      <img src="/static/core/images/teams/{{ t.logo_filename }}" class="team-logo" alt="{{ t.name }}">
     {% else %}
       <div class="team-logo-fallback" style="background: {{ t.primary_color }};">{{ t.short_name }}</div>
     {% endif %}

@@ -41,7 +41,7 @@
 
 <div class="team-header">
   {% if team.logo_filename %}
-    <img src="{% static 'core/images/teams/'|add:team.logo_filename %}" class="t-logo" alt="{{ team.name }}">
+    <img src="/static/core/images/teams/{{ team.logo_filename }}" class="t-logo" alt="{{ team.name }}">
   {% else %}
     <div class="t-logo-fb" style="background: {{ team.primary_color }};">{{ team.short_name }}</div>
   {% endif %}
