@@ -1,5 +1,6 @@
 ﻿import os
 import re
+import random
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'matchday.settings')
@@ -13,7 +14,7 @@ Player.objects.all().delete()
 Team.objects.all().delete()
 Gameweek.objects.all().delete()
 
-# Map of the 20 PL clubs in the text file to their MatchDay metadata
+# Map of the 20 PL clubs
 teams_data = {
     'Arsenal': ('ARS', 'Emirates Stadium', 1886, '#EF0107', '#FFFFFF'),
     'Aston Villa': ('AVL', 'Villa Park', 1874, '#95BFE5', '#670E36'),
@@ -37,21 +38,81 @@ teams_data = {
     'Wolverhampton Wanderers': ('WOL', 'Molineux Stadium', 1877, '#FDB913', '#231F20'),
 }
 
+# Club Tiers for Baseline Pricing
+tier_1 = ['MCI', 'ARS', 'LIV', 'CHE', 'TOT', 'MUN', 'NEW', 'AVL']
+tier_2 = ['BHA', 'WHU', 'CRY', 'FUL', 'BOU', 'BRE']
+
+# Hardcoded Overrides for Premium FPL Assets
+premium_prices = {
+    "Erling Håland": 15.0,
+    "Mohamed Salah": 12.5,
+    "Cole Palmer": 10.5,
+    "Alexander Isak": 10.0,
+    "Bukayo Saka": 10.0,
+    "Son Heung-min": 9.0,
+    "Phil Foden": 9.5,
+    "Kevin De Bruyne": 9.5,
+    "Ollie Watkins": 9.0,
+    "Martin Ødegaard": 8.5,
+    "Bruno Fernandes": 8.5,
+    "Florian Wirtz": 8.5,
+    "Eberechi Eze": 8.5,
+    "Viktor Gyökeres": 8.5,
+    "Anthony Gordon": 8.0,
+    "Luis Díaz": 7.5,
+    "Diogo Jota": 7.5,
+    "Trent Alexander-Arnold": 7.0,
+    "Ben White": 6.5,
+    "William Saliba": 6.0,
+    "Joško Gvardiol": 6.0,
+    "Gabriel": 6.0,
+    "Virgil van Dijk": 6.0,
+    "Kieran Trippier": 6.0,
+    "Pedro Porro": 5.5,
+    "David Raya": 5.5,
+    "Alisson Becker": 5.5,
+    "Ederson": 5.5,
+    "Emiliano Martínez": 5.5,
+}
+
+def calculate_price(full_name, pos, team_short):
+    # 1. Check for Premium Override
+    if full_name in premium_prices:
+        return premium_prices[full_name]
+    
+    # 2. Dynamic generation based on Team Tier and Position
+    # Using round(x * 2) / 2 ensures prices snap to .0 or .5
+    if team_short in tier_1:
+        if pos == 'FWD': return round(random.uniform(6.5, 8.0) * 2) / 2
+        if pos == 'MID': return round(random.uniform(5.5, 7.5) * 2) / 2
+        if pos == 'DEF': return round(random.uniform(4.5, 5.5) * 2) / 2
+        if pos == 'GK': return round(random.uniform(4.5, 5.0) * 2) / 2
+    elif team_short in tier_2:
+        if pos == 'FWD': return round(random.uniform(5.5, 7.0) * 2) / 2
+        if pos == 'MID': return round(random.uniform(5.0, 6.5) * 2) / 2
+        if pos == 'DEF': return round(random.uniform(4.0, 5.0) * 2) / 2
+        if pos == 'GK': return round(random.uniform(4.0, 4.5) * 2) / 2
+    else: # Tier 3
+        if pos == 'FWD': return round(random.uniform(4.5, 6.0) * 2) / 2
+        if pos == 'MID': return round(random.uniform(4.5, 5.5) * 2) / 2
+        if pos == 'DEF': return round(random.uniform(4.0, 4.5) * 2) / 2
+        if pos == 'GK': return round(random.uniform(4.0, 4.5) * 2) / 2
+    
+    return 4.5
+
 try:
     with open('PL.txt', 'r', encoding='utf-8') as f:
         content = f.read()
 except FileNotFoundError:
-    print("Error: PL.txt not found in the root directory.")
+    print("Error: PL.txt not found.")
     exit()
 
-print("Parsing PL.txt and populating database...")
+print("Parsing PL.txt and assigning dynamic FPL pricing...")
 
-# Clean up any fragmented newlines caused by source tags in the raw text
 content = re.sub(r'\n\\s*', ' ', content)
 content = re.sub(r'\\s*', '', content)
 
 pos_map = {'G': 'GK', 'D': 'DEF', 'M': 'MID', 'F': 'FWD'}
-price_map = {'GK': 4.5, 'DEF': 5.0, 'MID': 6.5, 'FWD': 7.5}
 
 current_team = None
 parsing_players = False
@@ -62,7 +123,6 @@ for line in content.split('\n'):
     if not line:
         continue
 
-    # Identify if the line is a club name header
     if line in teams_data:
         short_name, stadium, founded, primary, secondary = teams_data[line]
         current_team, _ = Team.objects.get_or_create(
@@ -72,18 +132,15 @@ for line in content.split('\n'):
         parsing_players = False
         continue
 
-    # Start parsing when we hit the table header
     if "Number\tName\tNat\tPos" in line:
         parsing_players = True
         continue
 
-    # Stop parsing when we hit the departed players section
     if "Players no longer at this club" in line:
         parsing_players = False
         current_team = None
         continue
 
-    # Parse player row
     if parsing_players and current_team:
         parts = line.split('\t')
         
@@ -96,7 +153,6 @@ for line in content.split('\n'):
             if not full_name:
                 continue
 
-            # Split First and Last Name
             name_parts = full_name.split(' ')
             if len(name_parts) > 1:
                 first_name = name_parts[0]
@@ -105,10 +161,11 @@ for line in content.split('\n'):
                 first_name = ''
                 last_name = name_parts[0]
 
-            # Assign Position and Baseline Price
             pos_char = parts[3].strip()
             pos = pos_map.get(pos_char, 'MID')
-            price = price_map.get(pos, 5.0)
+            
+            # Generate the realistic price!
+            price = calculate_price(full_name, pos, current_team.short_name)
 
             Player.objects.create(
                 team=current_team,
@@ -120,7 +177,7 @@ for line in content.split('\n'):
             )
             player_count += 1
 
-print(f"Successfully imported {player_count} active players into the database!")
+print(f"Successfully imported {player_count} active players with dynamic pricing!")
 
 print("Creating gameweeks...")
 gw_data = [
