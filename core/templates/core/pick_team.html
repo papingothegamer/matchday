@@ -83,6 +83,41 @@
 .btn-submit:hover { background: #2ea043; }
 .btn-submit:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
 .captain-hint { font-size: 11px; color: #8b949e; text-align: center; }
+
+/* --- UI UPGRADES --- */
+.pitch { 
+    background: repeating-linear-gradient(0deg, #164016, #164016 48px, #1a4a1a 48px, #1a4a1a 96px) !important; 
+    border: 2px solid #2ea043 !important; 
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.5); 
+}
+.shirt.empty { 
+    background: rgba(13, 17, 23, 0.6) !important; 
+    border: 2px dashed #484f58 !important; 
+    color: #8b949e !important; 
+}
+.shirt.filled { 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6) !important; 
+    border: 2px solid #ffffff !important; 
+}
+.slot-name { 
+    background: rgba(13, 17, 23, 0.7); 
+    padding: 2px 6px; 
+    border-radius: 10px; 
+    margin-top: 4px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+}
+.slot-price, .slot-pos { 
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8); 
+    font-weight: 600; 
+}
+.slot-price { color: #3fb950 !important; }
+
+/* Custom Dark Scrollbar */
+.player-list::-webkit-scrollbar { width: 8px; }
+.player-list::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
+.player-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+.player-list::-webkit-scrollbar-thumb:hover { background: #8b949e; }
+
 {% endblock %}
 
 {% block content %}
