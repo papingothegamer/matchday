@@ -9,52 +9,72 @@
 .formation-bar span { font-size: 12px; color: #8b949e; margin-right: 4px; }
 .f-btn { font-size: 12px; padding: 4px 12px; border: 1px solid #30363d; border-radius: 6px; background: transparent; color: #8b949e; cursor: pointer; }
 .f-btn.active, .f-btn:hover { background: #238636; color: #fff; border-color: #238636; }
+
+/* Minimalist Pitch Styling */
 .pitch {
   background: #1a4a1a;
   border-radius: 8px;
-  padding: 1rem 0.5rem;
+  padding: 1.5rem 0.5rem;
   position: relative;
   min-height: 480px;
-  border: 2px solid #2a6a2a;
+  border: 2px solid #2ea043;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+  overflow: hidden;
 }
 .pitch-lines {
-  position: absolute; top: 50%; left: 10%; right: 10%;
-  height: 1px; background: rgba(255,255,255,0.15);
+  position: absolute; top: 50%; left: -2px; right: -2px;
+  height: 1px; background: rgba(255,255,255,0.25);
 }
 .pitch-lines::before {
-  content: '';
-  position: absolute;
-  top: -60px; left: 35%; right: 35%;
-  height: 120px;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 50%;
+  content: ''; position: absolute; top: -60px; left: 35%; right: 35%;
+  height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%;
 }
-.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+.penalty-box-top {
+  position: absolute; top: 0; left: 22%; right: 22%; height: 16%;
+  border: 1px solid rgba(255,255,255,0.25); border-top: none;
+}
+.penalty-box-bottom {
+  position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%;
+  border: 1px solid rgba(255,255,255,0.25); border-bottom: none;
+}
+.goal-area-top {
+  position: absolute; top: 0; left: 36%; right: 36%; height: 6%;
+  border: 1px solid rgba(255,255,255,0.25); border-top: none;
+}
+.goal-area-bottom {
+  position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%;
+  border: 1px solid rgba(255,255,255,0.25); border-bottom: none;
+}
+.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; position: relative; z-index: 10; }
 .pitch-row:last-child { margin-bottom: 0; }
-.player-slot {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  cursor: pointer; width: 70px;
-}
+.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 70px; }
 .player-slot:hover .shirt { transform: scale(1.08); }
+
+/* Improved Shirt Visability */
 .shirt {
   width: 48px; height: 48px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600;
-  transition: transform 0.15s;
-  border: 2px solid rgba(255,255,255,0.2);
+  font-size: 11px; font-weight: 600; transition: transform 0.15s;
   position: relative;
 }
-.shirt.empty { background: #21262d; color: #484f58; border: 2px dashed #30363d; }
-.shirt.filled { color: #fff; }
+.shirt.empty { background: rgba(13, 17, 23, 0.6); border: 2px dashed #484f58; color: #8b949e; }
+.shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
+
 .captain-badge {
   position: absolute; top: -4px; right: -4px;
   width: 16px; height: 16px; background: #f6c90e;
   border-radius: 50%; font-size: 9px; font-weight: 700;
   color: #000; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
-.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 70px; }
-.slot-price { font-size: 9px; color: #38a169; }
-.slot-pos { font-size: 9px; color: #484f58; }
+.slot-name { 
+  font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; 
+  overflow: hidden; text-overflow: ellipsis; width: 75px;
+  background: rgba(13, 17, 23, 0.7); padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+}
+.slot-price { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.slot-pos { font-size: 9px; color: #8b949e; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
 .selector-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; }
 .panel-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
 .pos-filter { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -62,68 +82,32 @@
 .pos-btn.active, .pos-btn:hover { background: #1f6feb; color: #fff; border-color: #1f6feb; }
 .player-search { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; margin-bottom: 1rem; outline: none; }
 .player-search:focus { border-color: #8b949e; }
-.player-list { max-height: 420px; overflow-y: auto; }
-.player-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px; border-radius: 6px; cursor: pointer;
-  transition: background 0.1s;
-}
+.player-list { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+.player-list::-webkit-scrollbar { width: 8px; }
+.player-list::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
+.player-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+.player-list::-webkit-scrollbar-thumb:hover { background: #8b949e; }
+.player-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
 .player-item:hover { background: #21262d; }
-.player-item.selected { background: #1a2f1a; }
+.player-item.selected { background: #1a2f1a; pointer-events: none; opacity: 0.5; }
 .p-shirt { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2); }
 .p-info { flex: 1; min-width: 0; }
 .p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .p-meta { font-size: 11px; color: #8b949e; }
 .p-price { font-size: 12px; color: #38a169; font-weight: 500; flex-shrink: 0; }
-.submit-bar { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 8px; }
-.budget-row { display: flex; justify-content: space-between; font-size: 13px; }
+.submit-bar { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #30363d; padding-top: 1rem; }
+.budget-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
 .budget-label { color: #8b949e; }
 .budget-val { color: #38a169; font-weight: 600; }
-.btn-submit { width: 100%; padding: 10px; background: #238636; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
-.btn-submit:hover { background: #2ea043; }
+.btn-submit { width: 100%; padding: 10px; background: #238636; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+.btn-submit:hover:not(:disabled) { background: #2ea043; }
 .btn-submit:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
-.captain-hint { font-size: 11px; color: #8b949e; text-align: center; }
-
-/* --- UI UPGRADES --- */
-.pitch { 
-    background: repeating-linear-gradient(0deg, #164016, #164016 48px, #1a4a1a 48px, #1a4a1a 96px) !important; 
-    border: 2px solid #2ea043 !important; 
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.5); 
-}
-.shirt.empty { 
-    background: rgba(13, 17, 23, 0.6) !important; 
-    border: 2px dashed #484f58 !important; 
-    color: #8b949e !important; 
-}
-.shirt.filled { 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.6) !important; 
-    border: 2px solid #ffffff !important; 
-}
-.slot-name { 
-    background: rgba(13, 17, 23, 0.7); 
-    padding: 2px 6px; 
-    border-radius: 10px; 
-    margin-top: 4px; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
-}
-.slot-price, .slot-pos { 
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8); 
-    font-weight: 600; 
-}
-.slot-price { color: #3fb950 !important; }
-
-/* Custom Dark Scrollbar */
-.player-list::-webkit-scrollbar { width: 8px; }
-.player-list::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
-.player-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-.player-list::-webkit-scrollbar-thumb:hover { background: #8b949e; }
-
 {% endblock %}
 
 {% block content %}
 <div style="margin-bottom:1rem;">
   <h2 style="font-size:20px;font-weight:600;color:#fff;">Pick your team</h2>
-  <p style="font-size:13px;color:#8b949e;margin-top:4px;">Gameweek {{ active_gameweek.number|default:"—" }} &mdash; Budget: £100.0m &mdash; Click a slot to pick, click a filled slot to captain</p>
+  <p style="font-size:13px;color:#8b949e;margin-top:4px;">Gameweek {{ active_gameweek.number|default:"—" }} &mdash; Budget: £100.0m</p>
 </div>
 
 <div class="pick-wrap">
@@ -136,7 +120,11 @@
       <button class="f-btn" onclick="setFormation('451',this)">4-5-1</button>
     </div>
     <div class="pitch">
+      <div class="penalty-box-top"></div>
+      <div class="goal-area-top"></div>
       <div class="pitch-lines"></div>
+      <div class="penalty-box-bottom"></div>
+      <div class="goal-area-bottom"></div>
       <div id="pitch-rows"></div>
     </div>
   </div>
@@ -152,6 +140,7 @@
     </div>
     <input class="player-search" type="text" placeholder="Search player..." oninput="renderList()" id="search-input">
     <div class="player-list" id="player-list"></div>
+    
     <div class="submit-bar">
       <div class="budget-row">
         <span class="budget-label">Spent</span>
@@ -161,7 +150,12 @@
         <span class="budget-label">Remaining</span>
         <span class="budget-val" id="remaining-val">£100.0m</span>
       </div>
-      <p class="captain-hint">Click a filled shirt to toggle captain (C)</p>
+      <div class="budget-row" style="margin-top: 4px;">
+        <span class="budget-label">Captain</span>
+        <select id="captain-select" class="player-search" style="margin-bottom:0; width:140px; padding:4px 8px;" onchange="updateCaptain()">
+          <option value="">Select captain...</option>
+        </select>
+      </div>
       <button class="btn-submit" id="submit-btn" disabled onclick="submitTeam()">Save team</button>
     </div>
   </div>
@@ -184,34 +178,49 @@ const FORMATIONS = {
 };
 
 let formation = '433';
-let slots = [];       // {pos, player|null, captain}
+let slots = [];
 let activeSlot = null;
 let filterPosition = 'ALL';
 
-function buildSlots(f) {
+function buildSlots(f, savedPlayers = []) {
   const rows = FORMATIONS[f];
   slots = [];
   rows.forEach(row => row.forEach(pos => slots.push({ pos, player: null, captain: false })));
-  slots[0].captain = false;
+
+  let unassigned = [];
+  savedPlayers.forEach(p => {
+    let emptySlot = slots.find(s => s.pos === p.pos && s.player === null);
+    if (emptySlot) {
+      emptySlot.player = p;
+    } else {
+      unassigned.push(p.name);
+    }
+  });
+
+  if (unassigned.length > 0) {
+    alert("Formation changed. The following players were removed as they didn't fit the new structure:\n" + unassigned.join(', '));
+  }
 }
 
 function setFormation(f, btn) {
+  const currentPlayers = slots.map(s => s.player).filter(p => p !== null);
   formation = f;
-  buildSlots(f);
+  buildSlots(f, currentPlayers);
   activeSlot = null;
   document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderPitch();
   renderList();
   updateBudget();
+  updateCaptainDropdown();
 }
 
 function renderPitch() {
-  const rows = FORMATIONS[formation];
   const container = document.getElementById('pitch-rows');
   container.innerHTML = '';
   let idx = 0;
-  rows.forEach(row => {
+  
+  FORMATIONS[formation].forEach(row => {
     const div = document.createElement('div');
     div.className = 'pitch-row';
     row.forEach(() => {
@@ -220,8 +229,10 @@ function renderPitch() {
       const el = document.createElement('div');
       el.className = 'player-slot';
       el.onclick = () => clickSlot(slotIdx);
+      
       const shirt = document.createElement('div');
       shirt.className = slot.player ? 'shirt filled' : 'shirt empty';
+      
       if (slot.player) {
         shirt.style.background = slot.player.color;
         shirt.textContent = slot.player.team;
@@ -234,15 +245,20 @@ function renderPitch() {
       } else {
         shirt.textContent = slot.pos;
       }
+      
       const name = document.createElement('div');
       name.className = 'slot-name';
-      name.textContent = slot.player ? slot.player.name : '+';
+      name.textContent = slot.player ? slot.player.name : '+ Add';
+      if (!slot.player) name.style.background = 'transparent';
+      
       const price = document.createElement('div');
       price.className = slot.player ? 'slot-price' : 'slot-pos';
       price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
+      
       el.appendChild(shirt);
       el.appendChild(name);
       el.appendChild(price);
+      
       if (activeSlot === slotIdx) el.style.outline = '2px solid #38a169';
       div.appendChild(el);
       idx++;
@@ -253,13 +269,17 @@ function renderPitch() {
 
 function clickSlot(idx) {
   const slot = slots[idx];
+  // Clicking a filled slot un-selects the player
   if (slot.player) {
-    // toggle captain
-    slots.forEach(s => s.captain = false);
-    slot.captain = true;
+    slot.player = null;
+    slot.captain = false;
     renderPitch();
+    renderList();
+    updateBudget();
+    updateCaptainDropdown();
     return;
   }
+  
   activeSlot = idx;
   filterPosition = slot.pos;
   document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
@@ -279,12 +299,14 @@ function filterPos(pos, btn) {
 function renderList() {
   const q = document.getElementById('search-input').value.toLowerCase();
   const pickedIds = slots.filter(s => s.player).map(s => s.player.id);
+  
   let list = ALL_PLAYERS.filter(p => {
     if (filterPosition !== 'ALL' && p.pos !== filterPosition) return false;
     if (q && !p.full.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) return false;
     return true;
   });
   list.sort((a,b) => b.price - a.price);
+  
   const container = document.getElementById('player-list');
   container.innerHTML = '';
   list.slice(0, 60).forEach(p => {
@@ -292,6 +314,7 @@ function renderList() {
     const div = document.createElement('div');
     div.className = 'player-item' + (isPicked ? ' selected' : '');
     div.onclick = () => selectPlayer(p);
+    
     div.innerHTML = `
       <div class="p-shirt" style="background:${p.color}">${p.team}</div>
       <div class="p-info">
@@ -316,11 +339,52 @@ function selectPlayer(p) {
     alert(p.full + ' is already in your team.');
     return;
   }
+  
   slot.player = p;
   activeSlot = null;
   renderPitch();
   renderList();
   updateBudget();
+  updateCaptainDropdown();
+}
+
+function updateCaptainDropdown() {
+  const select = document.getElementById('captain-select');
+  const currentVal = select.value;
+  select.innerHTML = '<option value="">Select captain...</option>';
+  
+  let hasValidCaptain = false;
+  slots.forEach(s => {
+    if (s.player) {
+      const opt = document.createElement('option');
+      opt.value = s.player.id;
+      opt.textContent = s.player.name + ' (' + s.player.pos + ')';
+      if (s.player.id.toString() === currentVal) {
+        opt.selected = true;
+        hasValidCaptain = true;
+        s.captain = true;
+      } else {
+        s.captain = false;
+      }
+      select.appendChild(opt);
+    }
+  });
+
+  if (!hasValidCaptain) {
+    slots.forEach(s => s.captain = false);
+  }
+  validateSubmit();
+  renderPitch();
+}
+
+function updateCaptain() {
+  const select = document.getElementById('captain-select');
+  const capId = select.value;
+  slots.forEach(s => {
+    s.captain = (s.player && s.player.id.toString() === capId);
+  });
+  validateSubmit();
+  renderPitch();
 }
 
 function updateBudget() {
@@ -328,20 +392,29 @@ function updateBudget() {
   const rem = 100 - spent;
   document.getElementById('spent-val').textContent = '£' + spent.toFixed(1) + 'm';
   document.getElementById('remaining-val').textContent = '£' + rem.toFixed(1) + 'm';
-  const filled = slots.filter(s => s.player).length;
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = filled < 11;
+  
   if (rem < 0) {
     document.getElementById('remaining-val').style.color = '#f85149';
-    btn.disabled = true;
   } else {
     document.getElementById('remaining-val').style.color = '#38a169';
   }
+  validateSubmit();
+}
+
+function validateSubmit() {
+  const filled = slots.filter(s => s.player).length;
+  const spent = slots.reduce((sum, s) => sum + (s.player ? s.player.price : 0), 0);
+  const rem = 100 - spent;
+  const hasCaptain = slots.some(s => s.captain);
+  
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = filled < 11 || rem < 0 || !hasCaptain;
 }
 
 function submitTeam() {
   const hasCaptain = slots.some(s => s.captain);
-  if (!hasCaptain) { alert('Please select a captain by clicking a filled shirt.'); return; }
+  if (!hasCaptain) { alert('Please select a captain from the dropdown.'); return; }
+  
   const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain }));
   fetch('/pick/save/', {
     method: 'POST',
@@ -353,6 +426,7 @@ function submitTeam() {
   });
 }
 
+// Initialize
 buildSlots(formation);
 renderPitch();
 renderList();
