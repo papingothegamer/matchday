@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}{{ team.name }} — MatchDay{% endblock %}
+
+{% block extra_style %}
+.team-header { display: flex; align-items: center; gap: 1.5rem; background: linear-gradient(90deg, #161b22, {{ team.primary_color }}40); border: 1px solid #30363d; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+.t-logo { width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+.t-logo-fb { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: #fff; border: 2px solid rgba(255,255,255,0.2); }
+.t-info h1 { font-size: 28px; color: #fff; margin: 0 0 8px 0; }
+.t-info p { color: #8b949e; margin: 0; font-size: 14px; }
+
+.view-tabs { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.tab-btn { background: #161b22; border: 1px solid #30363d; color: #8b949e; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+.tab-btn.active { background: #238636; border-color: #238636; color: #fff; }
+
+.pitch { background: #1a4a1a; border-radius: 8px; padding: 2rem 1rem; position: relative; min-height: 500px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 20px; }
+.pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); }
+.pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; }
+.penalty-box-top { position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
+.penalty-box-bottom { position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
+.pitch-row { display: flex; justify-content: center; gap: 20px; position: relative; z-index: 10; width: 100%; }
+.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; }
+.shirt { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
+.slot-name { font-size: 11px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 85px; background: rgba(13, 17, 23, 0.8); padding: 3px 6px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: 500;}
+.slot-price { font-size: 11px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+.bench-section { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+.bench-title { font-size: 16px; color: #fff; border-bottom: 1px solid #30363d; padding-bottom: 8px; margin-bottom: 12px; }
+.bench-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.bench-item { display: flex; align-items: center; gap: 10px; background: #0d1117; padding: 8px 12px; border-radius: 6px; border: 1px solid #21262d; }
+.bench-pos { font-size: 10px; color: #8b949e; font-weight: bold; background: #21262d; padding: 2px 6px; border-radius: 4px; }
+
+.table-view { display: none; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
+.players-table { width: 100%; border-collapse: collapse; text-align: left; }
+.players-table th { color: #8b949e; font-size: 12px; padding: 10px; border-bottom: 1px solid #30363d; text-transform: uppercase; }
+.players-table td { padding: 12px 10px; border-bottom: 1px solid #21262d; color: #e6e6e6; font-size: 14px; }
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'players' %}" style="color: #8b949e; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 1rem;">&larr; Back to Clubs</a>
+
+<div class="team-header">
+  {% if team.logo_filename %}
+    <img src="{% static 'core/images/teams/'|add:team.logo_filename %}" class="t-logo" alt="{{ team.name }}">
+  {% else %}
+    <div class="t-logo-fb" style="background: {{ team.primary_color }};">{{ team.short_name }}</div>
+  {% endif %}
+  <div class="t-info">
+    <h1>{{ team.name }}</h1>
+    <p>Stadium: {{ team.stadium }} &middot; Founded: {{ team.founded_year }}</p>
+  </div>
+</div>
+
+<div class="view-tabs">
+  <button class="tab-btn active" id="btn-pitch" onclick="toggleView('pitch')">Starting XI</button>
+  <button class="tab-btn" id="btn-list" onclick="toggleView('list')">Squad List (A-Z)</button>
+</div>
+
+<div id="view-pitch">
+  <div class="pitch">
+    <div class="penalty-box-top"></div>
+    <div class="pitch-lines"></div>
+    <div class="penalty-box-bottom"></div>
+    
+    <div class="pitch-row">
+      {% for p in starters %}{% if p.position == 'FWD' %}
+      <div class="player-slot"><div class="shirt" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="pitch-row">
+      {% for p in starters %}{% if p.position == 'MID' %}
+      <div class="player-slot"><div class="shirt" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="pitch-row">
+      {% for p in starters %}{% if p.position == 'DEF' %}
+      <div class="player-slot"><div class="shirt" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="pitch-row">
+      {% for p in starters %}{% if p.position == 'GK' %}
+      <div class="player-slot"><div class="shirt" style="background: #e3a92b; color: #000;">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
+      {% endif %}{% endfor %}
+    </div>
+  </div>
+
+  <div class="bench-section">
+    <div class="bench-title">Substitutes</div>
+    <div class="bench-grid">
+      {% for p in subs %}
+      <div class="bench-item">
+        <span class="bench-pos">{{ p.position }}</span>
+        <span style="color:#e6e6e6;font-size:13px;flex:1;">{{ p.first_name }} <strong>{{ p.last_name }}</strong></span>
+        <span style="color:#3fb950;font-size:12px;font-weight:600;">£{{ p.price|floatformat:1 }}m</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <div class="bench-section">
+    <div class="bench-title">Reserves</div>
+    <div class="bench-grid">
+      {% for p in reserves %}
+      <div class="bench-item">
+        <span class="bench-pos">{{ p.position }}</span>
+        <span style="color:#e6e6e6;font-size:13px;flex:1;">{{ p.first_name }} <strong>{{ p.last_name }}</strong></span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div id="view-list" class="table-view">
+  <table class="players-table">
+    <thead>
+      <tr>
+        <th>Player Name</th>
+        <th>Position</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in all_players %}
+      <tr>
+        <td>{{ p.first_name }} <strong style="color: #fff;">{{ p.last_name }}</strong></td>
+        <td><span style="font-size:11px;color:#8b949e;background:#21262d;padding:3px 6px;border-radius:6px;border:1px solid #30363d;">{{ p.position }}</span></td>
+        <td style="color:#38a169;font-weight:600;">£{{ p.price|floatformat:1 }}m</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function toggleView(view) {
+  document.getElementById('view-pitch').style.display = view === 'pitch' ? 'block' : 'none';
+  document.getElementById('view-list').style.display = view === 'list' ? 'block' : 'none';
+  
+  document.getElementById('btn-pitch').className = view === 'pitch' ? 'tab-btn active' : 'tab-btn';
+  document.getElementById('btn-list').className = view === 'list' ? 'tab-btn active' : 'tab-btn';
+}
+</script>
+{% endblock %}

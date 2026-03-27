@@ -51,6 +51,37 @@ def save_picks(request):
     except Exception as e:
         return JsonResponse({'error': str(e)})
 
+
+from django.shortcuts import get_object_or_404
+
 def players_list(request):
-    players = Player.objects.select_related('team').order_by('-price', 'last_name')
-    return render(request, 'core/players.html', {'players': players, 'teams': Team.objects.all().order_by('name')})
+    teams = Team.objects.all().order_by('name')
+    return render(request, 'core/players.html', {'teams': teams})
+
+def team_detail(request, short_name):
+    team = get_object_or_404(Team, short_name=short_name)
+    players = Player.objects.filter(team=team).order_by('-price', 'last_name')
+    
+    # Auto-generate Starting XI based on Price Quality (4-3-3 Formation)
+    gks = list(players.filter(position='GK'))
+    defs = list(players.filter(position='DEF'))
+    mids = list(players.filter(position='MID'))
+    fwds = list(players.filter(position='FWD'))
+
+    starters = []
+    if gks: starters.append(gks.pop(0))
+    for _ in range(min(4, len(defs))): starters.append(defs.pop(0))
+    for _ in range(min(3, len(mids))): starters.append(mids.pop(0))
+    for _ in range(min(3, len(fwds))): starters.append(fwds.pop(0))
+
+    subs = gks[:1] + defs[:2] + mids[:2] + fwds[:2]
+    reserves = [p for p in players if p not in starters and p not in subs]
+
+    context = {
+        'team': team,
+        'starters': starters,
+        'subs': subs,
+        'reserves': reserves,
+        'all_players': players.order_by('position', '-price')
+    }
+    return render(request, 'core/team_detail.html', context)

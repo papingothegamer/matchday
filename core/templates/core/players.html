@@ -1,111 +1,36 @@
 {% extends 'core/base.html' %}
-{% block title %}Players — MatchDay{% endblock %}
+{% load static %}
+{% block title %}Clubs — MatchDay{% endblock %}
 
 {% block extra_style %}
-.players-container { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
-.filters-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-.filter-input { background: #0d1117; border: 1px solid #30363d; color: #e6e6e6; padding: 8px 12px; border-radius: 6px; font-size: 13px; outline: none; flex: 1; min-width: 150px; }
-.filter-input:focus { border-color: #8b949e; }
-.players-table { width: 100%; border-collapse: collapse; text-align: left; }
-.players-table th { color: #8b949e; font-size: 12px; font-weight: 600; padding: 10px; border-bottom: 1px solid #30363d; text-transform: uppercase; }
-.players-table td { padding: 12px 10px; border-bottom: 1px solid #21262d; color: #e6e6e6; font-size: 14px; vertical-align: middle; }
-.players-table tr:hover td { background: #21262d; }
-.p-team-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-.pos-badge { font-size: 11px; color: #8b949e; background: #21262d; padding: 3px 6px; border-radius: 6px; font-weight: 600; border: 1px solid #30363d; }
-.price-tag { color: #38a169; font-weight: 600; }
+.team-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+@media (max-width: 1024px) { .team-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
+.team-tile { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.2s ease; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.team-tile:hover { transform: translateY(-5px); border-color: #8b949e; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.team-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+.team-logo-fallback { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; margin-bottom: 1rem; border: 2px solid rgba(255,255,255,0.2); }
+.team-name { font-size: 15px; font-weight: 600; color: #e6e6e6; }
+.team-stadium { font-size: 12px; color: #8b949e; margin-top: 4px; }
 {% endblock %}
 
 {% block content %}
 <div style="margin-bottom:1rem;">
-  <h2 style="font-size:20px;font-weight:600;color:#fff;">Player Database</h2>
-  <p style="font-size:13px;color:#8b949e;margin-top:4px;">View, filter, and sort all Premier League players.</p>
+  <h2 style="font-size:24px;font-weight:600;color:#fff;">Premier League Clubs</h2>
+  <p style="font-size:14px;color:#8b949e;margin-top:4px;">Select a club to view their 2025/2026 squad list and starting XI.</p>
 </div>
 
-<div class="players-container">
-  
-  <div class="filters-bar">
-    <input type="text" id="searchName" placeholder="Search by name..." class="filter-input" oninput="applyFilters()">
-    <select id="filterTeam" class="filter-input" onchange="applyFilters()">
-      <option value="ALL">All Teams</option>
-      {% for t in teams %}
-      <option value="{{ t.short_name }}">{{ t.name }}</option>
-      {% endfor %}
-    </select>
-    <select id="filterPos" class="filter-input" onchange="applyFilters()">
-      <option value="ALL">All Positions</option>
-      <option value="GK">Goalkeepers (GK)</option>
-      <option value="DEF">Defenders (DEF)</option>
-      <option value="MID">Midfielders (MID)</option>
-      <option value="FWD">Forwards (FWD)</option>
-    </select>
-    <select id="sortBy" class="filter-input" onchange="applyFilters()">
-      <option value="price_desc">Price: High to Low</option>
-      <option value="price_asc">Price: Low to High</option>
-      <option value="name_asc">Name: A to Z</option>
-      <option value="name_desc">Name: Z to A</option>
-    </select>
-  </div>
-
-  <table class="players-table">
-    <thead>
-      <tr>
-        <th>Player Name</th>
-        <th>Position</th>
-        <th>Team</th>
-        <th>Price</th>
-      </tr>
-    </thead>
-    <tbody id="players-body">
-      {% for p in players %}
-      <tr class="player-row" data-name="{{ p.last_name }}, {{ p.first_name }}" data-team="{{ p.team.short_name }}" data-pos="{{ p.position }}" data-price="{{ p.price|stringformat:'f' }}">
-        <td><strong style="color: #fff;">{{ p.last_name }}</strong>, {{ p.first_name }}</td>
-        <td><span class="pos-badge">{{ p.position }}</span></td>
-        <td><span class="p-team-badge" style="background: {{ p.team.primary_color }}; border: 1px solid rgba(255,255,255,0.2);">{{ p.team.name }}</span></td>
-        <td class="price-tag">£{{ p.price|floatformat:1 }}m</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="team-grid">
+  {% for t in teams %}
+  <a href="{% url 'team_detail' t.short_name %}" class="team-tile">
+    {% if t.logo_filename %}
+      <img src="{% static 'core/images/teams/'|add:t.logo_filename %}" class="team-logo" alt="{{ t.name }}">
+    {% else %}
+      <div class="team-logo-fallback" style="background: {{ t.primary_color }};">{{ t.short_name }}</div>
+    {% endif %}
+    <div class="team-name">{{ t.name }}</div>
+    <div class="team-stadium">{{ t.stadium }}</div>
+  </a>
+  {% endfor %}
 </div>
-{% endblock %}
-
-{% block extra_script %}
-<script>
-function applyFilters() {
-  const search = document.getElementById('searchName').value.toLowerCase();
-  const team = document.getElementById('filterTeam').value;
-  const pos = document.getElementById('filterPos').value;
-  const sort = document.getElementById('sortBy').value;
-
-  const tbody = document.getElementById('players-body');
-  const rows = Array.from(tbody.getElementsByClassName('player-row'));
-
-  // 1. Filter the rows
-  rows.forEach(row => {
-    const rName = row.getAttribute('data-name').toLowerCase();
-    const rTeam = row.getAttribute('data-team');
-    const rPos = row.getAttribute('data-pos');
-
-    let match = true;
-    if (search && !rName.includes(search)) match = false;
-    if (team !== 'ALL' && rTeam !== team) match = false;
-    if (pos !== 'ALL' && rPos !== pos) match = false;
-
-    row.style.display = match ? '' : 'none';
-  });
-
-  // 2. Sort the visible rows
-  const visibleRows = rows.filter(r => r.style.display !== 'none');
-  visibleRows.sort((a, b) => {
-    if (sort === 'price_desc') return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
-    if (sort === 'price_asc') return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
-    if (sort === 'name_asc') return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
-    if (sort === 'name_desc') return b.getAttribute('data-name').localeCompare(a.getAttribute('data-name'));
-    return 0;
-  });
-
-  // 3. Re-append sorted rows to the table body
-  visibleRows.forEach(row => tbody.appendChild(row));
-}
-</script>
 {% endblock %}
