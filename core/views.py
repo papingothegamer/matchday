@@ -50,3 +50,7 @@ def save_picks(request):
         return JsonResponse({'ok': True})
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+def players_list(request):
+    players = Player.objects.select_related('team').order_by('-price', 'last_name')
+    return render(request, 'core/players.html', {'players': players})

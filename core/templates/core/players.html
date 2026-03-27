@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% block title %}Players — MatchDay{% endblock %}
+
+{% block extra_style %}
+.players-container { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+.players-table { width: 100%; border-collapse: collapse; text-align: left; }
+.players-table th { color: #8b949e; font-size: 12px; font-weight: 600; padding: 10px; border-bottom: 1px solid #30363d; text-transform: uppercase; }
+.players-table td { padding: 12px 10px; border-bottom: 1px solid #21262d; color: #e6e6e6; font-size: 14px; vertical-align: middle; }
+.players-table tr:hover td { background: #21262d; }
+.p-team-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.pos-badge { font-size: 11px; color: #8b949e; background: #21262d; padding: 3px 6px; border-radius: 6px; font-weight: 600; border: 1px solid #30363d; }
+.price-tag { color: #38a169; font-weight: 600; }
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <h2 style="font-size:20px;font-weight:600;color:#fff;">Player Database</h2>
+  <p style="font-size:13px;color:#8b949e;margin-top:4px;">View all Premier League players and their current fantasy prices.</p>
+</div>
+
+<div class="players-container">
+  <table class="players-table">
+    <thead>
+      <tr>
+        <th>Player Name</th>
+        <th>Position</th>
+        <th>Team</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in players %}
+      <tr>
+        <td><strong style="color: #fff;">{{ p.last_name }}</strong>, {{ p.first_name }}</td>
+        <td><span class="pos-badge">{{ p.position }}</span></td>
+        <td><span class="p-team-badge" style="background: {{ p.team.primary_color }}; border: 1px solid rgba(255,255,255,0.2);">{{ p.team.name }}</span></td>
+        <td class="price-tag">£{{ p.price|floatformat:1 }}m</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
