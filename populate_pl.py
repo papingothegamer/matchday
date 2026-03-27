@@ -1,5 +1,7 @@
-import os
+﻿import os
+import re
 import django
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'matchday.settings')
 django.setup()
 
@@ -11,352 +13,121 @@ Player.objects.all().delete()
 Team.objects.all().delete()
 Gameweek.objects.all().delete()
 
-print("Creating teams...")
-teams_data = [
-    ('Arsenal',            'ARS', 'Emirates Stadium',        1886, '#EF0107', '#FFFFFF'),
-    ('Aston Villa',        'AVL', 'Villa Park',              1874, '#95BFE5', '#670E36'),
-    ('Bournemouth',        'BOU', 'Vitality Stadium',        1899, '#DA291C', '#000000'),
-    ('Brentford',          'BRE', 'Gtech Community Stadium', 1889, '#E30613', '#FFFFFF'),
-    ('Brighton',           'BHA', 'Amex Stadium',            1901, '#0057B8', '#FFFFFF'),
-    ('Chelsea',            'CHE', 'Stamford Bridge',         1905, '#034694', '#FFFFFF'),
-    ('Crystal Palace',     'CRY', 'Selhurst Park',           1905, '#1B458F', '#C4122E'),
-    ('Everton',            'EVE', 'Goodison Park',           1878, '#003399', '#FFFFFF'),
-    ('Fulham',             'FUL', 'Craven Cottage',          1879, '#FFFFFF', '#000000'),
-    ('Ipswich Town',       'IPS', 'Portman Road',            1878, '#0044A9', '#FFFFFF'),
-    ('Leeds United',       'LEE', 'Elland Road',             1919, '#FFCD00', '#1D428A'),
-    ('Leicester City',     'LEI', 'King Power Stadium',      1884, '#003090', '#FDBE11'),
-    ('Liverpool',          'LIV', 'Anfield',                 1892, '#C8102E', '#FFFFFF'),
-    ('Manchester City',    'MCI', 'Etihad Stadium',          1880, '#6CABDD', '#FFFFFF'),
-    ('Manchester United',  'MUN', 'Old Trafford',            1878, '#DA291C', '#FFE500'),
-    ('Newcastle United',   'NEW', "St. James' Park",         1892, '#241F20', '#FFFFFF'),
-    ('Nottingham Forest',  'NFO', 'City Ground',             1865, '#DD0000', '#FFFFFF'),
-    ('Tottenham Hotspur',  'TOT', 'Tottenham Hotspur Stadium',1882,'#132257', '#FFFFFF'),
-    ('West Ham United',    'WHU', 'London Stadium',          1895, '#7A263A', '#1BB1E7'),
-    ('Wolverhampton',      'WOL', 'Molineux Stadium',        1877, '#FDB913', '#231F20'),
-]
-
-teams = {}
-for name, short, stadium, founded, primary, secondary in teams_data:
-    t = Team.objects.create(
-        name=name, short_name=short,
-        stadium=stadium, founded_year=founded,
-        primary_color=primary, secondary_color=secondary,
-    )
-    teams[short] = t
-    print(f"  {short}")
-
-print("\nCreating players...")
-# (last_name, first_name, position, price)
-players_data = {
-    'ARS': [
-        ('Raya',       'David',    'GK',  5.5),
-        ('White',      'Ben',      'DEF', 7.0),
-        ('Saliba',     'William',  'DEF', 6.5),
-        ('Timber',     'Jurrien',  'DEF', 5.5),
-        ('Zinchenko',  'Oleksandr','DEF', 5.0),
-        ('Odegaard',   'Martin',   'MID', 8.5),
-        ('Saka',       'Bukayo',   'MID', 10.0),
-        ('Havertz',    'Kai',      'MID', 8.0),
-        ('Martinelli', 'Gabriel',  'MID', 7.5),
-        ('Merino',     'Mikel',    'MID', 6.0),
-        ('Zubimendi',  'Martin',   'MID', 6.5),
-        ('Jesus',      'Gabriel',  'FWD', 7.5),
-        ('Trossard',   'Leandro',  'FWD', 7.0),
-    ],
-    'AVL': [
-        ('Martinez',   'Emiliano', 'GK',  5.5),
-        ('Cash',       'Matty',    'DEF', 5.5),
-        ('Konsa',      'Ezri',     'DEF', 5.5),
-        ('Torres',     'Pau',      'DEF', 5.0),
-        ('Digne',      'Lucas',    'DEF', 4.5),
-        ('McGinn',     'John',     'MID', 6.0),
-        ('Tielemans',  'Youri',    'MID', 5.5),
-        ('Bailey',     'Leon',     'MID', 6.5),
-        ('Rogers',     'Morgan',   'MID', 6.0),
-        ('Ramsey',     'Jacob',    'MID', 5.5),
-        ('Watkins',    'Ollie',    'FWD', 9.0),
-        ('Duran',      'Jhon',     'FWD', 6.5),
-    ],
-    'BOU': [
-        ('Flekken',    'Mark',     'GK',  4.5),
-        ('Smith',      'Adam',     'DEF', 4.5),
-        ('Zabarnyi',   'Ilya',     'DEF', 4.5),
-        ('Kerkez',     'Milos',    'DEF', 5.0),
-        ('Senesi',     'Marcos',   'DEF', 4.5),
-        ('Cook',       'Lewis',    'MID', 4.5),
-        ('Scott',      'Jaidon',   'MID', 4.5),
-        ('Semenyo',    'Antoine',  'MID', 6.0),
-        ('Kluivert',   'Justin',   'MID', 6.5),
-        ('Ouattara',   'Dango',    'FWD', 6.0),
-        ('Evanilson',  '',         'FWD', 6.5),
-    ],
-    'BRE': [
-        ('Flekken',    'Mark',     'GK',  4.5),
-        ('Ajer',       'Kristoffer','DEF', 4.5),
-        ('Collins',    'Nathan',   'DEF', 4.5),
-        ('Pinnock',    'Ethan',    'DEF', 4.5),
-        ('Van den Berg','Sepp',    'DEF', 4.5),
-        ('Norgaard',   'Christian','MID', 5.0),
-        ('Damsgaard',  'Mikkel',   'MID', 5.5),
-        ('Mbeumo',     'Bryan',    'MID', 8.5),
-        ('Lewis-Potter','Shandon', 'MID', 5.5),
-        ('Thiago',     '',         'FWD', 7.0),
-        ('Wissa',      'Yoane',    'FWD', 7.0),
-    ],
-    'BHA': [
-        ('Verbruggen', 'Bart',     'GK',  4.5),
-        ('Veltman',    'Joel',     'DEF', 4.5),
-        ('Dunk',       'Lewis',    'DEF', 4.5),
-        ('Estupinan',  'Pervis',   'DEF', 5.0),
-        ('Lamptey',    'Tariq',    'DEF', 4.5),
-        ('Baleba',     'Carlos',   'MID', 5.0),
-        ('Gross',      'Pascal',   'MID', 6.0),
-        ('Mitoma',     'Kaoru',    'MID', 7.0),
-        ('Rutter',     'Georginio','MID', 6.0),
-        ('Welbeck',    'Danny',    'FWD', 6.2),
-        ('Joao Pedro', '',         'FWD', 7.5),
-    ],
-    'CHE': [
-        ('Sanchez',    'Robert',   'GK',  5.0),
-        ('Disasi',     'Axel',     'DEF', 4.5),
-        ('Colwill',    'Levi',     'DEF', 5.0),
-        ('Cucurella',  'Marc',     'DEF', 6.0),
-        ('James',      'Reece',    'DEF', 5.5),
-        ('Caicedo',    'Moises',   'MID', 6.0),
-        ('Palmer',     'Cole',     'MID', 10.5),
-        ('Neto',       'Pedro',    'MID', 5.5),
-        ('Gittens',    'Jamie',    'MID', 6.5),
-        ('Estevao',    '',         'MID', 6.5),
-        ('Joao Pedro', '',         'FWD', 7.5),
-        ('Jackson',    'Nicolas',  'FWD', 7.5),
-    ],
-    'CRY': [
-        ('Henderson',  'Dean',     'GK',  4.5),
-        ('Munoz',      'Daniel',   'DEF', 5.5),
-        ('Guehi',      'Marc',     'DEF', 5.5),
-        ('Lacroix',    'Maxence',  'DEF', 5.0),
-        ('Mitchell',   'Tyrick',   'DEF', 4.5),
-        ('Doucoure',   'Cheick',   'MID', 5.0),
-        ('Eze',        'Eberechi', 'MID', 7.5),
-        ('Sarr',       'Ismaila',  'MID', 6.5),
-        ('Schlupp',    'Jeffrey',  'MID', 5.0),
-        ('Edouard',    'Odsonne',  'FWD', 5.5),
-        ('Mateta',     'Jean-Philippe','FWD', 6.5),
-    ],
-    'EVE': [
-        ('Pickford',   'Jordan',   'GK',  5.0),
-        ('Mykolenko',  'Vitaliy',  'DEF', 4.5),
-        ('Tarkowski',  'James',    'DEF', 5.0),
-        ('Young',      'Ashley',   'DEF', 4.5),
-        ('Patterson',  'Nathan',   'DEF', 4.5),
-        ('Gueye',      'Idrissa',  'MID', 4.5),
-        ('Doucoure',   'Abdoulaye','MID', 5.0),
-        ('Lindstrom',  'Jesper',   'MID', 5.5),
-        ('Ndiaye',     'Iliman',   'MID', 6.0),
-        ('Calvert-Lewin','Dominic','FWD', 6.0),
-        ('Beto',       '',         'FWD', 5.5),
-    ],
-    'FUL': [
-        ('Leno',       'Bernd',    'GK',  5.0),
-        ('Tete',       '',         'DEF', 4.5),
-        ('Ream',       'Tim',      'DEF', 4.5),
-        ('Robinson',   'Antonee',  'DEF', 5.0),
-        ('Andersen',   'Joachim',  'DEF', 5.0),
-        ('Lukic',      'Sasa',     'MID', 4.5),
-        ('Andreas',    'Pereira',  'MID', 6.0),
-        ('Iwobi',      'Alex',     'MID', 6.0),
-        ('Wilson',     'Harry',    'MID', 6.0),
-        ('Jimenez',    'Raul',     'FWD', 6.0),
-        ('Muniz',      'Rodrigo',  'FWD', 6.0),
-    ],
-    'IPS': [
-        ('Flaherty',   'Cieran',   'GK',  4.5),
-        ('Woolfenden', 'Luke',     'DEF', 4.5),
-        ('Burgess',    'Cameron',  'DEF', 4.5),
-        ('Davis',      'Leif',     'DEF', 4.5),
-        ('Tuanzebe',   'Axel',     'DEF', 4.5),
-        ('Morsy',      'Sam',      'MID', 4.5),
-        ('Luthe',      'Andreas',  'MID', 4.5),
-        ('Chaplin',    'Conor',    'MID', 5.0),
-        ('Hutchinson', 'Omari',    'MID', 5.0),
-        ('Delap',      'Liam',     'FWD', 5.5),
-        ('Broadhead',  'Nathan',   'FWD', 5.0),
-    ],
-    'LEE': [
-        ('Meslier',    'Illan',    'GK',  4.5),
-        ('Ayling',     'Luke',     'DEF', 4.5),
-        ('Cooper',     'Liam',     'DEF', 4.5),
-        ('Struijk',    'Pascal',   'DEF', 4.5),
-        ('Firpo',      'Junior',   'DEF', 4.5),
-        ('Adams',      'Tyler',    'MID', 5.0),
-        ('Roca',       'Marc',     'MID', 5.0),
-        ('James',      'Daniel',   'MID', 5.5),
-        ('Gnonto',     'Wilfried', 'MID', 5.5),
-        ('Bamford',    'Patrick',  'FWD', 5.5),
-        ('Joseph',     'Mateo',    'FWD', 5.0),
-    ],
-    'LEI': [
-        ('Hermansen',  'Mads',     'GK',  4.5),
-        ('Justin',     'James',    'DEF', 5.0),
-        ('Faes',       'Wout',     'DEF', 4.5),
-        ('Kristiansen','Victor',   'DEF', 4.5),
-        ('Pereira',    'Ricardo',  'DEF', 4.5),
-        ('Soumare',    'Boubakary','MID', 4.5),
-        ('Ndidi',      'Wilfred',  'MID', 5.0),
-        ('Vardy',      'Jamie',    'FWD', 5.5),
-        ('Daka',       'Patson',   'FWD', 5.5),
-        ('Mavididi',   'Stephy',   'MID', 5.5),
-        ('El Khannouss','Bilal',   'MID', 5.5),
-    ],
-    'LIV': [
-        ('Alisson',    '',         'GK',  5.5),
-        ('Alexander-Arnold','Trent','DEF', 8.0),
-        ('Van Dijk',   'Virgil',   'DEF', 6.5),
-        ('Robertson',  'Andy',     'DEF', 7.0),
-        ('Gomez',      'Joe',      'DEF', 5.0),
-        ('Salah',      'Mohamed',  'MID', 14.5),
-        ('Szoboszlai', 'Dominik',  'MID', 7.0),
-        ('Mac Allister','Alexis',  'MID', 7.5),
-        ('Wirtz',      'Florian',  'MID', 8.5),
-        ('Diaz',       'Luis',     'MID', 7.5),
-        ('Ekitike',    'Hugo',     'FWD', 8.0),
-        ('Jota',       'Diogo',    'FWD', 7.5),
-    ],
-    'MCI': [
-        ('Ederson',    '',         'GK',  5.5),
-        ('Walker',     'Kyle',     'DEF', 5.5),
-        ('Dias',       'Ruben',    'DEF', 6.0),
-        ('Gvardiol',   'Josko',    'DEF', 6.5),
-        ('Lewis',      'Rico',     'DEF', 4.5),
-        ('Rodri',      '',         'MID', 6.5),
-        ('De Bruyne',  'Kevin',    'MID', 10.0),
-        ('Bernardo Silva','',      'MID', 7.5),
-        ('Foden',      'Phil',     'MID', 9.5),
-        ('Cherki',     'Rayan',    'MID', 6.5),
-        ('Haaland',    'Erling',   'FWD', 14.0),
-        ('Doku',       'Jeremy',   'MID', 7.0),
-    ],
-    'MUN': [
-        ('Onana',      'Andre',    'GK',  5.0),
-        ('Dalot',      'Diogo',    'DEF', 5.5),
-        ('Maguire',    'Harry',    'DEF', 5.0),
-        ('Martinez',   'Lisandro', 'DEF', 5.5),
-        ('Shaw',       'Luke',     'DEF', 5.0),
-        ('Fernandes',  'Bruno',    'MID', 10.3),
-        ('Mainoo',     'Kobbie',   'MID', 6.0),
-        ('Mount',      'Mason',    'MID', 6.0),
-        ('Rashford',   'Marcus',   'MID', 7.0),
-        ('Garnacho',   'Alejandro','MID', 7.0),
-        ('Hojlund',    'Rasmus',   'FWD', 7.5),
-        ('Zirkzee',    'Joshua',   'FWD', 6.5),
-    ],
-    'NEW': [
-        ('Pope',       'Nick',     'GK',  5.5),
-        ('Trippier',   'Kieran',   'DEF', 7.0),
-        ('Schar',      'Fabian',   'DEF', 5.5),
-        ('Botman',     'Sven',     'DEF', 5.0),
-        ('Burn',       'Dan',      'DEF', 5.0),
-        ('Joelinton',  '',         'MID', 6.0),
-        ('Bruno Guimaraes','',     'MID', 7.5),
-        ('Gordon',     'Anthony',  'MID', 8.0),
-        ('Almiron',    'Miguel',   'MID', 5.5),
-        ('Murphy',     'Jacob',    'MID', 5.5),
-        ('Isak',       'Alexander','FWD', 9.5),
-        ('Wilson',     'Callum',   'FWD', 6.0),
-    ],
-    'NFO': [
-        ('Flaherty',   'Matt',     'GK',  4.5),
-        ('Aina',       'Ola',      'DEF', 5.5),
-        ('Murillo',    '',         'DEF', 5.0),
-        ('Milenkovic', 'Nikola',   'DEF', 5.0),
-        ('Williams',   'Neco',     'DEF', 4.5),
-        ('Anderson',   'Elliot',   'MID', 5.5),
-        ('Yates',      'Ryan',     'MID', 5.0),
-        ('Hudson-Odoi','Callum',   'MID', 5.5),
-        ('Gibbs-White', 'Morgan',  'MID', 7.0),
-        ('Elanga',     'Anthony',  'MID', 6.5),
-        ('Wood',       'Chris',    'FWD', 9.0),
-        ('Awoniyi',    'Taiwo',    'FWD', 6.0),
-    ],
-    'TOT': [
-        ('Forster',    'Fraser',   'GK',  4.5),
-        ('Porro',      'Pedro',    'DEF', 6.0),
-        ('Romero',     'Cristian', 'DEF', 6.0),
-        ('Davies',     'Ben',      'DEF', 4.5),
-        ('Udogie',     'Destiny',  'DEF', 5.5),
-        ('Bissouma',   'Yves',     'MID', 5.0),
-        ('Maddison',   'James',    'MID', 7.5),
-        ('Kulusevski',  'Dejan',   'MID', 7.0),
-        ('Johnson',    'Brennan',  'MID', 6.0),
-        ('Son',        'Heung-min','MID', 9.5),
-        ('Solanke',    'Dominic',  'FWD', 7.5),
-        ('Werner',     'Timo',     'FWD', 6.0),
-    ],
-    'WHU': [
-        ('Areola',     'Alphonse', 'GK',  4.5),
-        ('Coufal',     'Vladimir', 'DEF', 4.5),
-        ('Ogbonna',    'Angelo',   'DEF', 4.5),
-        ('Emerson',    '',         'DEF', 4.5),
-        ('Mavropanos', 'Konstantinos','DEF',4.5),
-        ('Soucek',     'Tomas',    'MID', 5.5),
-        ('Ward-Prowse','James',    'MID', 6.0),
-        ('Paqueta',    'Lucas',    'MID', 7.0),
-        ('Bowen',      'Jarrod',   'MID', 7.5),
-        ('Kudus',      'Mohammed', 'MID', 7.0),
-        ('Fullkrug',   'Niclas',   'FWD', 6.5),
-        ('Antonio',    'Michail',  'FWD', 5.5),
-    ],
-    'WOL': [
-        ('Sa',         'Jose',     'GK',  4.5),
-        ('Doherty',    'Matt',     'DEF', 4.5),
-        ('Dawson',     'Craig',    'DEF', 4.5),
-        ('Bueno',      'Hugo',     'DEF', 4.5),
-        ('Ait-Nouri',  'Rayan',    'DEF', 5.0),
-        ('Joao Gomes', '',         'MID', 5.0),
-        ('Lemina',     'Mario',    'MID', 5.5),
-        ('Cunha',      'Matheus',  'MID', 7.5),
-        ('Munetsi',    'Marshall', 'MID', 4.5),
-        ('Larsen',     'Jorgen',   'MID', 4.5),
-        ('Strand Larsen','Jorgen', 'FWD', 6.0),
-        ('Doyle',      'Tommy',    'MID', 4.5),
-    ],
+# Map of the 20 PL clubs in the text file to their MatchDay metadata
+teams_data = {
+    'Arsenal': ('ARS', 'Emirates Stadium', 1886, '#EF0107', '#FFFFFF'),
+    'Aston Villa': ('AVL', 'Villa Park', 1874, '#95BFE5', '#670E36'),
+    'Bournemouth': ('BOU', 'Vitality Stadium', 1899, '#DA291C', '#000000'),
+    'Brentford': ('BRE', 'Gtech Community Stadium', 1889, '#E30613', '#FFFFFF'),
+    'Brighton & Hove Albion': ('BHA', 'Amex Stadium', 1901, '#0057B8', '#FFFFFF'),
+    'Burnley': ('BUR', 'Turf Moor', 1882, '#6C1D45', '#99D6EA'),
+    'Chelsea': ('CHE', 'Stamford Bridge', 1905, '#034694', '#FFFFFF'),
+    'Crystal Palace': ('CRY', 'Selhurst Park', 1905, '#1B458F', '#C4122E'),
+    'Everton': ('EVE', 'Goodison Park', 1878, '#003399', '#FFFFFF'),
+    'Fulham': ('FUL', 'Craven Cottage', 1879, '#FFFFFF', '#000000'),
+    'Leeds United': ('LEE', 'Elland Road', 1919, '#FFCD00', '#1D428A'),
+    'Liverpool': ('LIV', 'Anfield', 1892, '#C8102E', '#FFFFFF'),
+    'Manchester City': ('MCI', 'Etihad Stadium', 1880, '#6CABDD', '#FFFFFF'),
+    'Manchester United': ('MUN', 'Old Trafford', 1878, '#DA291C', '#FFE500'),
+    'Newcastle United': ('NEW', "St. James' Park", 1892, '#241F20', '#FFFFFF'),
+    'Nottingham Forest': ('NFO', 'City Ground', 1865, '#DD0000', '#FFFFFF'),
+    'Sunderland': ('SUN', 'Stadium of Light', 1879, '#FF0000', '#FFFFFF'),
+    'Tottenham Hotspur': ('TOT', 'Tottenham Hotspur Stadium', 1882, '#132257', '#FFFFFF'),
+    'West Ham United': ('WHU', 'London Stadium', 1895, '#7A263A', '#1BB1E7'),
+    'Wolverhampton Wanderers': ('WOL', 'Molineux Stadium', 1877, '#FDB913', '#231F20'),
 }
 
-for team_short, squad in players_data.items():
-    team = teams[team_short]
-    for entry in squad:
-        last_name, first_name, position, price = entry
-        Player.objects.create(
-            team=team,
-            first_name=first_name,
-            last_name=last_name,
-            position=position,
-            price=price,
-            is_active=True,
-        )
+try:
+    with open('PL.txt', 'r', encoding='utf-8') as f:
+        content = f.read()
+except FileNotFoundError:
+    print("Error: PL.txt not found in the root directory.")
+    exit()
 
-print("\nCreating gameweeks...")
+print("Parsing PL.txt and populating database...")
+
+# Clean up any fragmented newlines caused by source tags in the raw text
+content = re.sub(r'\n\\s*', ' ', content)
+content = re.sub(r'\\s*', '', content)
+
+pos_map = {'G': 'GK', 'D': 'DEF', 'M': 'MID', 'F': 'FWD'}
+price_map = {'GK': 4.5, 'DEF': 5.0, 'MID': 6.5, 'FWD': 7.5}
+
+current_team = None
+parsing_players = False
+player_count = 0
+
+for line in content.split('\n'):
+    line = line.strip()
+    if not line:
+        continue
+
+    # Identify if the line is a club name header
+    if line in teams_data:
+        short_name, stadium, founded, primary, secondary = teams_data[line]
+        current_team, _ = Team.objects.get_or_create(
+            name=line,
+            defaults={'short_name': short_name, 'stadium': stadium, 'founded_year': founded, 'primary_color': primary, 'secondary_color': secondary}
+        )
+        parsing_players = False
+        continue
+
+    # Start parsing when we hit the table header
+    if "Number\tName\tNat\tPos" in line:
+        parsing_players = True
+        continue
+
+    # Stop parsing when we hit the departed players section
+    if "Players no longer at this club" in line:
+        parsing_players = False
+        current_team = None
+        continue
+
+    # Parse player row
+    if parsing_players and current_team:
+        parts = line.split('\t')
+        
+        if len(parts) >= 4:
+            num_str = parts[0].strip()
+            if not num_str.isdigit():
+                continue
+
+            full_name = parts[1].strip()
+            if not full_name:
+                continue
+
+            # Split First and Last Name
+            name_parts = full_name.split(' ')
+            if len(name_parts) > 1:
+                first_name = name_parts[0]
+                last_name = ' '.join(name_parts[1:])
+            else:
+                first_name = ''
+                last_name = name_parts[0]
+
+            # Assign Position and Baseline Price
+            pos_char = parts[3].strip()
+            pos = pos_map.get(pos_char, 'MID')
+            price = price_map.get(pos, 5.0)
+
+            Player.objects.create(
+                team=current_team,
+                first_name=first_name,
+                last_name=last_name,
+                position=pos,
+                price=price,
+                is_active=True
+            )
+            player_count += 1
+
+print(f"Successfully imported {player_count} active players into the database!")
+
+print("Creating gameweeks...")
 gw_data = [
-    (29, '2026-02-22 11:00', False),
-    (30, '2026-03-08 11:00', False),
-    (31, '2026-03-15 11:00', False),
-    (32, '2026-03-29 11:00', True),
-    (33, '2026-04-05 11:00', False),
-    (34, '2026-04-19 11:00', False),
-    (35, '2026-04-26 11:00', False),
-    (36, '2026-05-03 11:00', False),
-    (37, '2026-05-10 11:00', False),
-    (38, '2026-05-17 11:00', False),
+    (29, '2026-02-22 11:00', False), (30, '2026-03-08 11:00', False), (31, '2026-03-15 11:00', False),
+    (32, '2026-03-29 11:00', True), (33, '2026-04-05 11:00', False), (34, '2026-04-19 11:00', False),
 ]
 for number, deadline_str, is_active in gw_data:
-    Gameweek.objects.create(
-        number=number,
-        deadline=datetime.strptime(deadline_str, '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc),
-        is_active=is_active,
-    )
+    Gameweek.objects.create(number=number, deadline=datetime.strptime(deadline_str, '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc), is_active=is_active)
 
-print("\nDone!")
-print(f"  Teams:      {Team.objects.count()}")
-print(f"  Players:    {Player.objects.count()}")
-print(f"  Gameweeks:  {Gameweek.objects.count()}")
-print(f"  Active GW:  {Gameweek.objects.filter(is_active=True).first()}")
+print("Setup Complete!")
