@@ -53,4 +53,4 @@ def save_picks(request):
 
 def players_list(request):
     players = Player.objects.select_related('team').order_by('-price', 'last_name')
-    return render(request, 'core/players.html', {'players': players})
+    return render(request, 'core/players.html', {'players': players, 'teams': Team.objects.all().order_by('name')})

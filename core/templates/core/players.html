@@ -3,6 +3,9 @@
 
 {% block extra_style %}
 .players-container { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+.filters-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+.filter-input { background: #0d1117; border: 1px solid #30363d; color: #e6e6e6; padding: 8px 12px; border-radius: 6px; font-size: 13px; outline: none; flex: 1; min-width: 150px; }
+.filter-input:focus { border-color: #8b949e; }
 .players-table { width: 100%; border-collapse: collapse; text-align: left; }
 .players-table th { color: #8b949e; font-size: 12px; font-weight: 600; padding: 10px; border-bottom: 1px solid #30363d; text-transform: uppercase; }
 .players-table td { padding: 12px 10px; border-bottom: 1px solid #21262d; color: #e6e6e6; font-size: 14px; vertical-align: middle; }
@@ -15,10 +18,34 @@
 {% block content %}
 <div style="margin-bottom:1rem;">
   <h2 style="font-size:20px;font-weight:600;color:#fff;">Player Database</h2>
-  <p style="font-size:13px;color:#8b949e;margin-top:4px;">View all Premier League players and their current fantasy prices.</p>
+  <p style="font-size:13px;color:#8b949e;margin-top:4px;">View, filter, and sort all Premier League players.</p>
 </div>
 
 <div class="players-container">
+  
+  <div class="filters-bar">
+    <input type="text" id="searchName" placeholder="Search by name..." class="filter-input" oninput="applyFilters()">
+    <select id="filterTeam" class="filter-input" onchange="applyFilters()">
+      <option value="ALL">All Teams</option>
+      {% for t in teams %}
+      <option value="{{ t.short_name }}">{{ t.name }}</option>
+      {% endfor %}
+    </select>
+    <select id="filterPos" class="filter-input" onchange="applyFilters()">
+      <option value="ALL">All Positions</option>
+      <option value="GK">Goalkeepers (GK)</option>
+      <option value="DEF">Defenders (DEF)</option>
+      <option value="MID">Midfielders (MID)</option>
+      <option value="FWD">Forwards (FWD)</option>
+    </select>
+    <select id="sortBy" class="filter-input" onchange="applyFilters()">
+      <option value="price_desc">Price: High to Low</option>
+      <option value="price_asc">Price: Low to High</option>
+      <option value="name_asc">Name: A to Z</option>
+      <option value="name_desc">Name: Z to A</option>
+    </select>
+  </div>
+
   <table class="players-table">
     <thead>
       <tr>
@@ -28,9 +55,9 @@
         <th>Price</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="players-body">
       {% for p in players %}
-      <tr>
+      <tr class="player-row" data-name="{{ p.last_name }}, {{ p.first_name }}" data-team="{{ p.team.short_name }}" data-pos="{{ p.position }}" data-price="{{ p.price|stringformat:'f' }}">
         <td><strong style="color: #fff;">{{ p.last_name }}</strong>, {{ p.first_name }}</td>
         <td><span class="pos-badge">{{ p.position }}</span></td>
         <td><span class="p-team-badge" style="background: {{ p.team.primary_color }}; border: 1px solid rgba(255,255,255,0.2);">{{ p.team.name }}</span></td>
@@ -40,4 +67,45 @@
     </tbody>
   </table>
 </div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function applyFilters() {
+  const search = document.getElementById('searchName').value.toLowerCase();
+  const team = document.getElementById('filterTeam').value;
+  const pos = document.getElementById('filterPos').value;
+  const sort = document.getElementById('sortBy').value;
+
+  const tbody = document.getElementById('players-body');
+  const rows = Array.from(tbody.getElementsByClassName('player-row'));
+
+  // 1. Filter the rows
+  rows.forEach(row => {
+    const rName = row.getAttribute('data-name').toLowerCase();
+    const rTeam = row.getAttribute('data-team');
+    const rPos = row.getAttribute('data-pos');
+
+    let match = true;
+    if (search && !rName.includes(search)) match = false;
+    if (team !== 'ALL' && rTeam !== team) match = false;
+    if (pos !== 'ALL' && rPos !== pos) match = false;
+
+    row.style.display = match ? '' : 'none';
+  });
+
+  // 2. Sort the visible rows
+  const visibleRows = rows.filter(r => r.style.display !== 'none');
+  visibleRows.sort((a, b) => {
+    if (sort === 'price_desc') return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+    if (sort === 'price_asc') return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+    if (sort === 'name_asc') return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+    if (sort === 'name_desc') return b.getAttribute('data-name').localeCompare(a.getAttribute('data-name'));
+    return 0;
+  });
+
+  // 3. Re-append sorted rows to the table body
+  visibleRows.forEach(row => tbody.appendChild(row));
+}
+</script>
 {% endblock %}
