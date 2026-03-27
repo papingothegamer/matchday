@@ -75,14 +75,18 @@
 .slot-price { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 .slot-pos { font-size: 9px; color: #8b949e; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-.selector-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; }
+.selector-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; }
 .panel-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
 .pos-filter { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
 .pos-btn { font-size: 11px; padding: 3px 10px; border: 1px solid #30363d; border-radius: 20px; background: transparent; color: #8b949e; cursor: pointer; }
 .pos-btn.active, .pos-btn:hover { background: #1f6feb; color: #fff; border-color: #1f6feb; }
-.player-search { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; margin-bottom: 1rem; outline: none; }
+
+/* Filter Controls */
+.filter-group { display: flex; gap: 8px; margin-bottom: 10px; }
+.player-search { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; outline: none; }
 .player-search:focus { border-color: #8b949e; }
-.player-list { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+
+.player-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
 .player-list::-webkit-scrollbar { width: 8px; }
 .player-list::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
 .player-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
@@ -95,7 +99,7 @@
 .p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .p-meta { font-size: 11px; color: #8b949e; }
 .p-price { font-size: 12px; color: #38a169; font-weight: 500; flex-shrink: 0; }
-.submit-bar { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #30363d; padding-top: 1rem; }
+.submit-bar { margin-top: auto; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #30363d; padding-top: 1rem; }
 .budget-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
 .budget-label { color: #8b949e; }
 .budget-val { color: #38a169; font-weight: 600; }
@@ -138,7 +142,21 @@
       <button class="pos-btn" onclick="filterPos('MID',this)">MID</button>
       <button class="pos-btn" onclick="filterPos('FWD',this)">FWD</button>
     </div>
-    <input class="player-search" type="text" placeholder="Search player..." oninput="renderList()" id="search-input">
+    
+    <input class="player-search" style="margin-bottom: 10px; width: 100%;" type="text" placeholder="Search player..." oninput="renderList()" id="search-input">
+    
+    <div class="filter-group">
+      <select id="filterTeam" class="player-search" onchange="renderList()">
+        <option value="ALL">All Teams</option>
+      </select>
+      <select id="sortBy" class="player-search" onchange="renderList()">
+        <option value="price_desc">Price: High to Low</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="name_asc">Name: A to Z</option>
+        <option value="name_desc">Name: Z to A</option>
+      </select>
+    </div>
+
     <div class="player-list" id="player-list"></div>
     
     <div class="submit-bar">
@@ -166,7 +184,7 @@
 <script>
 const ALL_PLAYERS = [
   {% for p in players %}
-  { id:{{ p.id }}, name:"{{ p.display_name }}", full:"{{ p.full_name }}", pos:"{{ p.position }}", team:"{{ p.team.short_name }}", price:{{ p.price }}, color:"{{ p.team.primary_color }}", color2:"{{ p.team.secondary_color }}" },
+  { id:{{ p.id }}, name:"{{ p.first_name }} {{ p.last_name }}", full:"{{ p.first_name }} {{ p.last_name }}", pos:"{{ p.position }}", team:"{{ p.team.short_name }}", price:{{ p.price }}, color:"{{ p.team.primary_color }}", color2:"{{ p.team.secondary_color }}" },
   {% endfor %}
 ];
 
@@ -181,6 +199,16 @@ let formation = '433';
 let slots = [];
 let activeSlot = null;
 let filterPosition = 'ALL';
+
+// Dynamically inject unique teams into the dropdown
+const uniqueTeams = [...new Set(ALL_PLAYERS.map(p => p.team))].sort();
+const teamSelect = document.getElementById('filterTeam');
+uniqueTeams.forEach(t => {
+  const opt = document.createElement('option');
+  opt.value = t;
+  opt.textContent = t;
+  teamSelect.appendChild(opt);
+});
 
 function buildSlots(f, savedPlayers = []) {
   const rows = FORMATIONS[f];
@@ -269,7 +297,6 @@ function renderPitch() {
 
 function clickSlot(idx) {
   const slot = slots[idx];
-  // Clicking a filled slot un-selects the player
   if (slot.player) {
     slot.player = null;
     slot.captain = false;
@@ -298,18 +325,36 @@ function filterPos(pos, btn) {
 
 function renderList() {
   const q = document.getElementById('search-input').value.toLowerCase();
+  const teamFilter = document.getElementById('filterTeam').value;
+  const sortVal = document.getElementById('sortBy').value;
   const pickedIds = slots.filter(s => s.player).map(s => s.player.id);
   
   let list = ALL_PLAYERS.filter(p => {
     if (filterPosition !== 'ALL' && p.pos !== filterPosition) return false;
+    if (teamFilter !== 'ALL' && p.team !== teamFilter) return false;
     if (q && !p.full.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) return false;
     return true;
   });
-  list.sort((a,b) => b.price - a.price);
+  
+  // Tie-breaker Sorting Logic
+  list.sort((a,b) => {
+    if (sortVal === 'price_desc') {
+        if (b.price === a.price) return a.full.localeCompare(b.full);
+        return b.price - a.price;
+    }
+    if (sortVal === 'price_asc') {
+        if (a.price === b.price) return a.full.localeCompare(b.full);
+        return a.price - b.price;
+    }
+    if (sortVal === 'name_asc') return a.full.localeCompare(b.full);
+    if (sortVal === 'name_desc') return b.full.localeCompare(a.full);
+    return 0;
+  });
   
   const container = document.getElementById('player-list');
   container.innerHTML = '';
-  list.slice(0, 60).forEach(p => {
+  // Increased slice to 100 so cheaper options are more visible
+  list.slice(0, 100).forEach(p => {
     const isPicked = pickedIds.includes(p.id);
     const div = document.createElement('div');
     div.className = 'player-item' + (isPicked ? ' selected' : '');
