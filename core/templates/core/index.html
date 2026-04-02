@@ -1,4 +1,4 @@
-﻿{% extends 'core/base.html' %}
+{% extends 'core/base.html' %}
 {% block title %}MatchDay — PL Fantasy{% endblock %}
 
 {% block extra_style %}
@@ -54,6 +54,7 @@
   </div>
 </div>
 {% else %}
+
 {% if active_gameweek %}
 {% now "U" as now_ts %}
 <div class="gw-banner {% if active_gameweek.deadline %}urgent{% endif %}" id="gw-banner">
@@ -92,26 +93,17 @@
 {% endif %}
 
 {% endif %}
+
 <div class="stats-grid">
   <div class="stat-card"><div class="stat-label">Teams</div><div class="stat-value">{{ num_teams }}</div></div>
   <div class="stat-card"><div class="stat-label">Players</div><div class="stat-value">{{ num_players }}</div></div>
-  <div class="stat-card"><div class="stat-label">Gameweek</div><div class="stat-value">{% if request.user.is_staff %}
-<div class="hero" style="border-color: #d73a49; background: #2d1114;">
-  <h1 style="color: #f85149;">Administrator Mode</h1>
-  <p style="color: #e6e6e6;">You are currently logged in as a system administrator. Staff accounts cannot participate in the fantasy game.</p>
-  <div class="hero-actions">
-    <a href="/admin/" class="btn-primary" style="background: #d73a49; border: none;">Go to Admin Dashboard</a>
-    <a href="/auth/logout/" class="btn-secondary" style="border-color: #d73a49; color: #f85149;">Log Out</a>
-  </div>
-</div>
-{% else %}
-{% if active_gameweek %}{{ active_gameweek.number }}{% else %}—{% endif %}</div></div>
+  <div class="stat-card"><div class="stat-label">Gameweek</div><div class="stat-value">{% if active_gameweek %}{{ active_gameweek.number }}{% else %}—{% endif %}</div></div>
 </div>
 
 {% if not request.user.is_authenticated %}
 <div class="hero">
   <h1>Premier League Fantasy</h1>
-  <p>Pick 11 players each gameweek. Score points based on simulated match performance. Climb the leaderboard.</p>
+  <p>Pick 15 players each gameweek. Score points based on simulated match performance. Climb the leaderboard.</p>
   <div class="hero-actions">
     <a href="/auth/register/" class="btn-primary">Get started</a>
     <a href="/leaderboard/" class="btn-secondary">Leaderboard</a>
@@ -136,16 +128,6 @@
 {% block extra_script %}
 <script>
 // Countdown
-{% if request.user.is_staff %}
-<div class="hero" style="border-color: #d73a49; background: #2d1114;">
-  <h1 style="color: #f85149;">Administrator Mode</h1>
-  <p style="color: #e6e6e6;">You are currently logged in as a system administrator. Staff accounts cannot participate in the fantasy game.</p>
-  <div class="hero-actions">
-    <a href="/admin/" class="btn-primary" style="background: #d73a49; border: none;">Go to Admin Dashboard</a>
-    <a href="/auth/logout/" class="btn-secondary" style="border-color: #d73a49; color: #f85149;">Log Out</a>
-  </div>
-</div>
-{% else %}
 {% if active_gameweek %}
 const deadline = new Date('{{ active_gameweek.deadline|date:"c" }}');
 function updateCountdown() {
@@ -155,8 +137,7 @@ function updateCountdown() {
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
-  document.getElementById('countdown').textContent =
-    days > 0 ? ${days}d h remaining : ${hours}h m remaining;
+  document.getElementById('countdown').textContent = days > 0 ? `${days}d ${hours}h remaining` : `${hours}h ${mins}m remaining`;
   if (diff < 86400000) document.getElementById('gw-banner').classList.add('urgent');
 }
 updateCountdown();
@@ -166,7 +147,16 @@ setInterval(updateCountdown, 60000);
 // Mini pitch
 const picks = [
   {% for pick in picks %}
-  { name:"{{ pick.player.display_name }}", team:"{{ pick.player.team.short_name }}", color:"{{ pick.player.team.primary_color }}", color2:"{{ pick.player.team.secondary_color }}", pos:"{{ pick.player.position }}", pts:"{{ pick.points_scored|default_if_none:'-' }}", captain:{{ pick.is_captain|yesno:"true,false" }}, is_sub:{{ pick.is_sub|yesno:"true,false" }} },
+  { 
+    name:"{{ pick.player.display_name|escapejs }}", 
+    team:"{{ pick.player.team.short_name|escapejs }}", 
+    color:"{{ pick.player.team.primary_color|escapejs }}", 
+    color2:"{{ pick.player.team.secondary_color|escapejs }}", 
+    pos:"{{ pick.player.position|escapejs }}", 
+    pts:"{{ pick.points_scored|default_if_none:'-' }}", 
+    captain:{{ pick.is_captain|yesno:"true,false" }}, 
+    is_sub:{% if pick.is_sub %}true{% else %}false{% endif %} 
+  },
   {% endfor %}
 ];
 

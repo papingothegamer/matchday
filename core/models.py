@@ -1,7 +1,6 @@
-﻿import uuid
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
-
 
 class Team(models.Model):
     name = models.CharField(max_length=100)
@@ -10,13 +9,13 @@ class Team(models.Model):
     founded_year = models.IntegerField()
     primary_color = models.CharField(max_length=7, default='#333333')
     secondary_color = models.CharField(max_length=7, default='#FFFFFF')
+    logo_filename = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['name']
 
     def __str__(self):
         return self.name
-
 
 class Player(models.Model):
     POSITION_CHOICES = (
@@ -50,7 +49,6 @@ class Player(models.Model):
     def display_name(self):
         return self.last_name if self.last_name else self.first_name
 
-
 class Gameweek(models.Model):
     number = models.IntegerField(unique=True)
     deadline = models.DateTimeField()
@@ -61,7 +59,6 @@ class Gameweek(models.Model):
 
     def __str__(self):
         return f'Gameweek {self.number}'
-
 
 class Match(models.Model):
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
@@ -78,7 +75,6 @@ class Match(models.Model):
 
     def __str__(self):
         return f'{self.home_team.short_name} vs {self.away_team.short_name} (GW{self.gameweek.number})'
-
 
 class PlayerStat(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='stats')
@@ -117,7 +113,6 @@ class PlayerStat(models.Model):
     def __str__(self):
         return f'{self.player} — {self.match} ({self.fantasy_points} pts)'
 
-
 class FantasyTeam(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fantasy_teams')
     gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE, related_name='fantasy_teams')
@@ -129,7 +124,6 @@ class FantasyTeam(models.Model):
 
     def __str__(self):
         return f'{self.name} — {self.gameweek} ({self.user.username})'
-
 
 class FantasyPick(models.Model):
     fantasy_team = models.ForeignKey(FantasyTeam, on_delete=models.CASCADE, related_name='picks')
@@ -144,7 +138,6 @@ class FantasyPick(models.Model):
     def __str__(self):
         captain = ' (C)' if self.is_captain else ''
         return f'{self.player}{captain} — {self.fantasy_team}'
-
 
 class League(models.Model):
     name = models.CharField(max_length=100)
@@ -162,7 +155,6 @@ class League(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class LeagueMember(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE, related_name='members')
