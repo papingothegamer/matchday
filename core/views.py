@@ -92,9 +92,11 @@ def pick_team(request):
     players = Player.objects.filter(is_active=True).select_related('team').order_by('position', '-price')
     active_gw = Gameweek.objects.filter(is_active=True).first()
     existing_picks = []
+    saved_formation = '433'
     if active_gw:
         ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
         if ft:
+            saved_formation = ft.formation
             for pick in ft.picks.all():
                 existing_picks.append({
                     'id': pick.player.id,
@@ -106,6 +108,7 @@ def pick_team(request):
         'players': players,
         'active_gameweek': active_gw,
         'saved_picks_json': json.dumps(existing_picks),
+        'saved_formation': saved_formation,
     }
     return render(request, 'core/pick_team.html', context)
 
@@ -118,6 +121,7 @@ def save_picks(request):
     try:
         data = json.loads(request.body)
         picks = data.get('picks', [])
+        formation = data.get('formation', '433')
         gw = Gameweek.objects.filter(is_active=True).first()
         if not gw:
             return JsonResponse({'error': 'No active gameweek'})
@@ -125,6 +129,8 @@ def save_picks(request):
             user=request.user, gameweek=gw,
             defaults={'name': request.user.username + ' FC'}
         )
+        ft.formation = formation
+        ft.save()
         ft.picks.all().delete()
         for pick in picks:
             player = Player.objects.get(id=pick['player_id'])

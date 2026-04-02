@@ -32,14 +32,31 @@
 .team-preview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
 .team-preview-title { font-size: 15px; font-weight: 600; color: #fff; }
 .prev-pts { font-size: 13px; color: #38a169; font-weight: 500; }
-.mini-pitch { background: #1a4a1a; border-radius: 8px; padding: 1rem 0.5rem; min-height: 300px; border: 2px solid #2a6a2a; }
-.pitch-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; }
+
+/* Identical Pitch Design */
+.pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; }
+.pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); }
+.pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; }
+.penalty-box-top { position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
+.penalty-box-bottom { position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
+.goal-area-top { position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
+.goal-area-bottom { position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
+
+.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; position: relative; z-index: 10; }
 .pitch-row:last-child { margin-bottom: 0; }
-.mini-slot { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 60px; }
-.mini-shirt { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; border: 2px solid rgba(255,255,255,0.2); position: relative; flex-shrink: 0; }
-.mini-captain { position: absolute; top: -3px; right: -3px; width: 13px; height: 13px; background: #f6c90e; border-radius: 50%; font-size: 8px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; }
-.mini-name { font-size: 9px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 60px; }
-.mini-pts { font-size: 9px; color: #38a169; }
+.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 70px; }
+
+.shirt { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; position: relative; }
+.shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
+
+.captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 75px; background: rgba(13, 17, 23, 0.7); padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.slot-pts { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+.bench-area { margin-top: 1rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem; border-radius: 8px; border: 1px solid #30363d; }
+.bench-title { font-size: 14px; font-weight: 600; color: #fff; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
 {% endblock %}
 
 {% block content %}
@@ -81,8 +98,17 @@
     <div class="prev-pts">Previous GW: {{ prev_points }} pts</div>
     {% endif %}
   </div>
-  <div class="mini-pitch" id="mini-pitch">
-    <div id="mini-pitch-rows"></div>
+  <div class="pitch">
+    <div class="penalty-box-top"></div>
+    <div class="goal-area-top"></div>
+    <div class="pitch-lines"></div>
+    <div class="penalty-box-bottom"></div>
+    <div class="goal-area-bottom"></div>
+    <div id="pitch-rows"></div>
+  </div>
+  <div class="bench-area">
+    <div class="bench-title">Substitutes</div>
+    <div class="pitch-row" id="bench-rows"></div>
   </div>
 </div>
 {% elif request.user.is_authenticated %}
@@ -144,7 +170,15 @@ updateCountdown();
 setInterval(updateCountdown, 60000);
 {% endif %}
 
-// Mini pitch
+// Pitch Logic
+const savedFormation = '{{ user_team.formation|default:"433" }}';
+const FORMATIONS = {
+  '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'],['FWD','FWD','FWD']],
+  '442': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID'],['FWD','FWD']],
+  '352': [['GK'],['DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD','FWD']],
+  '451': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD']],
+};
+
 const picks = [
   {% for pick in picks %}
   { 
@@ -155,7 +189,8 @@ const picks = [
     pos:"{{ pick.player.position|escapejs }}", 
     pts:"{{ pick.points_scored|default_if_none:'-' }}", 
     captain:{{ pick.is_captain|yesno:"true,false" }}, 
-    is_sub:{% if pick.is_sub %}true{% else %}false{% endif %} 
+    is_sub:{% if pick.is_sub %}true{% else %}false{% endif %},
+    injured:{% if pick.player.is_injured %}true{% else %}false{% endif %}
   },
   {% endfor %}
 ];
@@ -167,48 +202,45 @@ if (picks.length > 0) {
   const sRows = { GK:[], DEF:[], MID:[], FWD:[] };
   starters.forEach(p => sRows[p.pos] && sRows[p.pos].push(p));
 
-  const order = ['FWD','MID','DEF','GK'];
-  const pitchContainer = document.getElementById('mini-pitch-rows');
+  const pitchContainer = document.getElementById('pitch-rows');
+  const benchContainer = document.getElementById('bench-rows');
 
   if (pitchContainer) {
-    // Render Starters
-    order.forEach(pos => {
-      if (!sRows[pos].length) return;
-      const row = document.createElement('div');
-      row.className = 'pitch-row';
-      sRows[pos].forEach(p => {
-        row.innerHTML += `
-          <div class="mini-slot">
-            <div class="mini-shirt" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
-              ${p.team}
-              ${p.captain ? '<div class="mini-captain">C</div>' : ''}
-            </div>
-            <div class="mini-name">${p.name}</div>
-            <div class="mini-pts" style="font-weight:bold; color:#3fb950;">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
-          </div>`;
+    const layout = FORMATIONS[savedFormation] || FORMATIONS['433'];
+    layout.forEach(rowPositions => {
+      const rowEl = document.createElement('div');
+      rowEl.className = 'pitch-row';
+      rowPositions.forEach(pos => {
+        const p = sRows[pos].shift(); 
+        if (p) {
+          rowEl.innerHTML += `
+            <div class="player-slot">
+              <div class="shirt filled" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
+                ${p.team}
+                ${p.captain ? '<div class="captain-badge">C</div>' : ''}
+                ${p.injured ? '<div class="injury-badge">✚</div>' : ''}
+              </div>
+              <div class="slot-name">${p.name}</div>
+              <div class="slot-pts">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
+            </div>`;
+        }
       });
-      pitchContainer.appendChild(row);
+      pitchContainer.appendChild(rowEl);
     });
+  }
 
-    // Render Bench
-    if (subs.length > 0) {
-        const benchRow = document.createElement('div');
-        benchRow.className = 'pitch-row';
-        benchRow.style.marginTop = '15px';
-        benchRow.style.paddingTop = '15px';
-        benchRow.style.borderTop = '1px dashed rgba(255,255,255,0.2)';
-        subs.forEach(p => {
-            benchRow.innerHTML += `
-              <div class="mini-slot">
-                <div class="mini-shirt" style="background:${p.color}; color:${p.color2}; border-color:${p.color2}; opacity: 0.7;">
-                  ${p.team}
-                </div>
-                <div class="mini-name" style="color:#8b949e;">${p.name}</div>
-                <div class="mini-pts" style="font-weight:bold; color:#3fb950;">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
-              </div>`;
-        });
-        pitchContainer.appendChild(benchRow);
-    }
+  if (benchContainer && subs.length > 0) {
+    subs.forEach(p => {
+        benchContainer.innerHTML += `
+          <div class="player-slot" style="opacity: 0.7;">
+            <div class="shirt filled" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
+              ${p.team}
+              ${p.injured ? '<div class="injury-badge">✚</div>' : ''}
+            </div>
+            <div class="slot-name">${p.name}</div>
+            <div class="slot-pts">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
+          </div>`;
+    });
   }
 }
 </script>

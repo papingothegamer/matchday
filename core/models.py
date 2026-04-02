@@ -118,6 +118,7 @@ class FantasyTeam(models.Model):
     gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE, related_name='fantasy_teams')
     name = models.CharField(max_length=100)
     total_points = models.IntegerField(default=0)
+    formation = models.CharField(max_length=3, default='433')
 
     class Meta:
         unique_together = ('user', 'gameweek')

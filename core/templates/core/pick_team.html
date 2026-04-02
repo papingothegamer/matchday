@@ -174,7 +174,7 @@ const FORMATIONS = {
   '451': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD']],
 };
 
-let formation = '433';
+let formation = '{{ saved_formation|default:"433" }}';
 let slots = [];
 let activeSlot = null;
 let filterPosition = 'ALL';
@@ -468,7 +468,7 @@ try {
     fetch('/pick/save/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-      body: JSON.stringify({ picks })
+      body: JSON.stringify({ picks, formation: formation })
     }).then(r => r.json()).then(d => {
       if (d.ok) window.location.href = '/';
       else alert(d.error || 'Something went wrong.');
@@ -480,6 +480,8 @@ try {
   renderList();
   updateBudget();
   updateCaptainDropdown();
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.f-btn[onclick*="'${formation}'"]`)?.classList.add('active');
 } catch (e) {
   console.error(e);
   document.getElementById('player-list').innerHTML = `<div style="color:#f85149; padding:15px; border:1px solid #d73a49; border-radius:8px; background:#2d1114;"><b>UI Render Error:</b><br>${e.message}<br><br>Please check console or clear your browser cache.</div>`;
