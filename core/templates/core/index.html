@@ -135,7 +135,7 @@ setInterval(updateCountdown, 60000);
 // Mini pitch
 const picks = [
   {% for pick in picks %}
-  { name:"{{ pick.player.display_name }}", team:"{{ pick.player.team.short_name }}", color:"{{ pick.player.team.primary_color }}", pos:"{{ pick.player.position }}", pts:{{ pick.points_scored }}, captain:{{ pick.is_captain|yesno:"true,false" }} },
+  { name:"{{ pick.player.last_name }}", team:"{{ pick.player.team.short_name }}", color:"{{ pick.player.team.primary_color }}", color2:"{{ pick.player.team.secondary_color }}", pos:"{{ pick.player.position }}", pts:"{{ pick.points_scored|default_if_none:'-' }}", captain:{{ pick.is_captain|yesno:"true,false" }} },
   {% endfor %}
 ];
 
@@ -150,14 +150,15 @@ if (picks.length > 0) {
       const row = document.createElement('div');
       row.className = 'pitch-row';
       rows[pos].forEach(p => {
-        row.innerHTML += 
+        row.innerHTML += `
           <div class="mini-slot">
-            <div class="mini-shirt" style="background:">
-              
+            <div class="mini-shirt" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
+              ${p.team}
+              ${p.captain ? '<div class="mini-captain">C</div>' : ''}
             </div>
-            <div class="mini-name"></div>
-            <div class="mini-pts"></div>
-          </div>;
+            <div class="mini-name">${p.name}</div>
+            <div class="mini-pts" style="font-weight:bold; color:#3fb950;">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
+          </div>`;
       });
       container.appendChild(row);
     });
