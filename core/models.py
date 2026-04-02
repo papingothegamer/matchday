@@ -32,6 +32,8 @@ class Player(models.Model):
     position = models.CharField(max_length=3, choices=POSITION_CHOICES)
     price = models.FloatField(help_text='Price in millions')
     is_active = models.BooleanField(default=True)
+    is_injured = models.BooleanField(default=False)
+    injury_weeks = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['last_name', 'first_name']
@@ -133,6 +135,7 @@ class FantasyPick(models.Model):
     fantasy_team = models.ForeignKey(FantasyTeam, on_delete=models.CASCADE, related_name='picks')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='fantasy_picks')
     is_captain = models.BooleanField(default=False)
+    is_sub = models.BooleanField(default=False)
     points_scored = models.IntegerField(default=0)
 
     class Meta:
@@ -171,3 +174,15 @@ class LeagueMember(models.Model):
 
     def __str__(self):
         return f'{self.user.username} — {self.league.name}'
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"To {self.user.username}: {self.message}"

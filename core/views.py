@@ -89,11 +89,17 @@ def pick_team(request):
     if active_gw:
         ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
         if ft:
-            existing_picks = list(ft.picks.values_list('player_id', flat=True))
+            for pick in ft.picks.all():
+                existing_picks.append({
+                    'id': pick.player.id,
+                    'pos': pick.player.position,
+                    'is_sub': pick.is_sub,
+                    'is_captain': pick.is_captain
+                })
     context = {
         'players': players,
         'active_gameweek': active_gw,
-        'existing_picks': json.dumps(existing_picks),
+        'saved_picks_json': json.dumps(existing_picks),
     }
     return render(request, 'core/pick_team.html', context)
 
@@ -110,6 +116,20 @@ def save_picks(request):
         if not gw:
             return JsonResponse({'error': 'No active gameweek'})
         ft, _ = FantasyTeam.objects.get_or_create(
+            user=request.user, gameweek=gw,
+            defaults={'name': request.user.username + ' FC'}
+        )
+        ft.picks.all().delete()
+        for pick in picks:
+            player = Player.objects.get(id=pick['player_id'])
+            FantasyPick.objects.create(
+                fantasy_team=ft, player=player,
+                is_captain=pick.get('is_captain', False),
+                is_sub=pick.get('is_sub', False)
+            )
+        return JsonResponse({'ok': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)})        ft, _ = FantasyTeam.objects.get_or_create(
             user=request.user, gameweek=gw,
             defaults={'name': request.user.username + ' FC'}
         )
