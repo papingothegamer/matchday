@@ -1,0 +1,19 @@
+{% extends "jazzmin/base.html" %}
+{% block extrajs %}
+{{ block.super }}
+<script>
+    // Failsafe: Remove any stuck Bootstrap modal backdrops
+    document.addEventListener('click', function(e) {
+        setTimeout(() => {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop && !document.querySelector('.modal.show')) {
+                backdrop.remove();
+            }
+        }, 500);
+    });
+</script>
+<style>
+    /* Force hide Django 5.1+ double-submit grey overlay if it glitches */
+    .submit-row::after { display: none !important; }
+</style>
+{% endblock %}
