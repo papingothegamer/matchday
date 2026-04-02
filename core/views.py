@@ -103,7 +103,6 @@ def pick_team(request):
     }
     return render(request, 'core/pick_team.html', context)
 
-
 @csrf_exempt
 @login_required
 def save_picks(request):
@@ -129,21 +128,7 @@ def save_picks(request):
             )
         return JsonResponse({'ok': True})
     except Exception as e:
-        return JsonResponse({'error': str(e)})        ft, _ = FantasyTeam.objects.get_or_create(
-            user=request.user, gameweek=gw,
-            defaults={'name': request.user.username + ' FC'}
-        )
-        ft.picks.all().delete()
-        for pick in picks:
-            player = Player.objects.get(id=pick['player_id'])
-            FantasyPick.objects.create(
-                fantasy_team=ft, player=player,
-                is_captain=pick.get('is_captain', False)
-            )
-        return JsonResponse({'ok': True})
-    except Exception as e:
         return JsonResponse({'error': str(e)})
-
 
 def leaderboard(request):
     gameweeks = Gameweek.objects.all()
