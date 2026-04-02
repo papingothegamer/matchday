@@ -446,13 +446,28 @@ try {
     document.getElementById('submit-btn').disabled = (filled < 16 || rem < 0 || !hasCaptain);
   }
 
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
   function submitTeam() {
     if (!slots.some(s => s.captain)) { alert('Please select a captain from the dropdown.'); return; }
     const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain, is_sub: s.is_sub }));
     
     fetch('/pick/save/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
       body: JSON.stringify({ picks })
     }).then(r => r.json()).then(d => {
       if (d.ok) window.location.href = '/';
