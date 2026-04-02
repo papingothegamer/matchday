@@ -44,6 +44,16 @@
 
 {% block content %}
 
+{% if request.user.is_staff %}
+<div class="hero" style="border-color: #d73a49; background: #2d1114;">
+  <h1 style="color: #f85149;">Administrator Mode</h1>
+  <p style="color: #e6e6e6;">You are currently logged in as a system administrator. Staff accounts cannot participate in the fantasy game.</p>
+  <div class="hero-actions">
+    <a href="/admin/" class="btn-primary" style="background: #d73a49; border: none;">Go to Admin Dashboard</a>
+    <a href="/auth/logout/" class="btn-secondary" style="border-color: #d73a49; color: #f85149;">Log Out</a>
+  </div>
+</div>
+{% else %}
 {% if active_gameweek %}
 {% now "U" as now_ts %}
 <div class="gw-banner {% if active_gameweek.deadline %}urgent{% endif %}" id="gw-banner">
@@ -81,10 +91,21 @@
 </div>
 {% endif %}
 
+{% endif %}
 <div class="stats-grid">
   <div class="stat-card"><div class="stat-label">Teams</div><div class="stat-value">{{ num_teams }}</div></div>
   <div class="stat-card"><div class="stat-label">Players</div><div class="stat-value">{{ num_players }}</div></div>
-  <div class="stat-card"><div class="stat-label">Gameweek</div><div class="stat-value">{% if active_gameweek %}{{ active_gameweek.number }}{% else %}—{% endif %}</div></div>
+  <div class="stat-card"><div class="stat-label">Gameweek</div><div class="stat-value">{% if request.user.is_staff %}
+<div class="hero" style="border-color: #d73a49; background: #2d1114;">
+  <h1 style="color: #f85149;">Administrator Mode</h1>
+  <p style="color: #e6e6e6;">You are currently logged in as a system administrator. Staff accounts cannot participate in the fantasy game.</p>
+  <div class="hero-actions">
+    <a href="/admin/" class="btn-primary" style="background: #d73a49; border: none;">Go to Admin Dashboard</a>
+    <a href="/auth/logout/" class="btn-secondary" style="border-color: #d73a49; color: #f85149;">Log Out</a>
+  </div>
+</div>
+{% else %}
+{% if active_gameweek %}{{ active_gameweek.number }}{% else %}—{% endif %}</div></div>
 </div>
 
 {% if not request.user.is_authenticated %}
@@ -115,6 +136,16 @@
 {% block extra_script %}
 <script>
 // Countdown
+{% if request.user.is_staff %}
+<div class="hero" style="border-color: #d73a49; background: #2d1114;">
+  <h1 style="color: #f85149;">Administrator Mode</h1>
+  <p style="color: #e6e6e6;">You are currently logged in as a system administrator. Staff accounts cannot participate in the fantasy game.</p>
+  <div class="hero-actions">
+    <a href="/admin/" class="btn-primary" style="background: #d73a49; border: none;">Go to Admin Dashboard</a>
+    <a href="/auth/logout/" class="btn-secondary" style="border-color: #d73a49; color: #f85149;">Log Out</a>
+  </div>
+</div>
+{% else %}
 {% if active_gameweek %}
 const deadline = new Date('{{ active_gameweek.deadline|date:"c" }}');
 function updateCountdown() {

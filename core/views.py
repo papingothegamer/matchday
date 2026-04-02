@@ -1,7 +1,9 @@
 ﻿from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+player_only = user_passes_test(lambda u: not u.is_staff, login_url='/admin/')
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
@@ -18,8 +20,11 @@ def auth_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user:
-            login(request, user)
-            return redirect(request.GET.get('next', '/'))
+            if user.is_staff:
+                error = 'Administrators must log in via the /admin/ portal.'
+            else:
+                login(request, user)
+                return redirect(request.GET.get('next', '/'))
         error = 'Invalid username or password.'
     return render(request, 'core/auth/login.html', {'error': error})
 
@@ -82,6 +87,7 @@ def index(request):
 
 
 @login_required
+@player_only
 def pick_team(request):
     players = Player.objects.filter(is_active=True).select_related('team').order_by('position', '-price')
     active_gw = Gameweek.objects.filter(is_active=True).first()
@@ -105,6 +111,7 @@ def pick_team(request):
 
 @csrf_exempt
 @login_required
+@player_only
 def save_picks(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=405)
@@ -188,6 +195,7 @@ def leaderboard(request):
 
 
 @login_required
+@player_only
 def create_league(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
@@ -199,6 +207,7 @@ def create_league(request):
 
 
 @login_required
+@player_only
 def join_league(request):
     if request.method == 'POST':
         code = request.POST.get('code', '').strip().upper()
