@@ -1,35 +1,108 @@
-﻿from django.shortcuts import render
+﻿from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum
 import json
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember
+
+
+def auth_login(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect(request.GET.get('next', '/'))
+        error = 'Invalid username or password.'
+    return render(request, 'core/auth/login.html', {'error': error})
+
+
+def auth_register(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        confirm = request.POST.get('confirm', '')
+        if not username or not password:
+            error = 'All fields are required.'
+        elif password != confirm:
+            error = 'Passwords do not match.'
+        elif User.objects.filter(username=username).exists():
+            error = 'Username already taken.'
+        elif len(password) < 8:
+            error = 'Password must be at least 8 characters.'
+        else:
+            user = User.objects.create_user(username=username, password=password)
+            login(request, user)
+            return redirect('/')
+    return render(request, 'core/auth/register.html', {'error': error})
+
+
+def auth_logout(request):
+    logout(request)
+    return redirect('/auth/login/')
 
 
 def index(request):
+    active_gw = Gameweek.objects.filter(is_active=True).first()
+    user_team = None
+    prev_points = None
+    picks = []
+
+    if request.user.is_authenticated and active_gw:
+        user_team = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
+        if user_team:
+            picks = list(user_team.picks.select_related('player__team').all())
+
+        prev_gw = Gameweek.objects.filter(number=active_gw.number - 1).first()
+        if prev_gw:
+            prev_team = FantasyTeam.objects.filter(user=request.user, gameweek=prev_gw).first()
+            if prev_team:
+                prev_points = prev_team.total_points
+
     context = {
         'num_teams': Team.objects.count(),
         'num_players': Player.objects.count(),
-        'active_gameweek': Gameweek.objects.filter(is_active=True).first(),
+        'active_gameweek': active_gw,
         'recent_matches': Match.objects.filter(is_played=True).order_by('-match_date')[:5],
+        'user_team': user_team,
+        'picks': picks,
+        'prev_points': prev_points,
     }
     return render(request, 'core/index.html', context)
 
 
+@login_required
 def pick_team(request):
     players = Player.objects.filter(is_active=True).select_related('team').order_by('position', '-price')
+    active_gw = Gameweek.objects.filter(is_active=True).first()
+    existing_picks = []
+    if active_gw:
+        ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
+        if ft:
+            existing_picks = list(ft.picks.values_list('player_id', flat=True))
     context = {
         'players': players,
-        'active_gameweek': Gameweek.objects.filter(is_active=True).first(),
+        'active_gameweek': active_gw,
+        'existing_picks': json.dumps(existing_picks),
     }
     return render(request, 'core/pick_team.html', context)
 
 
 @csrf_exempt
+@login_required
 def save_picks(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=405)
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Login required'}, status=401)
     try:
         data = json.loads(request.body)
         picks = data.get('picks', [])
@@ -52,60 +125,100 @@ def save_picks(request):
         return JsonResponse({'error': str(e)})
 
 
-from django.shortcuts import get_object_or_404
+def leaderboard(request):
+    gameweeks = Gameweek.objects.all()
+    from django.contrib.auth.models import User
 
+    global_rankings = []
+    for user in User.objects.filter(fantasy_teams__isnull=False).distinct():
+        teams = FantasyTeam.objects.filter(user=user)
+        total = teams.aggregate(t=Sum('total_points'))['t'] or 0
+        gw_scores = list(teams.order_by('gameweek__number').values_list('total_points', flat=True))
+        global_rankings.append({'user': user, 'total': total, 'gw_scores': gw_scores[-5:]})
+    global_rankings.sort(key=lambda x: x['total'], reverse=True)
+    for i, r in enumerate(global_rankings):
+        r['rank'] = i + 1
 
-from django.shortcuts import get_object_or_404
-from .models import Player, Team
+    selected_gw_num = request.GET.get('gw')
+    selected_gw = Gameweek.objects.filter(number=selected_gw_num).first() if selected_gw_num else None
+    if not selected_gw:
+        selected_gw = Gameweek.objects.filter(is_active=True).first()
+    gw_standings = []
+    if selected_gw:
+        gw_standings = list(FantasyTeam.objects.filter(gameweek=selected_gw).select_related('user').order_by('-total_points'))
+        for i, ft in enumerate(gw_standings):
+            ft.rank = i + 1
 
-def players_list(request):
-    teams = Team.objects.all().order_by('name')
-    return render(request, 'core/players.html', {'teams': teams})
+    top_scorers = (
+        Player.objects.filter(stats__isnull=False)
+        .annotate(total_pts=Sum('stats__fantasy_points'), total_goals=Sum('stats__goals'), total_assists=Sum('stats__assists'))
+        .order_by('-total_pts')[:50]
+    )
 
-def team_detail(request, short_name):
-    team = get_object_or_404(Team, short_name=short_name)
-    all_team_players = list(Player.objects.filter(team=team))
-    
-    # Real-Life 2025/2026 Starting XI Overrides for ultimate realism
-    CORE_STARTERS = {
-        'ARS': ['Raya', 'White', 'Saliba', 'Gabriel', 'Timber', 'Ødegaard', 'Rice', 'Saka', 'Zubimendi', 'Gyökeres', 'Eze'],
-        'LIV': ['Becker', 'Alexander-Arnold', 'Konaté', 'van Dijk', 'Robertson', 'Szoboszlai', 'Mac Allister', 'Wirtz', 'Díaz', 'Isak', 'Ekitike'],
-        'MCI': ['Trafford', 'Dias', 'Stones', 'Gvardiol', 'Aké', 'Rodri', 'De Bruyne', 'Foden', 'Bernardo Silva', 'Håland', 'Cherki'],
-        'CHE': ['Sánchez', 'James', 'Colwill', 'Fofana', 'Cucurella', 'Caicedo', 'Fernández', 'Palmer', 'Neto', 'Nkunku', 'Jackson'],
-        'MUN': ['Bayındır', 'Dalot', 'de Ligt', 'Martínez', 'Mazraoui', 'Mainoo', 'Ugarte', 'Fernandes', 'Garnacho', 'Rashford', 'Zirkzee'],
-        'TOT': ['Vicario', 'Porro', 'Romero', 'van de Ven', 'Udogie', 'Sarr', 'Maddison', 'Kulusevski', 'Son', 'Johnson', 'Solanke'],
-        'NEW': ['Pope', 'Trippier', 'Schär', 'Botman', 'Hall', 'Guimarães', 'Tonali', 'Joelinton', 'Gordon', 'Barnes', 'Wissa'],
-        'AVL': ['Martínez', 'Cash', 'Konsa', 'Torres', 'Digne', 'Onana', 'Tielemans', 'McGinn', 'Bailey', 'Rogers', 'Watkins'],
-        'WHU': ['Areola', 'Wan-Bissaka', 'Todibo', 'Kilman', 'Emerson', 'Álvarez', 'Souček', 'Paquetá', 'Bowen', 'Kudus', 'Fullkrug'],
-        'BHA': ['Verbruggen', 'Veltman', 'van Hecke', 'Dunk', 'Estupiñán', 'Baleba', 'Wieffer', 'Minteh', 'Mitoma', 'Rutter', 'Welbeck']
+    last5_gws = list(Gameweek.objects.order_by('-number')[:5])
+    last5_gws.reverse()
+    form_data = []
+    for user in User.objects.filter(fantasy_teams__isnull=False).distinct():
+        row = {'user': user, 'scores': [], 'total': 0}
+        for gw in last5_gws:
+            ft = FantasyTeam.objects.filter(user=user, gameweek=gw).first()
+            pts = ft.total_points if ft else None
+            row['scores'].append(pts)
+            if pts:
+                row['total'] += pts
+        form_data.append(row)
+    form_data.sort(key=lambda x: x['total'], reverse=True)
+
+    user_leagues = []
+    if request.user.is_authenticated:
+        user_leagues = League.objects.filter(members__user=request.user)
+
+    context = {
+        'global_rankings': global_rankings, 'gameweeks': gameweeks,
+        'selected_gw': selected_gw, 'gw_standings': gw_standings,
+        'top_scorers': top_scorers, 'last5_gws': last5_gws,
+        'form_data': form_data, 'user_leagues': user_leagues,
     }
-    
-    team_core = CORE_STARTERS.get(short_name, [])
-    
-    # Advanced Sort: If player is in real-life starting XI, boost them to the top. Fallback to FPL Price.
-    all_team_players.sort(key=lambda p: (
-        p.last_name in team_core or p.first_name in team_core or f"{p.first_name} {p.last_name}".strip() in team_core,
-        p.price
-    ), reverse=True)
+    return render(request, 'core/leaderboard.html', context)
 
-    gks = [p for p in all_team_players if p.position == 'GK']
-    defs = [p for p in all_team_players if p.position == 'DEF']
-    mids = [p for p in all_team_players if p.position == 'MID']
-    fwds = [p for p in all_team_players if p.position == 'FWD']
 
-    starters = []
-    if gks: starters.append(gks.pop(0))
-    for _ in range(min(4, len(defs))): starters.append(defs.pop(0))
-    for _ in range(min(3, len(mids))): starters.append(mids.pop(0))
-    for _ in range(min(3, len(fwds))): starters.append(fwds.pop(0))
+@login_required
+def create_league(request):
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        if name:
+            league = League.objects.create(name=name, created_by=request.user)
+            LeagueMember.objects.create(league=league, user=request.user)
+            return redirect('league_detail', code=league.code)
+    return render(request, 'core/create_league.html')
 
-    subs = gks[:1] + defs[:2] + mids[:2] + fwds[:2]
-    reserves = [p for p in all_team_players if p not in starters and p not in subs]
 
-    # Re-sort lists safely by position for the UI
-    reserves.sort(key=lambda p: p.price, reverse=True)
-    all_team_players.sort(key=lambda p: p.price, reverse=True)
+@login_required
+def join_league(request):
+    if request.method == 'POST':
+        code = request.POST.get('code', '').strip().upper()
+        league = League.objects.filter(code=code).first()
+        if not league:
+            return render(request, 'core/join_league.html', {'error': 'Invalid code.'})
+        LeagueMember.objects.get_or_create(league=league, user=request.user)
+        return redirect('league_detail', code=league.code)
+    return render(request, 'core/join_league.html')
 
-    return render(request, 'core/team_detail.html', {
-        'team': team, 'starters': starters, 'subs': subs, 'reserves': reserves, 'all_players': all_team_players
-    })
+
+def league_detail(request, code):
+    league = get_object_or_404(League, code=code)
+    members = LeagueMember.objects.filter(league=league).select_related('user')
+    rankings = []
+    for member in members:
+        teams = FantasyTeam.objects.filter(user=member.user)
+        total = teams.aggregate(t=Sum('total_points'))['t'] or 0
+        gw_scores = list(teams.order_by('gameweek__number').values_list('total_points', flat=True))
+        rankings.append({'user': member.user, 'total': total, 'gw_scores': gw_scores[-5:]})
+    rankings.sort(key=lambda x: x['total'], reverse=True)
+    for i, r in enumerate(rankings):
+        r['rank'] = i + 1
+    context = {
+        'league': league, 'rankings': rankings,
+        'is_member': request.user.is_authenticated and members.filter(user=request.user).exists(),
+    }
+    return render(request, 'core/league_detail.html', context)

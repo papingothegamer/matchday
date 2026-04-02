@@ -1,0 +1,57 @@
+﻿{% extends 'core/base.html' %}
+{% block title %}{{ league.name }} — MatchDay{% endblock %}
+{% block extra_style %}
+.table-wrap { border: 1px solid #21262d; border-radius: 10px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #161b22; color: #8b949e; font-weight: 500; padding: 10px 14px; text-align: left; border-bottom: 1px solid #21262d; }
+td { padding: 10px 14px; border-bottom: 1px solid #21262d; color: #e6e6e6; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #161b22; }
+.rank { color: #8b949e; font-weight: 600; }
+.rank.gold { color: #f6c90e; }
+.rank.silver { color: #c0c0c0; }
+.rank.bronze { color: #cd7f32; }
+.pts { font-weight: 600; color: #38a169; }
+.form-pill { display: inline-block; width: 32px; text-align: center; padding: 2px 0; border-radius: 4px; font-size: 11px; font-weight: 500; margin-right: 2px; }
+.form-high { background: #1a4a1a; color: #38a169; }
+.form-mid  { background: #4a3a00; color: #d4a017; }
+.form-low  { background: #4a1a1a; color: #f85149; }
+.form-none { background: #21262d; color: #484f58; }
+{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+  <div>
+    <h2 style="font-size:20px;font-weight:600;color:#fff;">{{ league.name }}</h2>
+    <p style="font-size:13px;color:#8b949e;margin-top:4px;">{{ league.members.count }} member{{ league.members.count|pluralize }} &mdash; Created by {{ league.created_by.username }}</p>
+  </div>
+  <div style="background:#161b22;border:1px solid #21262d;border-radius:8px;padding:10px 16px;text-align:center;">
+    <div style="font-size:11px;color:#8b949e;margin-bottom:4px;">Invite code</div>
+    <div style="font-family:monospace;font-size:18px;font-weight:600;color:#38a169;letter-spacing:3px;">{{ league.code }}</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Manager</th><th>Last 5</th><th>Total pts</th></tr></thead>
+    <tbody>
+      {% for r in rankings %}
+      <tr>
+        <td class="rank {% if r.rank == 1 %}gold{% elif r.rank == 2 %}silver{% elif r.rank == 3 %}bronze{% endif %}">{{ r.rank }}</td>
+        <td>{{ r.user.username }}</td>
+        <td>
+          {% for score in r.gw_scores %}
+            {% if score >= 60 %}<span class="form-pill form-high">{{ score }}</span>
+            {% elif score >= 40 %}<span class="form-pill form-mid">{{ score }}</span>
+            {% elif score is not None %}<span class="form-pill form-low">{{ score }}</span>
+            {% else %}<span class="form-pill form-none">—</span>{% endif %}
+          {% empty %}<span style="color:#484f58;font-size:12px;">No data</span>{% endfor %}
+        </td>
+        <td class="pts">{{ r.total }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="text-align:center;padding:2rem;color:#484f58;font-size:13px;">No members yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

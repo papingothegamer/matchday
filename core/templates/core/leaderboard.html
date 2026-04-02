@@ -1,0 +1,200 @@
+﻿{% extends 'core/base.html' %}
+{% block title %}Leaderboard — MatchDay{% endblock %}
+
+{% block extra_style %}
+.tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab-btn { font-size: 13px; padding: 6px 16px; border: 1px solid #30363d; border-radius: 6px; background: transparent; color: #8b949e; cursor: pointer; }
+.tab-btn.active { background: #238636; color: #fff; border-color: #238636; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.table-wrap { border: 1px solid #21262d; border-radius: 10px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #161b22; color: #8b949e; font-weight: 500; padding: 10px 14px; text-align: left; border-bottom: 1px solid #21262d; }
+td { padding: 10px 14px; border-bottom: 1px solid #21262d; color: #e6e6e6; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #161b22; }
+.rank { color: #8b949e; font-weight: 600; width: 40px; }
+.rank.gold { color: #f6c90e; }
+.rank.silver { color: #c0c0c0; }
+.rank.bronze { color: #cd7f32; }
+.pts { font-weight: 600; color: #38a169; }
+.form-pill { display: inline-block; width: 32px; text-align: center; padding: 2px 0; border-radius: 4px; font-size: 11px; font-weight: 500; margin-right: 2px; }
+.form-high { background: #1a4a1a; color: #38a169; }
+.form-mid  { background: #4a3a00; color: #d4a017; }
+.form-low  { background: #4a1a1a; color: #f85149; }
+.form-none { background: #21262d; color: #484f58; }
+.gw-select { background: #161b22; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 6px 10px; margin-bottom: 1rem; }
+.pos-badge { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+.pos-GK  { background: #1a3a4a; color: #58c8e8; }
+.pos-DEF { background: #1a2f4a; color: #58a8f8; }
+.pos-MID { background: #1a4a2a; color: #38d169; }
+.pos-FWD { background: #4a2a1a; color: #f88058; }
+.league-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.league-card { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 1rem 1.25rem; }
+.league-card h3 { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.league-card p { font-size: 12px; color: #8b949e; margin-bottom: 10px; }
+.league-code { font-family: monospace; font-size: 13px; background: #0d1117; padding: 3px 8px; border-radius: 4px; color: #38a169; letter-spacing: 1px; }
+.btn-sm { font-size: 12px; padding: 5px 12px; border-radius: 6px; border: 1px solid #30363d; background: transparent; color: #e6e6e6; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 8px; }
+.btn-sm:hover { background: #21262d; }
+.btn-green { background: #238636; border-color: #238636; color: #fff; }
+.btn-green:hover { background: #2ea043; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+.empty { font-size: 13px; color: #484f58; padding: 2rem; text-align: center; }
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+  <h2 style="font-size:20px;font-weight:600;color:#fff;">Leaderboard</h2>
+  <div style="display:flex;gap:8px;">
+    <a href="/leagues/create/" class="btn-sm btn-green">+ Create league</a>
+    <a href="/leagues/join/" class="btn-sm">Join league</a>
+  </div>
+</div>
+
+{% if user_leagues %}
+<div class="league-cards">
+  {% for league in user_leagues %}
+  <div class="league-card">
+    <h3>{{ league.name }}</h3>
+    <p>{{ league.members.count }} member{{ league.members.count|pluralize }}</p>
+    <span class="league-code">{{ league.code }}</span>
+    <br>
+    <a href="/leagues/{{ league.code }}/" class="btn-sm">View league</a>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('global',this)">Global rankings</button>
+  <button class="tab-btn" onclick="showTab('gw',this)">Gameweek</button>
+  <button class="tab-btn" onclick="showTab('scorers',this)">Top scorers</button>
+  <button class="tab-btn" onclick="showTab('form',this)">Form table</button>
+</div>
+
+<!-- Global rankings -->
+<div class="tab-panel active" id="tab-global">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Manager</th><th>Team</th><th>Last 5</th><th>Total pts</th></tr></thead>
+      <tbody>
+        {% for r in global_rankings %}
+        <tr>
+          <td class="rank {% if r.rank == 1 %}gold{% elif r.rank == 2 %}silver{% elif r.rank == 3 %}bronze{% endif %}">{{ r.rank }}</td>
+          <td>{{ r.user.username }}</td>
+          <td style="color:#8b949e;">{{ r.user.username }} FC</td>
+          <td>
+            {% for score in r.gw_scores %}
+              {% if score >= 60 %}<span class="form-pill form-high">{{ score }}</span>
+              {% elif score >= 40 %}<span class="form-pill form-mid">{{ score }}</span>
+              {% elif score is not None %}<span class="form-pill form-low">{{ score }}</span>
+              {% else %}<span class="form-pill form-none">—</span>{% endif %}
+            {% empty %}<span style="color:#484f58;font-size:12px;">No data</span>{% endfor %}
+          </td>
+          <td class="pts">{{ r.total }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="empty">No fantasy teams submitted yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Gameweek standings -->
+<div class="tab-panel" id="tab-gw">
+  <form method="get">
+    <select class="gw-select" name="gw" onchange="this.form.submit()">
+      {% for gw in gameweeks %}
+      <option value="{{ gw.number }}" {% if gw == selected_gw %}selected{% endif %}>Gameweek {{ gw.number }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Manager</th><th>GW points</th></tr></thead>
+      <tbody>
+        {% for ft in gw_standings %}
+        <tr>
+          <td class="rank {% if ft.rank == 1 %}gold{% elif ft.rank == 2 %}silver{% elif ft.rank == 3 %}bronze{% endif %}">{{ ft.rank }}</td>
+          <td>{{ ft.user.username }}</td>
+          <td class="pts">{{ ft.total_points }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="empty">No entries for this gameweek.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Top scorers -->
+<div class="tab-panel" id="tab-scorers">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Player</th><th>Pos</th><th>Team</th><th>G</th><th>A</th><th>Pts</th></tr></thead>
+      <tbody>
+        {% for p in top_scorers %}
+        <tr>
+          <td class="rank">{{ forloop.counter }}</td>
+          <td>{{ p.display_name }}</td>
+          <td><span class="pos-badge pos-{{ p.position }}">{{ p.position }}</span></td>
+          <td style="color:#8b949e;">{{ p.team.short_name }}</td>
+          <td>{{ p.total_goals|default:0 }}</td>
+          <td>{{ p.total_assists|default:0 }}</td>
+          <td class="pts">{{ p.total_pts|default:0 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="empty">No player stats recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Form table -->
+<div class="tab-panel" id="tab-form">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Manager</th>
+          {% for gw in last5_gws %}<th style="text-align:center;">GW{{ gw.number }}</th>{% endfor %}
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in form_data %}
+        <tr>
+          <td class="rank">{{ forloop.counter }}</td>
+          <td>{{ row.user.username }}</td>
+          {% for score in row.scores %}
+            <td style="text-align:center;">
+              {% if score is not None %}
+                {% if score >= 60 %}<span class="form-pill form-high">{{ score }}</span>
+                {% elif score >= 40 %}<span class="form-pill form-mid">{{ score }}</span>
+                {% else %}<span class="form-pill form-low">{{ score }}</span>{% endif %}
+              {% else %}<span class="form-pill form-none">—</span>{% endif %}
+            </td>
+          {% endfor %}
+          <td class="pts">{{ row.total }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="empty">No data yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+{% endblock %}

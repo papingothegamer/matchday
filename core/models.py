@@ -1,3 +1,4 @@
+﻿import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -140,3 +141,33 @@ class FantasyPick(models.Model):
     def __str__(self):
         captain = ' (C)' if self.is_captain else ''
         return f'{self.player}{captain} — {self.fantasy_team}'
+
+
+class League(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=8, unique=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_leagues')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = uuid.uuid4().hex[:8].upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class LeagueMember(models.Model):
+    league = models.ForeignKey(League, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='league_memberships')
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('league', 'user')
+
+    def __str__(self):
+        return f'{self.user.username} — {self.league.name}'

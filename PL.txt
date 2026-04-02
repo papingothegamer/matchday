@@ -1,0 +1,1832 @@
+Arsenal
+Official Name: Arsenal Football Club
+Formed: 1886  Ground: Emirates Stadium (60,704)  Manager: Mikel Arteta [ESP]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	David Raya	ESP	G	1.83	80	15-09-95	Barcelona	Brentford
+2	William Saliba	FRA	D	1.93	85	24-03-01	Bondy	St-Etienne
+3	Cristhian Mosquera	COL	D	1.88	79	27-06-04	Alicante	Valencia
+4	Ben White	ENG	D	1.85	78	08-11-97	Poole	Brighton & HA
+5	Piero Hincapié	ECU	D	1.83	66	09-01-02	Esmeraldas	Bayer Leverkusen
+6	Gabriel	BRA	D	1.90	78	19-12-97	São Paulo	Lille
+7	Bukayo Saka	ENG	F	1.78	65	05-09-01	Ealing	None
+8	Martin Ødegaard	NOR	M	1.76	68	17-12-98	Drammen	Real Madrid
+9	Gabriel Jesus	BRA	F	1.75	73	03-04-97	São Paulo	Manchester C
+10	Eberechi Eze	ENG	M	1.73	67	29-06-98	Greenwich	Crystal Palace
+11	Gabriel Martinelli	BRA	F	1.80	78	18-06-01	Guarulhos	Ituano
+12	Jurrien Timber	NED	D	1.79	75	17-06-01	Utrecht	Ajax
+13	Kepa Arrizabalaga	ESP	G	1.89	84	03-10-94	Ondarroa	Chelsea
+14	Viktor Gyökeres	SWE	F	1.87	86	04-06-98	Stockholm	Sporting CP
+15								
+16	Christian Nørgaard	DEN	M	1.86	75	10-03-94	Copenhagen	Brentford
+17								
+18								
+19	Leandro Trossard	BEL	F	1.72	61	04-12-94	Waterschei	Brighton & HA
+20	Noni Madueke	ENG	F	1.82	70	10-03-02	Barnet	Chelsea
+21								
+22								
+23	Mikel Merino	ESP	M	1.88	78	22-06-96	Pamplona	Real Sociedad
+24								
+25								
+26								
+27								
+28								
+29	Kai Havertz	GER	F	1.87	75	11-06-99	Aachen	Chelsea
+30								
+31								
+32								
+33	Riccardo Calafiori	ITA	D	1.83	78	19-05-02	Rome	Bologna
+34								
+35	Tommy Setford	ENG	G	1.85	76	13-03-06	Haarlem	Ajax
+36	Martín Zubimendi	ESP	M	1.80	74	02-02-99	San Sebastián	Real Sociedad
+37	Brayden Clarke	WAL	D	-	-	03-07-07	Oldbury	Wolverhampton W
+38								
+39	Harrison Dudziak	ENG	M	-	-	09-01-06	Westminster	None
+40	Sebastian Ferdinand	ENG	F	-	-	12-01-06	Watford	None
+41	Declan Rice	ENG	M	1.85	80	14-01-99	Kingston upon Thames	West Ham U
+42	Cam'ron Ismail	ENG	D	-	-	22-11-06	Islington	None
+47	Remy Mitchell	ENG	G	-	-	20-01-04	Hackney	Aylesbury U
+48	Josh Nichols	ENG	D	-	-	26-07-06	Plaistow	None
+49	Myles Lewis-Skelly	ENG	D	1.78	72	26-09-06	Denmark Hill	None
+51	Alexei Rojas	COL	G	1.86	77	28-09-05	Basildon	None
+52	Jaden Dixon	ENG	D	-	-	07-02-07	-	Stoke C
+54	Will Sweet	WAL	D	-	-	02-10-06	Tooting	None
+55	Marcell Washington	ENG	D	-	-	21-08-07	Cambridge	Chelsea
+56	Max Dowman	ENG	F	-	-	31-12-09	Chelmsford	None
+57	Archie Stevens	ENG	F	1.75	68	11-01-06	Sutton	Rangers
+58	Demiane Agustien	NED	M	-	-	28-07-07	-	Derby Co
+66	Evan Mooney	SCO	F	-	-	11-12-07	-	St Mirren
+67	Angelinou Pedro	ENG	D	-	-	04-09-09	-	None
+68	Emerson Nwaneri	ENG	M	-	-	18-08-10	-	None
+69	Mishel Nduka	ENG	M	-	-	03-04-10	-	Charlton Ath
+70	Sam Chapman	ENG	D	-	-	10-10-07	Harlow	None
+71	Andre Harriman-Annous	ENG	F	-	-	28-12-07	London	None
+72	Ife Ibrahim	ENG	M	-	-	20-01-08	Newham	None
+73	Theo Julienne	ENG	D	-	-	11-01-08	Hillingdon	None
+74	Alex Marcinak	WAL	M	-	-	18-01-08	Cardiff	None
+75	Josh Ogunnaike	ENG	D	-	-	08-04-08	London	None
+76	Ceadach O’Neill	NIR	M	-	-	10-04-08	Coleraine	Linfield
+77	Samuel Onyekachukwu	ENG	D	-	-	14-12-07	London	None
+78	Jack Porter	ENG	G	-	-	15-07-08	Chelmsford	None
+79	Khari Ranson	ENG	G	-	-	13-09-07	London	None
+80	Louis Zečević John	SRB	F	-	-	20-01-08	London	None
+81	Brando Bailey-Joseph	ENG	F	-	-	02-10-08	Enfield	None
+82	Marley Frohock	ENG	F	-	-	10-09-08	Basildon	None
+83	Callan Hamill	SCO	D	-	-	01-03-09	Stirling	St Johnstone
+84	Maalik Hashi	ENG	M	-	-	03-09-08	Hillingdon	None
+85	Josiah King	ENG	D	-	-	22-01-09	Leytonstone	None
+86	Teshaun Murisa	ENG	M	-	-	21-09-08	Romford	None
+87	Abraham Owusu-Gyasi	ENG	D	-	-	10-01-09	Dagenham	None
+88	Bowen Phillips	ENG	M	-	-	16-01-09	Leytonstone	None
+89	Marli Salmon	ENG	D	-	-	29-08-09	Leytonstone	None
+90	Saurap Sampang	ENG	M	-	-	01-02-09	Maidstone	None
+91	Patrick Stachow	POL	D	-	-	21-03-09	London	None
+92	Josh Tahou	ENG	D	-	-	23-03-09	London	None
+93	Jack Talbot	ENG	G	-	-	24-09-08	Harlow	None
+94	Remi Lupinski	ENG	G	-	-	01-10-08	London	MK Dons
+95	Jaden Maghoma	ENG	F	-	-	13-01-11	-	None
+96	Kyran Thompson	ENG	F	-	-	06-09-09	-	None
+97	Mikael Bonaventura Yetna	ENG	M	-	-	11-10-10	-	None
+98	Luis Muñoz	ENG	M	-	-	18-12-11	-	None
+99	Charlie Phillips	ENG	G	-	-	19-09-10	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+31	Karl Hein	EST	G	1.93	77	13-04-02	Põlva	Werder Bremen (On Loan)
+43	Ismeal Kabia	NED	F	1.75	70	10-12-05	Hengelo	Shrewsbury T (On Loan)
+15	Jakub Kiwior	POL	D	1.89	75	15-02-00	Tychy	FC Porto (On Loan)
+21	Fábio Vieira	POR	M	1.70	58	30-05-00	Santa Maria da Feira	Hamburg (On Loan)
+24	Reiss Nelson	ENG	F	1.75	70	10-12-99	Lambeth	Brentford (On Loan)
+28	Albert Sambi Lokonga	BEL	M	1.80	70	22-10-99	Verviers	Hamburg
+46	Lucas Nygaard	DEN	G	1.88	78	26-06-06	Rudersal	Brabrand (On Loan)
+38	Louie Copley	ENG	M	-	-	20-10-06	Southend-on-Sea	Crawley T (On Loan)
+22	Ethan Nwaneri	ENG	M	1.76	70	21-03-07	Enfield	Marseille (On Loan)
+44	Maldini Kacurri	ALB	D	-	-	04-10-05	Lewisham	Grimsby T
+17	Oleksandr Zinchenko	UKR	D	1.75	61	15-12-96	Illichivsk	Ajax
+45	Osman Kamara	SLE	F	-	-	06-08-06	Tower Hamlets	Blackburn R
+53	Charles Sagoe Junior	ENG	F	-	-	24-07-04	Kingston upon Thames	Kalmar FF (On Loan)
+50	Daniel Oyetunde	ENG	F	-	-	26-11-06	Enfield	Fort Wayne FC
+
+Aston Villa
+Official Name: Aston Villa Football Club
+Formed: 1874  Ground: Villa Park (42,350)  Manager: Unai Emery [ESP]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1								
+2	Matty Cash	POL	D	1.85	64	07-08-97	Slough	Nottingham F
+3	Victor Lindelöf	SWE	D	1.87	82	17-07-94	Västerås	Manchester U
+4	Ezri Konsa	ENG	D	1.83	77	23-10-97	Newham	Brentford
+5	Tyrone Mings	ENG	D	1.91	77	13-03-93	Bath	Bournemouth
+6	Ross Barkley	ENG	M	1.89	76	05-12-93	Liverpool	Luton T
+7	John McGinn	SCO	M	1.75	68	18-10-94	Glasgow	Hibernian
+8	Youri Tielemans	BEL	M	1.76	72	07-05-97	Sint-Pieters-Leeuw	Leicester C
+9	Harvey Elliott	ENG	M	1.70	67	04-04-03	Chertsey	Liverpool
+10	Emi Buendía	ARG	M	1.70	65	25-12-96	Mar del Plata	Norwich C
+11	Ollie Watkins	ENG	F	1.79	70	30-12-95	Torbay	Brentford
+12	Lucas Digne	FRA	D	1.78	74	20-07-93	Meaux	Everton
+13								
+14	Pau Torres	ESP	D	1.91	80	16-01-97	Villarreal	Villarreal
+15								
+16	Andrés García	ESP	D	1.83	82	07-02-03	Valencia	Levante
+17								
+18	Tammy Abraham	ENG	F	1.90	80	02-10-97	Camberwell	Beşiktaş
+19	Jadon Sancho	ENG	F	1.78	73	25-03-00	Lambeth	Manchester U
+20								
+21	Douglas Luiz	BRA	M	1.78	65	09-05-98	Rio de Janeiro	Juventus
+22	Ian Maatsen	NED	D	1.67	57	10-03-02	Vlaardingen	Chelsea
+23	Emiliano Martínez	ARG	G	1.95	88	02-09-92	Mar del Plata	Arsenal
+24	Amadou Onana	BEL	M	1.92	85	16-08-01	Dakar	Everton
+25								
+26	Lamare Bogarde	NED	D	1.83	76	05-01-04	Rotterdam	Feyenoord
+27	Morgan Rogers	ENG	M	1.87	80	26-07-02	Halesowen	Middlesbrough
+28	Zépiqueno Redmond	NED	F	-	-	22-06-06	-	Feyenoord
+29								
+30								
+31	Leon Bailey	JAM	M	1.81	70	09-08-97	Kingston	Bayer Leverkusen
+32								
+33								
+34								
+35								
+36								
+37								
+38								
+39								
+40	Marco Bizot	NED	G	1.84	85	10-03-91	Zwaag	Brest
+44	Boubacar Kamara	FRA	M	1.78	68	23-11-99	Marseille	Marseille
+47	Alysson Edward	BRA	F	1.82	77	05-05-06	Apucarana	Grêmio
+48	Junior Wilson	ENG	D	-	-	13-09-07	-	None
+50	Markie Meade	ENG	F	-	-	11-11-08	-	None
+52	Sam Proctor	ENG	G	-	-	21-12-06	Boston	Peterborough U
+53	George Hemmings	ENG	M	-	-	04-03-07	-	Nottingham F
+56	Leon Routh	ENG	D	-	-	30-11-07	-	Luton T
+59	Yeimar Mosquera	COL	D	1.91	93	06-02-05	Istmina	Orsomarso
+60	Ronnie Hollingshead	WAL	G	1.88	82	09-09-04	Hereford	WBA
+61	Omar Khedr	EGY	F	-	-	25-05-06	Cairo	ZED
+63	Owen Asemota	ENG	G	-	-	12-04-08	-	Arsenal
+64	James Wright	ENG	G	-	-	02-12-04	-	Manchester C
+66	Fletcher Boyd	SCO	M	-	-	26-01-08	Aberdeen	Aberdeen
+67	Mason Cotcher	ENG	F	-	-	04-09-06	North Shields	Sunderland
+68	Trai-Varn Mulley	ENG	F	-	-	03-06-07	-	None
+69	Cole Brannigan	NIR	F	-	-	12-05-07	Belfast	Linfield
+70	Charlie Pavey	ENG	M	-	-	23-10-05	-	None
+71	TJ Carroll	ENG	M	-	-	19-10-06	-	None
+72	Ashton McWilliams	ENG	D	-	-	25-08-07	-	None
+73	Calum Moreland	NIR	D	-	-	15-02-07	Belfast	Linfield
+74	Luka Lynch	ENG	M	-	-	11-01-07	-	WBA
+75	Cole Ramsey	ENG	M	-	-	18-02-07	-	None
+76	Lennon Melhuish	ENG	M	-	-	18-10-08	-	None
+78	Max Lott	ENG	M	-	-	14-05-07	-	None
+79	Mohamed Koné	CIV	M	-	-	03-07-07	-	ASEC Mimosas
+80	Rodrigo Fortes	POR	M	-	-	23-11-07	-	None
+81	Farid Addey	SWE	D	-	-	13-05-09	-	None
+82	Clay Atkins	ENG	D	-	-	13-09-08	-	None
+83	Bradley Burrowes	ENG	M	-	-	04-03-08	-	Bristol R
+84	Ollie Bindley	ENG	M	-	-	10-09-08	-	None
+85	Jack McGrath	ENG	M	-	-	14-10-08	-	None
+86	Rio Hammond	ENG	F	-	-	03-12-08	-	None
+87	Theo Houston	ENG	G	-	-	08-12-08	-	None
+88	Jahmi Kellyman	NIR	M	-	-	06-07-09	Derby	None
+89	Elijah Briscoe	ENG	F	-	-	06-12-07	-	None
+90	Woody Burgess	ENG	D	-	-	11-09-07	-	Cheltenham T
+91	Jacob Green	ENG	D	-	-	28-09-07	-	None
+92	Vinnie Hayward	ENG	M	-	-	19-10-08	-	None
+93	Alfie Lynskey	IRL	M	-	-	26-12-07	-	None
+94	Max Jenner	ENG	M	-	-	-	-	WBA
+95	Rhys Oakley	ENG	G	-	-	16-09-08	-	None
+96	Harry Pinnell	ENG	D	-	-	27-09-08	-	None
+97	Tay'veon Smithen	ENG	F	-	-	18-01-09	-	None
+98	Teddie Bloomfield	ENG	D	-	-	-	-	Ipswich T
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+58	Tommi O'Reilly	ENG	M	1.70	63	15-12-03	Birmingham	Crewe Alex (On Loan)
+41	Jacob Ramsey	ENG	M	1.66	61	28-05-01	Birmingham	Newcastle U
+32	Leander Dendoncker	BEL	M	1.88	79	15-04-95	Passendale	Oviedo
+15	Álex Moreno	ESP	D	1.79	68	06-08-93	Sant Sadurní d'Anoia	Getafe
+33	Lewis Dobbin	ENG	F	-	-	03-01-03	Stoke-on-Trent	Preston NE (On Loan)
+45	Triston Rowe	ENG	D	-	-	02-10-06	-	Annecy (On Loan)
+54	Aidan Borland	SCO	M	-	-	25-04-07	-	Swindon T (On Loan)
+46	Kane Taylor	ENG	M	-	-	14-02-05	Birmingham	Oldham Ath (On Loan)
+17	Donyell Malen	NED	M	1.76	68	09-01-99	Wieringen	Roma (On Loan)
+77	Archie Duerden	ENG	D	-	-	09-03-06	-	Bromsgrove Sporting
+29	Evann Guessand	CIV	F	1.87	86	01-07-01	Ajaccio	Crystal Palace (On Loan)
+19	Samuel Iling-Junior	ENG	F	1.82	71	04-10-03	Islington	Pisa (On Loan)
+20	Jamaldeen Jimoh-Aloba	ENG	M	-	-	02-10-06	-	WBA (On Loan)
+47	Lino Sousa	ENG	D	-	-	19-01-05	-	Rotherham U (On Loan)
+51	Kadan Young	ENG	F	-	-	19-01-06	Worcester	Reading (On Loan)
+62	Ben Broggio	ENG	M	-	-	29-01-07	-	Falkirk (On Loan)
+57	Rory Wilson	SCO	F	1.83	75	05-01-06	Girvan	Sturm Graz (On Loan)
+55	Travis Patterson	ENG	D	-	-	06-10-05	-	Annecy (On Loan)
+
+Bournemouth
+Official Name: Athletic Football Club Bournemouth
+Formed: 1899  Ground: Vitality Stadium (11,307)  Manager: Andoni Iraola [ESP]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Djordje Petrović	SRB	G	1.94	89	08-10-99	Požarevac	Chelsea
+2								
+3	Adrien Truffert	FRA	D	1.73	61	20-11-01	Liège	Rennes
+4	Lewis Cook	ENG	M	1.75	71	03-02-97	Leeds	Leeds U
+5	Marcos Senesi	ARG	D	1.85	75	10-05-97	Concordia	Feyenoord
+6	Julio Soler	ARG	D	1.70	63	16-02-05	Asunción	Lanús
+7	David Brooks	WAL	M	1.66	62	08-07-97	Warrington	Sheffield U
+8	Alex Scott	ENG	M	1.78	68	21-08-03	Guernsey	Bristol C
+9	Evanilson	BRA	F	1.80	80	06-10-99	Fortaleza	FC Porto
+10	Ryan Christie	SCO	M	1.78	70	22-02-95	Inverness	Celtic
+11	Ben Gannon-Doak	SCO	M	1.76	64	11-11-05	Dalry	Liverpool
+12	Tyler Adams	USA	M	1.75	68	14-02-99	Wappingers Falls	Leeds U
+13								
+14								
+15	Adam Smith	ENG	D	1.80	78	29-04-91	Leytonstone	Tottenham H
+16	Marcus Tavernier	ENG	M	1.77	70	22-03-99	Leeds	Middlesbrough
+17	Fraser Forster	ENG	G	2.01	93	17-03-88	Hexham	Tottenham H
+18	Bafodé Diakité	FRA	D	1.82	74	06-01-01	Toulouse	Lille
+19	Justin Kluivert	NED	F	1.71	67	05-05-99	Amsterdam	Roma
+20	Álex Jiménez	ESP	D	1.71	61	08-05-05	Leganés	Milan
+21	Amine Adli	MAR	F	1.74	60	10-05-00	Béziers	Bayer Leverkusen
+22	Eli Junior Kroupi	FRA	F	1.79	70	23-06-06	Lorient	Lorient
+23	James Hill	ENG	D	1.84	73	10-01-02	Bristol	Fleetwood T
+24								
+25								
+26	Enes Ünal	TUR	F	1.85	75	10-05-97	Bursa	Getafe
+27	Alex Tóth	HUN	M	1.81	70	23-10-05	Budapest	Ferencváros
+28	Jalil Conteh	ALG	D	-	-	16-12-08	-	Chelsea
+29	Christos Mandas	GRE	G	1.89	75	17-09-01	Piraeus	Lazio
+30								
+31								
+32								
+33								
+34								
+35	Owen Bevan	WAL	D	-	-	26-10-03	-	None
+36								
+37	Rayan	BRA	F	1.85	75	03-08-06	Rio de Janeiro	Vasco da Gama
+38								
+39								
+40								
+44	Veljko Milosavljević	SRB	D	1.92	82	28-06-07	Požarevac	Crvena Zvezda
+45	Matai Akinmboni	USA	D	1.91	77	17-10-06	Annapolis	DC United
+46	Callan McKenna	SCO	G	-	-	22-12-06	Rutherglen	Queen's Park
+48	Kai Crampton	ENG	G	-	-	15-01-07	Watford	Chelsea
+49	Dominic Sadi	ENG	M	-	-	02-09-03	Enfield	Wingate & Finchley
+50	Remy Rees-Dottin	ENG	F	-	-	06-03-06	Gosport	None
+51	Malcom Dacosta González	ECU	M	1.93	84	17-04-08	Alicante	None
+53	Charlie Stevens	WAL	M	-	-	31-05-07	Poole	None
+56	Harold William	ENG	D	-	-	-	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+11	Dango Ouattara	BFA	F	1.77	71	11-02-02	Ouagadougou	Brentford
+17	Luis Sinisterra	COL	F	1.72	60	17-06-99	Santader de Quilichao	Cruzeiro (On Loan)
+13	Alex Paulsen	NZL	G	1.83	74	04-07-02	Auckland	Lechia Gdańsk (On Loan)
+29	Philip Billing	DEN	M	1.93	80	11-06-96	Copenhagen	FC Midtjylland
+6	Chris Mepham	WAL	D	1.91	75	05-11-97	Hammersmith	WBA
+25	Hamed Junior Traoré	CIV	M	1.84	77	16-02-00	Abidjan	Marseille (On Loan)
+47	Ben Winterburn	ENG	M	-	-	04-09-04	-	Barnet (On Loan)
+17	Amine Adli	MAR	F	1.74	60	10-05-00	Béziers	Re-Registered (21)
+20	Julio Soler	ARG	D	1.70	63	16-02-05	Asunción	Re-Registered (6)
+2	Julián Araujo	MEX	D	1.78	70	13-08-01	Lompoc	Celtic (On Loan)
+24	Antoine Semenyo	GHA	F	1.78	63	07-01-00	Chelsea	Manchester C
+21	Romain Faivre	FRA	M	1.80	75	14-07-98	Asnières-sur-Seine	Auxerre (On Loan)
+40	Will Dennis	ENG	G	1.88	79	10-07-00	Bedford	Leyton Orient (On Loan)
+
+Brentford
+Official Name: Brentford Football Club
+Formed: 1889  Ground: Brentford Community Stadium (17,250)  Manager: Keith Andrews [IRL]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Caoimhin Kelleher	IRL	G	1.88	81	23-11-98	Cork	Liverpool
+2	Aaron Hickey	SCO	D	1.85	72	10-06-02	Glasgow	Bologna
+3	Rico Henry	ENG	D	1.70	66	08-07-97	Birmingham	Walsall
+4	Sepp van den Berg	NED	D	1.90	78	20-12-01	Zwolle	Liverpool
+5	Ethan Pinnock	JAM	D	1.92	79	29-05-93	Lambeth	Barnsley
+6	Jordan Henderson	ENG	M	1.82	67	17-06-90	Sunderland	Ajax
+7	Kevin Schade	GER	F	1.83	74	27-11-01	Potsdam	Freiburg
+8	Mathias Jensen	DEN	M	1.80	68	01-01-96	Horsens	Celta Vigo
+9	Igor Thiago	BRA	F	1.88	88	26-06-01	Tucuruí	Club Brugge
+10	Josh Dasilva	ENG	M	1.80	75	23-10-98	Redbridge	Arsenal
+11	Reiss Nelson	ENG	F	1.75	70	10-12-99	Lambeth	Arsenal
+12	Hákon Rafn Valdimarsson	ISL	G	-	-	13-10-01	-	IF Elfsborg
+13								
+14	Fabio Carvalho	POR	M	1.70	62	30-08-02	Lisbon	Liverpool
+15								
+16								
+17	Antoni Milambo	NED	M	1.79	68	03-04-05	Rotterdam	Feyenoord
+18	Yehor Yarmolyuk	UKR	M	1.80	72	01-03-04	Verkhnodniprovsk	Dnipro-1
+19	Dango Ouattara	BFA	F	1.77	71	11-02-02	Ouagadougou	Bournemouth
+20	Kristoffer Ajer	NOR	D	1.96	84	17-04-98	Rælingen	Start
+21								
+22	Nathan Collins	IRL	D	1.96	89	30-04-01	Leixlip	Wolverhampton W
+23	Keane Lewis-Potter	ENG	F	1.75	67	22-02-01	Kingston upon Hull	Hull C
+24	Mikkel Damsgaard	DEN	M	1.80	71	03-07-00	Roskilde	Sampdoria
+25								
+26								
+27	Vitaly Janelt	GER	M	1.84	79	10-05-98	Hamburg	Bochum
+28								
+29								
+30								
+31	Ellery Balcombe	ENG	G	1.83	76	15-10-99	Watford	None
+32								
+33	Michael Kayode	ITA	D	1.79	71	10-07-04	Borgomanero	Fiorentina
+34								
+35								
+36								
+37								
+38								
+39								
+40								
+41	Julian Eyestone	USA	G	1.98	97	21-04-06	Dallas	Duke Univ
+45	Romelle Donovan	ENG	M	-	-	30-11-06	Birmingham	Birmingham C
+47	Kaye Furo	BEL	F	1.90	78	06-02-07	-	Club Brugge
+48	Luka Bentt	BEL	M	1.84	78	01-10-07	Washington, DC	None
+49	Ollie Shield	ENG	D	-	-	25-09-06	-	Southampton
+50	Josh Stephenson	ENG	D	-	-	04-09-07	-	Millwall
+51	Conor McManus	IRL	D	-	-	16-06-04	-	Bray W
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+21	Jayden Meghoma	ENG	D	-	-	28-06-06	Bath	Rangers (On Loan)
+30	Mads Roerslev	DEN	D	1.85	74	24-06-99	Copenhagen	Southampton
+11	Yoane Wissa	COD	F	1.76	73	03-09-96	Villeneuve-Saint-Georges	Newcastle U
+25	Myles Peart-Harris	ENG	M	1.87	70	18-09-02	Isleworth	Oxford U
+13	Matthew Cox	ENG	G	1.82	64	02-05-03	Sutton	Shrewsbury T (On Loan)
+26	Yunus Emre Konak	TUR	M	1.81	72	10-01-06	Batman	Oxford U (On Loan)
+39	Gustavo Nunes	BRA	F	1.73	69	20-11-05	São Vicente do Sul	Swansea C (On Loan)
+32	Paris Maghoma	ENG	M	1.81	70	08-05-01	Enfield	Norwich C
+15	Frank Onyeka	NGA	M	1.83	70	01-01-98	Abuja	Coventry C (On Loan)
+43	Benjamin Arthur	ENG	D	-	-	09-10-05	-	Celtic (On Loan)
+
+Brighton & Hove Albion
+Official Name: Brighton & Hove Albion Football Club
+Formed: 1901  Ground: American Express Community Stadium (31,876)  Manager: Fabian Hürzeler [GER]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Bart Verbruggen	NED	G	1.93	75	18-08-02	Breda	Anderlecht
+2								
+3	Igor	BRA	D	1.84	85	07-02-98	Bom Sucesso	Fiorentina
+4	Adam Webster	ENG	D	1.85	75	04-01-95	West Wittering	Bristol C
+5	Lewis Dunk	ENG	D	1.90	77	21-11-91	Brighton	None
+6	Jan Paul van Hecke	NED	D	1.89	78	08-06-00	Arnemuiden	NAC Breda
+7	Solly March	ENG	M	1.85	77	26-07-94	Eastbourne	Lewes
+8								
+9	Stefanos Tzimas	GRE	F	1.84	77	06-01-06	Thessaloniki	PAOK
+10	Georginio Rutter	FRA	F	1.82	77	20-04-02	Plescop	Leeds U
+11	Yankuba Minteh	GAM	F	1.80	65	22-07-04	Serrekunda	Newcastle U
+12								
+13	Jack Hinshelwood	ENG	M	1.81	73	11-04-05	Chichester	None
+14								
+15								
+16								
+17	Carlos Baleba	CMR	M	1.79	75	03-01-04	Douala	Lille
+18	Danny Welbeck	ENG	F	1.85	73	26-11-90	Manchester	Watford
+19	Charalampos Kostoulas	GRE	F	1.85	75	30-05-07	Athens	Olympiakos
+20	James Milner	ENG	M	1.75	70	04-01-86	Wortley	Liverpool
+21	Olivier Boscagli	FRA	D	1.81	68	18-11-97	Monaco	PSV Eindhoven
+22	Kaoru Mitoma	JPN	M	1.78	68	20-05-97	Kawasaki	Kawasaki Frontale
+23	Jason Steele	ENG	G	1.88	79	18-08-90	Newton Aycliffe	Sunderland
+24	Ferdi Kadıoğlu	TUR	D	1.73	64	07-10-99	Arnhem	Fenerbahçe
+25	Diego Gómez	PAR	M	1.85	77	27-03-03	San Juan Bautista	Inter Miami
+26	Yasin Ayari	SWE	M	1.72	69	06-10-03	Solna	AIK
+27	Mats Wieffer	NED	M	1.88	74	16-11-99	Borne	Feyenoord
+28								
+29	Maxim De Cuyper	BEL	D	1.83	72	22-10-00	Knokke-Heist	Club Brugge
+30	Pascal Groß	GER	M	1.71	66	15-06-91	Bad Salzungen	Borussia Dortmund
+31								
+32								
+33	Matt O'Riley	DEN	M	1.87	77	21-11-00	Hounslow	Celtic
+34	Joël Veltman	NED	D	1.84	75	15-01-92	IJmuiden	Ajax
+35								
+36								
+37								
+38	Tom McGill	CAN	G	1.85	80	25-03-00	Haywards Heath	None
+39								
+40								
+44	Sean Keogh	IRL	M	-	-	15-04-06	-	Dundalk
+46	Noël Atom	GER	D	-	-	05-01-05	-	RB Leipzig
+48	Ben Barclay	ENG	D	1.87	78	07-10-96	Manchester	Carlisle U
+50	Josh Robertson	ENG	M	-	-	03-10-05	-	Sunderland
+51	Charlie Tasker	ENG	D	-	-	24-02-06	-	None
+52	Zane Albarus	ENG	M	-	-	18-12-05	Milton Keynes	None
+53	Harry Howell	ENG	F	-	-	29-09-08	-	None
+54	Freddie Simmonds	ENG	D	-	-	09-03-08	-	None
+55	Charlie Penman	ENG	D	-	-	25-09-05	-	Blackpool
+56	Harry Mills	CYP	M	-	-	17-03-06	-	None
+57	Yussif Owusu	ENG	M	-	-	14-02-06	-	Chelsea
+58	Nehemiah Oriola	ENG	M	-	-	11-06-07	-	Manchester U
+59	Joe Belmont	WAL	F	-	-	09-09-06	-	Liverpool
+60	Aidan West	ENG	F	-	-	-	-	None
+61	Steven Hall	AUS	G	-	-	16-01-05	-	Adelaide U
+62	Nils Ramming	SWE	G	1.90	80	28-03-07	London	Eintracht Frankfurt
+63	Lorenz Ferdinand	ENG	G	-	-	24-07-06	Manchester	None
+64	Sebastian Jensen	DEN	G	-	-	20-02-06	Macclesfield	Everton
+65	Michael Dike	IRL	G	-	-	06-10-06	Limerick	Treaty U
+66	Callum Mackley	ENG	D	-	-	17-06-07	-	None
+67	Jacob Vickers	ENG	D	-	-	-	-	Luton T
+68	Shane Nti	ENG	M	-	-	-	-	None
+69	Matthew Hayden	ENG	D	-	-	07-05-07	-	None
+70	Kofi Shaw	ENG	M	-	-	04-12-06	Gloucester	Bristol R
+71	Tyler Silsby	ENG	F	-	-	03-05-08	-	None
+73	Tate Ferdinand	ENG	D	-	-	-	-	None
+74	Adam Brett	WAL	F	-	-	20-09-07	-	None
+75	Jesse Middleton	ENG	M	-	-	-	-	None
+76	Henry Kasvosve	WAL	M	-	-	09-11-07	-	Bristol C
+79	Younes Ibrahim	AUS	M	-	-	16-02-08	-	None
+86	Jacob Parsons	ENG	F	-	-	10-05-09	-	None
+87	Zac Brennan	ENG	M	-	-	09-10-08	-	None
+88	Bode Newnham-Reeve	ENG	M	-	-	29-07-09	-	None
+91	Jackson Morby	ENG	D	-	-	-	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+28	Evan Ferguson	IRL	F	1.88	78	19-10-04	Bettystown	Roma (On Loan)
+39	Carl Rushworth	ENG	G	1.88	74	02-07-01	Halifax	Coventry C (On Loan)
+36	Malick Yalcouyé	MLI	M	1.71	69	18-11-05	Bandiagara	Swansea C (On Loan)
+37	Abdallah Sima	SEN	F	1.88	74	17-06-01	Dakar	Lens
+2	Tariq Lamptey	GHA	D	1.75	69	30-09-00	Hillingdon	Fiorentina
+31	Julio Enciso	PAR	F	1.77	68	23-01-04	Caaguazú	Strasbourg
+45	Jacob Slater	IRL	D	-	-	05-10-04	-	Harrogate T (On Loan)
+16	Eiran Cashin	IRL	D	1.87	73	09-11-01	Mansfield	Blackburn R (On Loan)
+40	Facundo Buonanotte	ARG	M	1.74	66	23-12-04	Pérez	Leeds U (On Loan)
+32	Jeremy Sarmiento	ECU	M	1.83	72	16-06-02	Madrid	Middlesbrough (On Loan)
+42	Diego Coppola	ITA	D	1.93	78	28-12-03	Bussolengo	Paris FC (On Loan)
+49	Joe Knight	ENG	M	-	-	21-09-05	-	Stevenage
+14	Tom Watson	ENG	F	1.90	72	08-04-06	Easington	Millwall (On Loan)
+8	Brajan Gruda	GER	M	1.78	70	31-05-04	Speyer	RB Leipzig (On Loan)
+35	Andy Moran	IRL	M	1.77	73	15-10-03	Dublin	Preston NE
+
+Burnley
+Official Name: Burnley Football Club
+Formed: 1882  Ground: Turf Moor (21,944)  Manager: Scott Parker [ENG]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Martin Dúbravka	SVK	G	1.90	83	15-01-89	Žilina	Newcastle U
+2	Kyle Walker	ENG	D	1.83	83	28-05-90	Sheffield	Manchester C
+3	Quilindschy Hartman	NED	D	1.83	72	14-11-01	Zwijndrecht	Feyenoord
+4	Joe Worrall	ENG	D	1.93	64	10-01-97	Nottingham	Nottingham F
+5	Maxime Estève	FRA	D	1.93	87	26-05-02	Montpellier	Montpellier
+6	Axel Tuanzebe	COD	D	1.82	75	14-11-97	Bunia	Ipswich T
+7	Jacob Bruun Larsen	DEN	F	1.83	74	19-09-98	Lyngby	Stuttgart
+8	Lesley Ugochukwu	FRA	M	1.88	83	26-03-04	Rennes	Chelsea
+9	Lyle Foster	RSA	F	1.85	75	03-09-00	Soweto	KVC Westerlo
+10	Marcus Edwards	ENG	F	1.76	61	03-12-98	Camden Town	Sporting CP
+11	Jaidon Anthony	ENG	F	1.83	68	01-12-99	Hackney	Bournemouth
+12	Bashir Humphreys	ENG	D	1.86	79	15-03-03	Exeter	Chelsea
+13	Max Weiß	GER	G	1.90	84	15-06-04	Speyer	Karlsruhe
+14	Connor Roberts	WAL	D	1.75	71	23-09-95	Neath	Swansea C
+15								
+16	Florentino Luis	POR	M	1.84	73	19-08-99	Lisbon	Benfica
+17	Loum Tchaouna	FRA	F	1.80	67	08-09-03	N'Djamena	Lazio
+18	Hjalmar Ekdal	SWE	D	1.87	76	21-10-98	Stockholm	Djurgårdens IF
+19	Zian Flemming	NED	F	1.85	85	01-08-98	Amsterdam	Millwall
+20	James Ward-Prowse	ENG	M	1.73	66	01-11-94	Southampton	West Ham U
+21								
+22								
+23	Lucas Pires	BRA	D	1.82	76	24-03-01	São Paulo	Santos
+24	Josh Cullen	IRL	M	1.75	70	07-04-96	Southend-on-Sea	Anderlecht
+25	Zeki Amdouni	SUI	F	1.85	79	04-12-00	Geneva	Basel
+26								
+27	Armando Broja	ALB	F	1.86	74	10-09-01	Slough	Chelsea
+28	Hannibal Mejbri	TUN	M	1.84	70	21-01-03	Ivry-sur-Seine	Manchester U
+29	Josh Laurent	ENG	M	1.83	70	06-05-95	Leytonstone	Stoke C
+30								
+31	Mike Trésor	BEL	M	1.73	69	28-05-99	Lembeek	KRC Genk
+32	Václav Hladký	CZE	G	1.89	80	14-11-90	Brno	Ipswich T
+33								
+34								
+35	Ashley Barnes	AUT	F	1.86	77	31-10-89	Bath	Norwich C
+36	Jordan Beyer	GER	D	1.87	80	19-05-00	Kempen	B Mönchengladbach
+37								
+38								
+39								
+40								
+41	George Brierley	ENG	M	-	-	20-11-07	-	None
+42	Tom Tweedy	WAL	F	-	-	15-09-04	-	Penybont
+43	Murray Campbell	SCO	M	-	-	25-07-06	-	St Mirren
+45	Brandon Pouani	ENG	F	-	-	10-12-07	-	None
+47	Ellis Clark	SCO	M	-	-	26-06-07	-	Aberdeen
+48	Enock Agyei	BEL	F	1.72	66	13-01-05	-	Anderlecht
+52	Kian McMahon-Brown	IRL	F	-	-	03-08-08	-	None
+53	Marley Leuluai	NZL	M	-	-	08-11-06	Manly	Manchester C
+54	Oliver Pimlott	ENG	M	-	-	07-04-07	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+43	Shurandy Sambo	CUW	D	1.74	70	19-08-01	Geldrop	Sparta Rotterdam (On Loan)
+27	Manuel Benson	ANG	F	1.78	68	28-03-97	Lokeren	Re-Registered (26)
+20	Etienne Green	ENG	G	1.90	76	19-07-00	Colchester	Fredericia
+21	Aaron Ramsey	ENG	M	1.80	66	21-01-03	Birmingham	Leicester C (On Loan)
+44	Hannes Delcroix	BEL	D	1.85	75	28-02-99	Grande Hatte	Lugano
+30	Luca Koleosho	ITA	M	1.75	68	15-09-04	Norwalk	Paris FC (On Loan)
+22	Oliver Sonne	PER	D	1.84	72	10-11-00	Herfølge	Sparta Prague (On Loan)
+34	Jaydon Banel	NED	F	1.72	65	19-10-04	Amsterdam	Derby Co (On Loan)
+26	Manuel Benson	ANG	F	1.78	68	28-03-97	Lokeren	Maccabi Haifa
+
+Chelsea
+Official Name: Chelsea Football Club
+Formed: 1905  Ground: Stamford Bridge (40,173)  Manager: Liam Rosenior [ENG]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Robert Sánchez	ESP	G	1.97	90	18-11-97	Cartagena	Brighton & HA
+2								
+3	Marc Cucurella	ESP	D	1.75	69	22-07-98	Alella	Brighton & HA
+4	Tosin Adarabioyo	ENG	D	1.96	80	24-09-97	Manchester	Fulham
+5	Benoît Badiashile	FRA	D	1.92	75	06-03-01	Limoges	Monaco
+6	Levi Colwill	ENG	D	1.87	75	26-02-03	Southampton	None
+7	Pedro Neto	POR	F	1.72	62	09-03-00	Viana do Castelo	Wolverhampton W
+8	Enzo Fernández	ARG	M	1.78	78	17-01-01	San Martín	Benfica
+9	Liam Delap	ENG	F	1.86	72	08-02-03	Winchester	Ipswich T
+10	Cole Palmer	ENG	F	1.89	74	06-05-02	Wythenshawe	Manchester C
+11	Jamie Gittens	ENG	F	1.75	70	08-08-04	Reading	Borussia Dortmund
+12	Filip Jörgensen	DEN	G	1.90	82	16-04-02	Lomma	Villarreal
+13								
+14	Dário Essugo	POR	M	1.79	76	14-03-05	Lisbon	Sporting CP
+15								
+16								
+17	Andrey Santos	BRA	M	1.76	72	03-05-04	Rio de Janeiro	Vasco da Gama
+18								
+19	Mamadou Sarr	FRA	D	1.94	80	29-08-05	Martigues	Strasbourg
+20	João Pedro	BRA	F	1.82	70	26-09-01	Ribeirão Preto	Brighton & HA
+21	Jorrel Hato	NED	D	1.83	76	07-03-06	Rotterdam	Ajax
+22								
+23	Trevoh Chalobah	ENG	D	1.90	75	05-07-99	Freetown	None
+24	Reece James	ENG	D	1.83	71	08-12-99	Redbridge	None
+25	Moisés Caicedo	ECU	M	1.78	73	02-11-01	Santo Domingo	Brighton & HA
+26								
+27	Malo Gusto	FRA	D	1.79	76	19-05-03	Décines-Charpieu	Lyon
+28	Teddy Sharman-Lowe	ENG	G	1.89	73	30-03-03	Leicester	Burton Alb
+29	Wesley Fofana	FRA	D	1.85	76	17-12-00	Marseille	Leicester C
+30								
+31								
+32								
+33	Deivid Washington	BRA	F	1.86	73	05-06-05	Itumbiara	Santos
+34	Josh Acheampong	ENG	D	1.90	79	05-05-06	Waltham Forest	None
+35								
+36	Samuel Rak-Sakyi	ENG	M	-	-	27-03-05	Lambeth	None
+37								
+38	Marc Guiu	ESP	F	1.87	82	04-01-06	Granollers	Barcelona B
+39	Genesis Antwi	SWE	D	-	-	11-05-07	Stockholm	None
+40								
+41	Estêvão	BRA	F	1.76	62	24-04-07	Franca	Palmeiras
+42	Jimi Tauriainen	FIN	F	-	-	09-03-04	Helsinki	HJK Helsinki
+43	Richard Olise	ENG	D	-	-	09-09-04	Hillingdon	None
+44	Gabriel Slonina	USA	G	1.93	89	15-05-04	Addison	Chicago Fire
+45	Romeo Lavia	BEL	M	1.81	70	06-01-04	Brussels	Southampton
+46	Reggie Walsh	ENG	M	-	-	20-10-08	-	None
+47	Harrison Murray-Campbell	ENG	D	-	-	04-08-06	Luton	None
+48	Harrison McMahon	ENG	M	-	-	29-01-06	South Ockendon	None
+49	Alejandro Garnacho	ARG	F	1.80	80	01-07-04	Madrid	Manchester U
+50	Max Merrick	ENG	G	-	-	10-11-05	High Wycombe	None
+52	Kian Best	ENG	D	-	-	27-08-05	-	Preston NE
+53	Kobe Barbour	ENG	F	1.72	-	03-10-07	Kingstown	None
+54	Leo Cardoso	POR	M	-	-	18-10-06	Aldama	None
+55	Jesse Derry	ENG	M	-	-	30-06-07	-	Crystal Palace
+56	Landon Emenalo	ENG	M	1.77	-	18-01-08	-	None
+57	Sol Gordon	ENG	M	1.77	-	22-11-07	-	None
+58	Ollie Harrison	ENG	M	-	-	07-08-07	Blaydon	Newcastle U
+60	Jack Austin	ENG	G	1.89	-	26-10-07	Harlow	None
+62	Shim Mheuka	ENG	F	1.85	-	20-10-07	Birmingham	None
+63	Kaiden Wilson	ENG	D	-	-	02-09-05	Bristol	None
+64	Justin Osagie	IRL	D	-	-	09-09-05	-	Peterborough U
+66	Tayo Subuloye	ENG	D	1.86	-	18-12-07	Eastbourne	None
+70	Hudson Sands	ENG	G	1.81	-	20-10-07	Portsmouth	None
+71	Calvin Diakite	ENG	D	1.81	-	07-04-09	Lambeth	None
+72	Mathis Eboué	ENG	M	1.78	-	27-02-09	Watford	Watford
+73	Chizaram Ezenwata	ENG	F	1.83	-	05-09-08	Bexley	Charlton Ath
+75	Charles Holland	ENG	M	1.80	-	03-07-09	Sidcup	None
+76	Ryan Kavuma-McQueen	ENG	F	1.79	-	01-01-09	London	None
+78	Jeremiah Berkeley-Agyepong	ENG	F	1.78	-	27-07-09	Croydon	None
+79	Isago Silva	BRA	D	1.78	-	12-11-08	Rio de Janeiro	None
+80	Toby Bell	ENG	G	1.82	-	22-02-09	Durham	None
+81	Ibrahim Rabbaj	MAR	M	1.66	-	03-01-09	Leicester	None
+82	Lewi Richards	ENG	M	1.78	-	04-10-08	Watford	None
+84	Dante Waite	ENG	D	1.87	-	27-09-08	London	None
+89	Mahdi Nicoll-Jazuli	ENG	M	-	-	06-01-10	-	None
+90	Freddy Bernal	ENG	G	1.88	-	21-10-08	Redhill	None
+93	Isaac Silva	POR	D	-	-	05-12-09	Amadora	None
+95	Gabriel Sambou	POL	D	-	-	25-11-09	-	None
+96	Andrew Pennie	ENG	F	-	-	03-11-09	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+18	Christopher Nkunku	FRA	F	1.75	70	14-11-97	Lagny-sur-Marne	Milan
+15	Nicolas Jackson	SEN	F	1.86	78	20-06-01	Dakar	Bayern Munich (On Loan)
+38	Genesis Antwi	SWE	D	-	-	11-05-07	Stockholm	Re-Registered (39)
+35	Ted Curd	ENG	G	-	-	14-02-06	Kingston upon Thames	Boreham Wood (On Loan)
+40	Facundo Buonanotte	ARG	M	1.74	66	23-12-04	Pérez	Brighton & HA
+65	Frankie Runham	ENG	M	-	-	09-01-07	Eastbourne	Ipswich T (On Loan)
+30	Aarón Anselmino	ARG	D	1.86	81	29-04-05	Bernardo Larroudé	Strasbourg (On Loan)
+32	Tyrique George	ENG	F	1.85	75	04-02-06	Camden	Everton (On Loan)
+37	Dujuan Richards	JAM	F	1.89	75	10-11-05	Port Royal	Leicester C (On Loan)
+51	Ato Ampah	ENG	F	-	-	22-04-06	Accra	Stoke C
+59	Yahya Idrissi	MAR	M	1.79	-	28-11-07	Watford	Milan Futuro
+61	Harry McGlinchey	IRL	D	1.81	-	10-02-07	Plymouth	Sheffield U
+67	Shaun Wade	IRL	F	-	-	29-09-06	Bristol	Derby Co (On Loan)
+68	Joseph Wheeler-Henry	ENG	D	-	-	17-12-07	Barnet	Brentford (On Loan)
+83	Joel Philbert	ENG	F	1.81	-	18-01-09	Guildford	Tottenham H
+
+Crystal Palace
+Official Name: Crystal Palace Football Club
+Formed: 1905  Ground: Selhurst Park (25,486)  Manager: Oliver Glasner [AUT]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Dean Henderson	ENG	G	1.90	85	12-03-97	Whitwrehaven	Manchester U
+2	Daniel Muñoz	COL	D	1.83	75	26-05-96	Amalfi	KRC Genk
+3	Tyrick Mitchell	ENG	D	1.74	66	01-09-99	Brent	Brentford
+4								
+5	Maxence Lacroix	FRA	D	1.90	88	06-04-00	Villeneuve-Saint-Georges	Wolfsburg
+6								
+7	Ismaïla Sarr	SEN	M	1.78	68	25-02-98	Saint-Louis	Marseille
+8	Jefferson Lerma	COL	M	1.79	70	25-10-94	El Cerrito	Bournemouth
+9	Eddie Nketiah	ENG	F	1.75	72	30-05-99	Lewisham	Arsenal
+10	Yéremi Pino	ESP	F	1.72	63	20-10-02	Las Palmas	Villarreal
+11	Brennan Johnson	WAL	F	1.79	73	23-05-01	Nottingham	Tottenham H
+12	Chrisantus Uche	NGA	M	1.90	78	19-05-03	Owerri	Getafe
+13								
+14	Jean-Philippe Mateta	FRA	F	1.92	84	28-06-97	Clamart	Mainz
+15								
+16								
+17	Nathaniel Clyne	ENG	D	1.75	67	05-04-91	Stockwell	Liverpool
+18	Daichi Kamada	JPN	M	1.80	72	05-08-96	Ehime	Lazio
+19	Will Hughes	ENG	M	1.85	74	17-04-95	Weybridge	Watford
+20	Adam Wharton	ENG	M	1.82	76	06-02-04	Blackburn	Blackburn R
+21								
+22	Jörgen Strand Larsen	NOR	F	1.93	79	06-02-00	Halden	Wolverhampton W
+23	Jaydee Canvot	FRA	D	1.80	70	29-07-06	Argenteuil	Toulouse
+24	Borna Sosa	CRO	D	1.84	77	21-01-98	Zagreb	Ajax
+25								
+26	Chris Richards	USA	D	1.88	86	28-03-00	Birmingham, AL	Bayern Munich
+27								
+28	Cheick Doucouré	MLI	M	1.80	73	08-01-00	Bamako	Lens
+29	Evann Guessand	CIV	F	1.87	86	01-07-01	Ajaccio	Aston VIlla
+30								
+31	Remi Matthews	ENG	G	1.84	78	10-02-94	Gorleston	Sunderland
+32								
+33								
+34	Chadi Riad	MAR	D	1.86	78	17-06-03	Palma de Mallorca	Betis
+35								
+36								
+37								
+38	Caleb Kporha	ENG	D	-	-	15-07-06	-	None
+39								
+40								
+41	Harry Lee	ENG	G	1.88	79	22-12-04	Torquay	Exeter C
+42	Kaden Rodney	ENG	M	-	-	07-10-04	Lambeth	None
+44	Walter Benítez	ARG	G	1.91	86	19-03-93	Chaco	PSV Eindhoven
+45	Dylan Reid	SCO	M	-	-	01-03-05	Kilbirnie	St Mirren
+47	Adler Nascimento	POR	F	-	-	25-11-04	-	Peterborough U
+48	Mofe Jemide	ENG	D	-	-	08-11-06	Tottenham	None
+50	Joe Gibbard	IRL	M	-	-	27-09-05	-	None
+53	Jackson Izquierdo	ENG	G	-	-	15-10-04	Windsor	None
+54	Jake Grante	IRL	D	-	-	02-01-06	-	None
+55	Justin Devenny	NIR	M	-	-	11-10-03	-	Airdrieonians
+58	Seb Williams	ENG	M	-	-	10-01-07	-	None
+59	Rio Cardines	TRI	M	-	-	01-07-06	-	None
+60	George King	ENG	D	-	-	20-03-07	-	None
+61	Rylan Brownlie	AUS	F	1.78	65	18-02-07	Brisbane	Brisbane Roar
+62	Tyler Whyte	ENG	D	-	-	09-10-06	-	None
+63	Zach Marsh	ENG	F	-	-	06-10-05	Luton	Watford
+64	Asher Agbinone	ENG	F	-	-	28-09-05	-	None
+65	Zack Henry	ENG	F	-	-	11-04-07	-	None
+66	Kai-Reece Adams-Collman	ENG	D	-	-	24-10-06	-	None
+68	Matteo Dashi	ALB	M	-	-	22-01-07	-	None
+70	Marcus Hill	ENG	G	-	-	25-10-06	Wandsworth	None
+72	Dean Benamar	ENG	D	-	-	31-05-08	-	None
+73	Ben Casey	ENG	F	-	-	30-11-07	-	None
+74	Sean Somade	ENG	D	-	-	10-01-08	-	None
+75	Charlie Walker-Smith	WAL	D	-	-	19-09-07	-	None
+76	Euan Danaher	ENG	M	-	-	27-09-07	-	None
+78	Jacob Fasida	ENG	D	-	-	16-09-08	-	None
+79	David Angibeaud	ENG	F	-	-	23-11-07	-	None
+80	Joshua Muwana	FRA	D	-	-	13-09-07	-	None
+81	Stuart Oduro	ENG	M	-	-	14-12-07	-	None
+82	Jasper Judd	ENG	D	-	-	16-11-07	-	None
+83	Jack Mason	ENG	G	-	-	30-11-07	-	None
+84	Harry Whitworth	ENG	G	-	-	10-04-07	-	None
+85	Thiago Speroni	ENG	G	-	-	14-11-08	-	None
+86	Joél Drakes-Thomas	ENG	F	-	-	09-06-09	-	None
+87	Chuks Okoli	ENG	M	-	-	22-02-08	-	None
+88	Donte Martin	ENG	F	-	-	13-11-08	-	None
+89	Jayden McDonald	ENG	F	-	-	17-12-08	-	None
+90	Ajean-Ray Greaves	ENG	M	-	-	28-04-09	-	None
+91	Aiden Morgan	ENG	M	-	-	15-06-09	-	None
+92	Daniel Owoade	ENG	M	-	-	13-11-08	-	None
+93	Remi Ahazie-Shittu	ENG	F	-	-	01-01-09	-	None
+94	Makai Bernard-Ferguson	ENG	F	-	-	20-02-09	-	None
+95	Raihaan Anderson	ENG	M	-	-	05-10-08	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+10	Eberechi Eze	ENG	M	1.73	67	29-06-98	Greenwich	Arsenal
+11	Matheus França	BRA	F	1.78	67	01-04-04	Rio de Janeiro	Vasco da Gama (On Loan)
+22	Odsonne Édouard	FRA	F	1.83	74	16-01-98	Kourou	Lens
+46	Franco Umeh-Chibueze	IRL	F	-	-	26-01-05	-	Portsmouth (On Loan)
+21	Romain Esse	ENG	M	1.78	65	13-05-05	Lambeth	Coventry C (On Loan)
+29	Naouirou Ahamada	FRA	M	1.83	69	29-03-02	Marseille	Auxerre
+40	Luke Browne	IRL	D	-	-	06-10-05	-	Notts Co
+6	Marc Guéhi	ENG	D	1.82	82	13-07-00	Abidjan	Manchester C
+30	Danny Imray	ENG	D	1.78	63	27-07-03	Harold Wood	WBA (On Loan)
+49	Jesurun Rak-Sakyi	ENG	M	1.78	65	05-10-02	Southwark	Stoke C (On Loan)
+
+Everton
+Official Name: Everton Football Club
+Formed: 1878  Ground: Hill Dickinson Stadium (52,769)  Manager: David Moyes [SCO]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Jordan Pickford	ENG	G	1.85	77	07-03-94	Washington	Sunderland
+2	Nathan Patterson	SCO	D	1.83	79	16-10-01	Glasgow	Rangers
+3								
+4								
+5	Michael Keane	ENG	D	1.91	82	11-01-93	Stockport	Burnley
+6	James Tarkowski	ENG	D	1.85	81	19-11-92	Manchester	Burnley
+7	Dwight McNeil	ENG	M	1.83	68	22-11-99	Rochdale	Burnley
+8								
+9	Beto	GNB	F	1.94	88	31-01-98	Lisbon	Udinese
+10	Iliman Ndiaye	SEN	M	1.80	70	06-03-00	Rouen	Marseille
+11	Thierno Barry	FRA	F	1.95	82	21-10-02	Lyon	Villarreal
+12	Mark Travers	IRL	G	1.91	82	18-05-99	Maynooth	Bournemouth
+13								
+14								
+15	Jake O'Brien	IRL	D	1.97	92	15-05-01	Cork	Lyon
+16	Vitaliy Mykolenko	UKR	D	1.80	71	29-05-99	Cherkasy	Dynamo Kyiv
+17								
+18	Jack Grealish	ENG	M	1.75	68	10-09-95	Birmingham	Manchester C
+19	Tyrique George	ENG	F	1.85	75	04-02-06	Camden	Chelsea
+20	Tyler Dibling	ENG	M	1.86	79	17-02-06	Exeter	Southampton
+21								
+22	Kiernan Dewsbury-Hall	ENG	M	1.77	70	06-09-98	Nottingham	Chelsea
+23	Séamus Coleman	IRL	D	1.77	67	11-10-88	Killybegs	Sligo R
+24	Carlos Alcaraz	ARG	M	1.76	68	30-11-02	La Plata	Flamengo
+25								
+26								
+27	Idrissa Gueye	SEN	M	1.74	66	26-09-89	Dakar	Paris St-Germain
+28								
+29								
+30								
+31	Tom King	WAL	G	1.86	80	09-03-95	Plymouth	Wolverhampton W
+32	Jarrad Branthwaite	ENG	D	1.87	67	27-06-02	Carlisle	Carlisle U
+33								
+34	Merlin Röhl	GER	M	1.91	80	05-07-02	Potsdam	SC Freiburg
+35								
+36								
+37	James Garner	ENG	M	1.86	77	13-03-01	Birkenhead	Manchester U
+38								
+39	Adam Aznou	MAR	D	1.78	70	02-06-06	Barcelona	Bayern Munich
+40								
+42	Tim Iroegbunam	ENG	M	-	-	30-06-03	West Bromwich	Aston Villa
+45	Harrison Armstrong	ENG	M	-	-	19-01-07	Liverpool	None
+47	Fraser Barnsley	NIR	G	-	-	06-10-04	-	Oxford U
+49	Omari Benjamin	WAL	F	-	-	04-12-05	Watford	Arsenal
+50	George Pickford	ENG	G	-	-	06-02-07	Preston	None
+51	Kingsford Boakye	GHA	F	-	-	11-12-04	Accra	Milan
+52	Douglass Lukjanciks	ENG	G	-	-	09-10-07	-	None
+57	Justin Clarke	ENG	F	-	-	-	-	AFC Wimbledon
+58	Braiden Graham	NIR	F	1.75	67	07-11-07	Ballygowan	Linfield
+59	Luca Davis	ENG	D	-	-	31-08-07	Manchester	None
+60	Rocco Lambert	ENG	D	-	-	-	-	None
+61	Luis Gardner	WAL	M	-	-	27-01-08	-	None
+64	Reece Welch	ENG	D	-	-	19-09-03	Huddersfield	None
+65	Demi Akarakiri	ENG	M	-	-	16-09-08	-	Arsenal
+68	Ceiran Loney	SCO	F	-	-	13-03-08	Wishaw	Partick Thistle
+70	Charlie Stewart	SCO	F	-	-	28-06-08	-	None
+71	Kean Wren	ENG	F	-	-	24-12-07	-	None
+72	Bradley Moonan	ENG	D	-	-	02-04-06	Wigan	None
+74	Goodness Gospel-Eze	ENG	G	-	-	06-05-08	-	None
+76	Malik Olayiwola	ENG	M	-	-	08-01-09	-	None
+77	Odin Samuels-Smith	ENG	D	-	-	05-06-06	Manchester	None
+78	Joshua van Schoor	ENG	D	-	-	08-10-06	Warrington	None
+79	Seve Patrick	ENG	G	-	-	-	-	None
+80	Joel Catesby	ENG	F	-	-	28-11-06	Birkenhead	None
+81	Harvey Foster	ENG	M	-	-	22-02-07	Burnley	None
+82	Francis Gomez	GAM	M	-	-	28-02-06	Serekunda	Sporting Supreme
+84	Coby Ebere	GER	F	-	-	17-09-05	-	None
+86	Melvin Matos	ENG	M	-	-	-	-	None
+88	Francis Okoronkwo	ENG	F	-	-	18-09-04	Blyth	Sunderland
+89	Louis Poland	ENG	D	-	-	-	-	None
+90	Aled Thomas	WAL	D	-	-	27-09-06	Wrexham	None
+91	Jacob Beaumont-Clark	ENG	M	-	-	19-09-05	Manchester	None
+92	Callum Bates	ENG	M	-	-	28-09-05	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+17	Youssef Chermiti	POR	F	1.92	81	24-05-04	Santa Maria	Rangers
+83	Isaac Heath	ENG	M	-	-	28-10-04	Leeds	Accrington Stanley (On Loan)
+62	Tyler Onyango	ENG	M	-	-	04-03-03	Luton	Stockport Co (On Loan)
+55	George Finney	ENG	D	-	-	16-05-07	-	Ayr U (On Loan)
+38	Harry Tyrer	ENG	G	-	-	06-12-01	Crosby	Cardiff C
+48	William Tamen	ENG	D	-	-	12-05-06	-	Tranmere R (On Loan)
+75	Roman Dixon	ENG	D	-	-	26-12-04	Stafford	Stockport Co (On Loan)
+87	George Morgan	WAL	F	-	-	08-09-06	Milton Keynes	Cannes (On Loan)
+67	Martin Sherif	NED	F	-	-	10-06-06	-	Port Vale (On Loan)
+73	Elijah Campbell	ENG	D	-	-	02-08-04	Manchester	Port Vale (On Loan)
+85	Jack Patterson	NIR	M	-	-	16-10-05	Ballyclare	ŁKS Łódź (On Loan)
+
+Fulham
+Official Name: Fulham Football Club
+Formed: 1885  Ground: Craven Cottage (29,589)  Manager: Marco Silva [POR]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Bernd Leno	GER	G	1.89	78	04-03-92	Bietigheim-Bissingen	Arsenal
+2	Kenny Tete	NED	D	1.75	70	09-10-95	Amsterdam	Lyon
+3	Calvin Bassey	NGA	D	1.85	76	31-12-99	Aosta	Ajax
+4								
+5	Joachim Andersen	DEN	D	1.92	90	31-05-96	Frederiksberg	Crystal Palace
+6	Harrison Reed	ENG	M	1.81	72	27-01-95	Worthing	Southampton
+7	Raúl Jiménez	MEX	F	1.90	76	05-05-91	Tepeji	Wolverhampton W
+8	Harry Wilson	WAL	M	1.73	70	22-03-97	Wrexham	Liverpool
+9	Rodrigo Muniz	BRA	F	1.82	79	04-05-01	São Domingos do Prata	Flamengo
+10	Tom Cairney	SCO	M	1.83	72	20-01-91	Nottingham	Blackburn R
+11								
+12								
+13								
+14	Oscar Bobb	NOR	M	1.74	70	12-07-03	Oslo	Manchester C
+15	Jorge Cuenca	ESP	D	1.87	75	17-11-99	Madrid	Villarreal
+16	Sander Berge	NOR	M	1.90	88	18-02-98	Bærum	Burnley
+17	Alex Iwobi	NGA	M	1.80	75	03-05-96	Lagos	Everton
+18	Jonah Kusi-Asare	SWE	F	1.96	84	04-07-07	Solna	Bayern Munich
+19	Samuel Chukwueze	NGA	F	1.72	70	22-05-99	Ugba	Milan
+20	Saša Lukić	SRB	M	1.83	77	13-08-96	Šabac	Torino
+21	Timothy Castagne	BEL	D	1.80	80	05-12-95	Aarlen	Leicester C
+22	Kevin	BRA	M	1.76	71	04-01-03	São Paulo	Shakhtar Donetsk
+23	Benjamin Lecomte	FRA	G	1.86	78	26-04-91	Paris	Montpellier
+24	Joshua King	ENG	M	-	-	03-01-07	-	None
+25								
+26								
+27								
+28								
+29								
+30	Ryan Sessegnon	ENG	D	1.78	71	18-05-00	Roehampton	Tottenham H
+31	Issa Diop	FRA	D	1.93	84	09-01-97	Toulouse	West Ham U
+32	Emile Smith Rowe	ENG	M	1.82	64	28-07-00	Croydon	Arsenal
+33	Antonee Robinson	USA	D	1.83	73	08-08-97	Milton Keynes	Wigan Ath
+34	Jonathan Esenga	ENG	D	-	-	09-02-07	-	None
+35	Sam Amissah	ENG	D	-	-	07-03-07	-	Brentford
+36	Alex Borto	USA	G	1.88	80	06-11-03	South Plainfield	Cedar Stars Rush
+37								
+38	Seth Ridgeon	ENG	M	-	-	12-09-08	-	None
+39								
+40	Alfie McNally	ENG	G	-	-	22-12-04	Hillingdon	Brentford
+42	Brad de Jesus	POR	F	-	-	14-01-06	-	None
+43	Tom Olyott	IRL	F	-	-	21-01-06	Liverpool	Manchester C
+44	Oliver Gofford	ENG	M	-	-	03-09-05	Windsor	None
+46	Macaulay Zepa	FRA	F	-	-	07-07-08	-	Arsenal
+47	Eddie Nsasi	ENG	D	-	-	06-08-07	-	None
+48	Jayden Quashie	GRN	M	-	-	11-09-06	Bromley	None
+49	Farhaan Ali Wahid	ENG	F	-	-	09-12-06	-	Chelsea
+50	Bradley Slade	ENG	D	-	-	-	-	None
+51	Tom Wingate	ENG	F	-	-	27-12-06	-	None
+52	Joe Walters	ENG	D	-	-	-	-	None
+53	Alfie White	ENG	M	-	-	15-11-07	-	None
+55	Logan Cooke	ENG	D	-	-	27-12-07	Gosport	None
+56	Quinn Schutter	ENG	D	-	-	-	-	None
+57	Nazim Benchaita	ENG	D	-	-	23-11-08	-	None
+58	Oliver Mayer	ENG	G	-	-	09-06-08	-	None
+59	Aidan Evans	CAN	F	-	-	01-11-08	-	None
+60	Brodie Dair	SCO	F	-	-	01-06-08	-	St Johnstone
+61	Tarrell Cavell	ENG	F	-	-	-	-	None
+62	Markuss Gomins	LVA	M	-	-	09-09-08	-	None
+64	Ruban Khan	SCO	M	-	-	08-04-08	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+18	Andreas Pereira	BRA	M	1.77	66	01-01-96	Duffel	Palmeiras
+27	Martial Godo	ENG	M	1.69	61	14-03-03	Greenwich	Strasbourg
+45	Chibby Nwoko	ENG	M	-	-	05-12-05	-	Forest Green R (On Loan)
+41	Terrell Works	ENG	F	-	-	26-12-04	Wandsworth	Yeovil T (On Loan)
+39	Aaron Loupalo-Bi	ENG	F	-	-	07-11-05	Lambeth	Walsall (On Loan)
+11	Adama Traoré	ESP	F	1.78	76	25-01-96	L'Hospitalet de Llobregat	West Ham U
+
+Leeds United
+Official Name: Leeds United Association Football Club
+Formed: 1919  Ground: Elland Road (37,890)  Manager: Daniel Farke [GER]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Lucas Perri	BRA	G	1.96	95	10-12-97	Campinas	Lyon
+2	Jayden Bogle	ENG	D	1.78	69	27-07-00	Reading	Sheffield U
+3	Gabriel Gudmundsson	SWE	D	1.81	74	29-04-99	Malmö	Lille
+4	Ethan Ampadu	WAL	M	1.82	78	14-09-00	Exeter	Chelsea
+5	Pascal Struijk	NED	D	1.90	75	11-08-99	Deurne	Ajax
+6	Joe Rodon	WAL	D	1.90	76	22-10-97	Swansea	Tottenham H
+7	Daniel James	WAL	M	1.80	76	10-11-97	Kingston upon Hull	Manchester U
+8	Sean Longstaff	ENG	M	1.81	65	30-10-97	North Shields	Newcastle U
+9	Dominic Calvert-Lewin	ENG	F	1.76	64	16-03-97	Sheffield	Everton
+10	Joël Piroe	NED	F	1.81	74	02-08-99	Nijmegen	Swansea C
+11	Brenden Aaronson	USA	M	1.78	67	22-10-00	Medford	Red Bull Salzburg
+12								
+13								
+14	Lukas Nmecha	GER	F	1.85	80	12-12-98	Hamburg	Wolfsburg
+15	Jaka Bijol	SVN	D	1.90	85	05-02-99	Vuzenica	Udinese
+16	Illan Meslier	FRA	G	1.96	74	02-03-00	Lorient	Lorient
+17								
+18	Anton Stach	GER	M	1.92	81	15-11-98	Buchholz in der Nordheide	1899 Hoffenheim
+19	Noah Okafor	SUI	F	1.85	85	24-05-00	Binningen	Milan
+20								
+21	Alex Cairns	ENG	G	1.83	72	04-01-93	Doncaster	Salford C
+22	Ao Tanaka	JPN	M	1.78	66	10-09-98	Kawasaki	Fortuna Düsseldorf
+23	Sebastiaan Bornauw	BEL	D	1.90	81	22-03-99	Wemmel	Wolfsburg
+24	James Justin	ENG	D	1.83	71	11-07-97	Luton	Leicester C
+25	Sam Byram	ENG	D	1.80	72	16-09-93	Thurrock	Norwich C
+26	Karl Darlow	WAL	G	1.85	79	08-10-90	Northampton	Newcastle U
+27								
+28								
+29	Wilfried Gnonto	ITA	F	1.70	72	05-11-03	Verbania	Zürich
+30								
+31								
+32								
+33								
+34								
+35								
+36								
+37								
+38								
+39								
+40	Facundo Buonanotte	ARG	M	1.74	66	23-12-04	Pérez	Brighton & HA
+42	Sam Chambers	SCO	M	-	-	18-08-07	-	None
+44	Ilia Gruev	BUL	M	1.85	72	06-05-00	Sofia	Werder Bremen
+47	Rhys Chadwick	ENG	M	-	-	19-02-07	-	None
+51	Alfie Cresswell	ENG	D	-	-	14-07-07	-	None
+52	Connor Douglas	ENG	M	-	-	08-10-05	Leeds	None
+55	Josh McDonald	SCO	M	-	-	06-03-07	Coatbridge	Hamilton Academical
+56	Darryl Ombang	ENG	G	-	-	11-07-05	Leeds	Bradford C
+57	Coban Bird	ENG	D	-	-	05-11-06	Pontefract	None
+58	Robbie Cook	AUS	G	-	-	27-01-07	-	Perth Glory
+59	Lewis Pirie	SCO	F	-	-	28-01-07	-	Aberdeen
+60	Harvey Vincent	ENG	F	-	-	20-03-07	-	None
+61	Marley Wilson	ENG	F	-	-	07-11-05	Leeds	None
+62	Louis Enahoro-Marcus	ENG	D	-	-	06-09-06	Benin City	Liverpool
+63	Alex Baird	ENG	G	-	-	01-08-07	-	None
+65	Jayden Lienou	WAL	D	-	-	08-04-08	Wigan	Manchester C
+70	Devon Brockie	SCO	M	-	-	10-03-07	-	None
+71	Louie Dudley	ENG	D	-	-	13-11-07	-	None
+72	Will Firth	AUS	D	-	-	11-09-07	-	None
+73	Joshua Hamilton	ENG	D	-	-	14-09-07	-	None
+74	George Kenyon	ENG	G	-	-	23-03-08	-	None
+75	Freddie Lane	ENG	M	-	-	24-09-07	-	None
+78	Oliver Pickles	ENG	M	-	-	11-10-07	-	None
+79	Jacob Render	ENG	M	-	-	20-03-08	-	None
+86	Jacob Howard	ENG	D	-	-	29-03-09	-	None
+88	Kenneth Mensah	ITA	M	-	-	05-01-09	-	None
+89	Callum Mills	ENG	M	-	-	19-09-08	-	None
+90	Carrick Njinko	ENG	F	-	-	-	-	None
+91	Louie Philpott	ENG	D	-	-	26-08-09	-	None
+93	Logan White	ENG	F	-	-	21-09-08	-	None
+94	Loui Whitehead	ENG	M	-	-	05-12-08	-	None
+95	Oliver Wood	ENG	G	-	-	-	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+17	Largie Ramazani	BEL	F	1.67	55	27-02-01	Sint-Agatha-Berchem	Valencia (On Loan)
+33	Isaac Schmidt	SUI	D	1.72	68	07-12-99	Lausanne	Werder Bremen (On Loan)
+48	Rory Mahady	SCO	G	-	-	16-08-06	-	Scunthorpe U (On Loan)
+45	Harry Gray	ENG	F	-	-	08-10-08	-	Rotherham U (On Loan)
+20	Jack Harrison	ENG	M	1.75	71	20-11-96	Stoke-on-Trent	Fiorentina (On Loan)
+53	Reuben Lopata-White	ENG	D	-	-	26-09-05	Bradford	Greenock Morton (On Loan)
+
+
+Liverpool
+Official Name: Liverpool Football Club
+Formed: 1892  Ground: Anfield (61,276)  Manager: Arne Slot [NED]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Alisson Becker	BRA	G	1.91	91	02-10-92	Novo Hamburgo	Roma
+2	Joe Gomez	ENG	D	1.88	77	23-05-97	Catford	Charlton Ath
+3	Wataru Endo	JPN	M	1.76	73	09-02-93	Yokohama	Stuttgart
+4	Virgil van Dijk	NED	D	1.93	92	08-07-91	Breda	Southampton
+5	Ibrahima Konaté	FRA	D	1.93	84	25-05-99	Paris	RB Leipzig
+6	Milos Kerkez	HUN	D	1.76	71	07-11-03	Vrbas	Bournemouth
+7	Florian Wirtz	GER	M	1.75	68	03-05-03	Pulheim	Bayer Leverkusen
+8	Dominik Szoboszlai	HUN	M	1.86	70	25-10-00	Budapest	RB Leipzig
+9	Alexander Isak	SWE	F	1.90	70	21-09-99	Solna	Newcastle U
+10	Alexis Mac Allister	ARG	M	1.74	72	24-12-98	La Pampa	Brighton & HA
+11	Mohamed Salah	EGY	F	1.75	72	15-06-92	Basyoun	Roma
+12	Conor Bradley	NIR	D	1.81	71	09-07-03	Castlederg	Dungannon Swifts
+13								
+14	Federico Chiesa	ITA	F	1.75	70	25-10-97	Genoa	Juventus
+15	Giovanni Leoni	ITA	D	1.93	76	21-12-06	Rome	Parma
+16								
+17	Curtis Jones	ENG	M	1.85	72	30-01-01	Liverpool	None
+18	Cody Gakpo	NED	F	1.79	64	07-05-99	Eindhoven	PSV Eindhoven
+19								
+20								
+21								
+22	Hugo Ekitike	FRA	F	1.89	70	20-06-02	Reims	Eintracht Frankfurt
+23								
+24								
+25	Giorgi Mamardashvili	GEO	G	1.99	86	29-09-00	Tbilisi	Valencia
+26	Andrew Robertson	SCO	D	1.78	63	11-03-94	Glasgow	Hull C
+27								
+28	Freddie Woodman	ENG	G	1.86	69	04-03-97	Croydon	Preston NE
+29								
+30	Jeremie Frimpong	NED	D	1.75	66	10-12-00	Amsterdam	Bayer Leverkusen
+31								
+32								
+33								
+34								
+35								
+36								
+37								
+38	Ryan Gravenberch	NED	M	1.87	75	16-05-02	Amsterdam	Bayern Munich
+39								
+40								
+41	Ármin Pécsi	HUN	G	1.83	75	24-02-05	Hainburg an der Donau	Puskás Akadémia
+42	Trey Nyoni	ENG	M	1.80	75	30-06-07	Leicester	Leicester C
+43	Stefan Bajčetić	ESP	M	1.85	77	22-10-04	Vigo	Celta Vigo
+46	Rhys Williams	ENG	D	1.96	82	03-02-01	Preston	None
+47	Calvin Ramsay	SCO	D	1.77	63	31-07-03	Aberdeen	Aberdeen
+49	Kaide Gordon	ENG	F	-	-	05-10-04	Burton upon Trent	Derby Co
+53	James McConnell	ENG	M	1.80	72	13-09-04	Newcastle upon Tyne	Sunderland
+57	Carter Pinnington	ENG	D	-	-	21-02-07	-	None
+59	Terence Miles	ENG	D	-	-	12-09-04	Liverpool	None
+61	Kyle Kelly	SKN	M	-	-	16-10-05	Northampton	None
+62	Joe Bradshaw	ENG	M	-	-	17-06-08	Bolton	Accrington Stanley
+64	Keyrol Figueroa	USA	F	-	-	31-08-06	Tegucigalpa	FC Dallas
+65	Amara Nallo	ENG	D	-	-	18-11-06	Enfield	West Ham U
+68	Kieran Morrison	NIR	M	-	-	09-11-06	-	None
+69	Josh Davidson	ENG	D	-	-	23-09-05	Liverpool	None
+70	Tommy Pilling	ENG	F	-	-	14-09-04	St Helens	None
+71	Jay Spearing	ENG	M	1.68	70	25-11-88	Wirral	Tranmere R
+73	Rio Ngumoha	ENG	F	1.70	75	29-08-08	Newham	Chelsea
+74	Kornel Miściur	POL	G	-	-	27-04-07	Scarborough	Hull C
+76	Jayden Danns	ENG	F	-	-	16-01-06	Liverpool	None
+79	Will Wright	ENG	F	-	-	01-01-08	Preston	Salford C
+80	Bailey Hall-MacDonald	ENG	G	-	-	01-09-07	Sunderland	None
+81	Kareem Ahmed	EGY	F	-	-	17-02-07	-	None
+82	Josh Sonni-Lambie	ENG	F	-	-	16-11-07	-	None
+88	Lucas Pitt	ENG	D	-	-	31-10-06	-	None
+90	Emmanuel Airoboma	ENG	D	-	-	15-05-07	-	None
+91	Ben Trueman	ENG	M	-	-	14-09-06	Whiston	None
+92	Wellity Lucky	ESP	D	-	-	12-01-06	Zaragoza	None
+94	Michael Laffey	ENG	M	-	-	11-10-05	Fazakerley	None
+95	Harvey Davies	ENG	G	1.90	80	03-09-03	Liverpool	None
+99	Fola Onanuga	ENG	M	-	-	01-09-06	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+50	Ben Gannon-Doak	SCO	M	1.76	64	11-11-05	Dalry	Bournemouth
+21	Kostas Tsimikas	GRE	D	1.77	70	12-05-96	Thessaloniki	Roma (On Loan)
+19	Harvey Elliott	ENG	M	1.70	67	04-04-03	Chertsey	Aston Villa (On Loan)
+67	Lewis Koumas	WAL	M	-	-	19-09-05	Chester	Hull C (On Loan)
+48	Calum Scanlon	ENG	D	-	-	14-02-05	Birmingham	Cardiff C (On Loan)
+51	Trent Koné-Doherty	IRL	F	1.75	65	30-06-06	Derry	Molde
+93	Fabian Mrozek	POL	G	1.92	87	28-09-03	Wrocław	FC Cincinnati (On Loan)
+
+
+Manchester City
+Official Name: Manchester City Football Club
+Formed: 1887  Ground: Etihad Stadium (52,900)  Manager: Josep Guardiola [ESP]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	James Trafford	ENG	G	1.97	83	10-10-02	Carlisle	Burnley
+2								
+3	Rúben Dias	POR	D	1.87	82	14-05-97	Amadora	Benfica
+4	Tijjani Reijnders	NED	M	1.78	65	29-07-98	Zwolle	Milan
+5	John Stones	ENG	D	1.88	70	28-05-94	Barnsley	Everton
+6	Nathan Aké	NED	D	1.80	75	18-02-95	Den Haag	Bournemouth
+7	Omar Marmoush	EGY	F	1.77	73	07-02-99	Cairo	Eintracht Frankfurt
+8	Mateo Kovačić	CRO	M	1.81	75	06-05-94	Linz	Chelsea
+9	Erling Håland	NOR	F	1.91	87	21-07-00	Leeds	Borussia Dortmund
+10	Rayan Cherki	FRA	M	1.77	71	17-08-03	Lyon	Lyon
+11	Jérémy Doku	BEL	M	1.79	68	27-05-02	Borgerhout	Rennes
+12								
+13	Marcus Bettinelli	ENG	G	1.94	82	24-05-92	Camberwell	Chelsea
+14	Nico González	ESP	M	1.88	86	03-01-02	La Coruña	FC Porto
+15	Marc Guéhi	ENG	D	1.82	82	13-07-00	Abidjan	Crystal Palace
+16	Rodri	ESP	M	1.90	78	22-06-96	Madrid	Atlético Madrid
+17								
+18								
+19								
+20	Bernardo Silva	POR	M	1.73	62	10-08-94	Lisbon	Monaco
+21	Rayan Aït-Nouri	ALG	D	1.79	70	06-06-01	Montreuil	Wolverhampton W
+22								
+23								
+24	Joško Gvardiol	CRO	D	1.85	82	23-01-02	Zagreb	RB Leipzig
+25	Gianluigi Donnarumma	ITA	G	1.96	90	25-02-99	Castellammare di Stabia	Paris St-Germain
+26	Savinho	BRA	M	1.76	71	10-04-04	São Mateus	Troyes
+27	Matheus Nunes	POR	M	1.83	74	27-08-98	Rio de Janeiro	Wolverhampton W
+28								
+29								
+30								
+31								
+32								
+33	Nico O'Reilly	ENG	M	1.93	77	21-03-05	Manchester	None
+34								
+35								
+36								
+37								
+38								
+39								
+40								
+41	Sverre Nypan	NOR	M	1.83	70	19-12-06	Trondheim	Rosenborg
+42	Antoine Semenyo	GHA	F	1.78	63	07-01-00	Chelsea	Bournemouth
+45	Abdukodir Khusanov	UZB	D	1.86	84	29-02-04	Tashkent	Lens
+46	Christian McFarlane	ENG	D	1.83	63	25-01-07	Basildon	New York C
+47	Phil Foden	ENG	M	1.71	70	28-05-00	Stockport	None
+48	Brooklyn Nfonkeu	ENG	F	-	-	01-07-07	Leeds	Leeds U
+53	Ezra Carrington	ENG	D	-	-	16-12-05	Manchester	None
+55	Harrison Parker	ENG	D	-	-	22-09-06	Havering	Manchester U
+56	Ryan McAidoo	ENG	F	-	-	24-06-08	London	Chelsea
+59	Charlie Gray	ENG	M	-	-	22-02-06	Manchester	None
+60	Femi Fapetu	ENG	M	-	-	04-08-07	Stoke-on-Trent	Arsenal
+61	Kaden Braithwaite	ENG	D	-	-	25-03-08	-	None
+62	Ashton Muir	ENG	F	-	-	08-12-05	Manchester	None
+64	Isaiah Dada-Mascoll	ENG	M	-	-	24-05-06	Manchester	None
+68	Max Alleyne	ENG	D	-	-	21-07-05	Bristol	Southampton
+69	Max Hudson	WAL	G	-	-	20-09-07	Wrexham	None
+71	Mahamadou Sangaré	FRA	F	1.77	72	06-03-07	Dionkoulané	Paris St-Germain
+75	Floyd Samba	ENG	M	-	-	15-01-09	Macclesfield	None
+79	Luke Mbete-Tabu	ENG	D	-	-	18-09-03	Westminster	None
+80	Spike Brits	ENG	G	-	-	24-06-07	Wimbledon	AFC Wimbledon
+82	Rico Lewis	ENG	D	1.70	64	21-11-04	Manchester	None
+84	Jack Wint	ENG	G	-	-	08-10-06	Cheadle	None
+88	Dante Headley	ENG	D	-	-	18-09-08	Manchester	None
+89	Matty Henderson-Hall	ENG	D	-	-	08-12-06	Bradford	None
+90	Kian Noble	ENG	D	-	-	26-02-07	-	None
+92	Reigan Heskey	ENG	F	-	-	19-01-08	-	None
+93	Christian Dunbar-McDonald	ENG	F	-	-	29-10-07	-	Reading
+97	Tyrone Samba	FRA	F	-	-	31-12-07	Macclesfield	None
+98	Matty Warhurst	ENG	F	-	-	25-09-06	Stalybridge	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+67	Divin Mubama	ENG	F	-	-	25-10-04	Newham	Stoke C (On Loan)
+94	Finley Burns	ENG	D	1.85	71	17-06-03	Southwark	Reading (On Loan)
+72	Oliver Whatmuff	ENG	G	-	-	06-11-07	Lancaster	Rochdale (On Loan)
+87	James McAtee	ENG	M	1.80	72	18-10-02	Salford	Nottingham F
+88	True Grant	ENG	G	-	-	02-11-05	Manchester	Stoke C
+25	Manuel Akanji	SUI	D	1.87	85	19-07-95	Winterthur	Internazionale (On Loan)
+65	Will Dickson	ENG	F	-	-	25-11-04	Liverpool	Chesterfield
+78	Issa Kaboré	BFA	D	1.80	70	12-05-01	Bobo-Dioulasso	Wrexham (On Loan)
+85	Farid Alfa-Ruprecht	GER	F	1.81	75	28-03-06	Hamburg	Bochum (On Loan)
+95	Lakyle Samuel	ENG	D	-	-	06-05-06	Manchester	Bromley (On Loan)
+19	İlkay Gündoğan	GER	M	1.80	80	24-10-90	Gelsenkirchen	Galatasaray
+31	Ederson	BRA	G	1.88	89	17-08-93	Osasco	Fenerbahçe
+57	Michael Okeke	HUN	M	1.85	78	16-10-05	Manchester	Puskás Akadémia
+97	Josh Wilson-Esbrand	ENG	D	1.76	63	26-12-02	Hackney	Radomiak Radom (On Loan)
+58	Alex Alcalá	MEX	M	1.70	68	20-10-05	Stockton, CA	Querétaro
+66	Jahmai Simpson-Pusey	ENG	D	1.87	70	04-11-05	Huddersfield	Köln (On Loan)
+99	Emilio Lawrence	ENG	F	-	-	20-09-05	Manchester	Luton T (On Loan)
+74	Tomas Galvez	FIN	D	-	-	28-01-05	Watford	SC Cambuur (On Loan)
+70	Jadel Katongo	ENG	D	-	-	14-09-04	Manchester	Kayserispor
+81	Jaden Heskey	ENG	F	-	-	17-12-05	Manchester	Sheffield W (On Loan)
+30	Claudio Echeverri	ARG	M	1.70	65	02-01-06	Resistencia	Girona (On Loan)
+54	Sebastian Naylor	ENG	D	-	-	10-09-05	Manchester	Bristol C
+52	Oscar Bobb	NOR	M	1.74	70	12-07-03	Oslo	Fulham
+91	Stephen Mfuni	ENG	D	-	-	12-02-08	Wigan	Watford (On Loan)
+18	Stefan Ortega	GER	G	1.83	84	06-11-92	Hofgeismar	Nottingham F
+76	Mahamadou Susoho	ESP	M	-	-	20-01-05	Granollers	Kocaelispor
+44	Kalvin Phillips	ENG	M	1.77	72	02-12-95	Leeds	Sheffield U (On Loan)
+63	Divine Mukasa	ENG	M	-	-	22-08-07	London	Leicester C (On Loan)
+73	Joel Ndala	ENG	F	-	-	31-05-06	Manchester	Sheffield W (On Loan)
+77	Justin Oboavwoduo	ENG	F	-	-	23-08-06	Manchester	Juventus Next Gen
+50	Kian Breckin	ENG	M	-	-	10-12-03	Manchester	Altrincham
+51	Isaac Smith	ENG	D	-	-	26-07-05	Liverpool	Barnsley (On Loan)
+
+Manchester United
+Official Name: Manchester United Football Club
+Formed: 1878  Ground: Old Trafford (74,031)  Manager: Michael Carrick [ENG]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Altay Bayındır	TUR	G	1.98	89	14-04-98	Osmangazi	Fenerbahçe
+2	Diogo Dalot	POR	D	1.84	75	18-03-99	Braga	FC Porto
+3	Noussair Mazraoui	MAR	D	1.78	63	14-11-97	Leiderdorp	Bayern Munich
+4	Matthijs de Ligt	NED	D	1.87	80	12-08-99	Leiderdorp	Bayern Munich
+5	Harry Maguire	ENG	D	1.88	79	05-03-93	Sheffield	Leicester C
+6	Lisandro Martínez	ARG	D	1.78	77	18-01-98	Gualeguay	Ajax
+7	Mason Mount	ENG	M	1.78	64	10-01-99	Portsmouth	Chelsea
+8	Bruno Fernandes	POR	M	1.79	75	08-09-94	Maia	Sporting CP
+9	 	 	 	 	 	 	 	 
+10	Matheus Cunha	BRA	F	1.84	75	27-05-99	João Pessoa	Wolverhampton W
+11	Joshua Zirkzee	NED	F	1.93	84	22-05-01	Schiedam	Bologna
+12	Tyrell Malacia	NED	D	1.69	67	17-08-99	Rotterdam	Feyenoord
+13	Patrick Dorgu	DEN	D	1.75	55	26-10-04	Copenhagen	Lecce
+14	 	 	 	 	 	 	 	 
+15	Leny Yoro	FRA	D	1.90	73	13-11-05	Saint-Maurice	Lille
+16	Amad Diallo	CIV	M	1.73	70	11-07-02	Abidjan	Atalanta
+17	 	 	 	 	 	 	 	 
+18	Casemiro	BRA	M	1.85	84	23-02-92	São José dos Campos	Real Madrid
+19	Bryan Mbeumo	CMR	F	1.71	65	07-08-99	Avallon	Brentford
+20	 	 	 	 	 	 	 	 
+21								
+22	Thomas Heaton	ENG	G	1.88	85	15-04-86	Chester	Aston Villa
+23	Luke Shaw	ENG	D	1.85	75	12-07-95	Kingston upon Thames	Southampton
+24								
+25	Manuel Ugarte	URU	M	1.77	70	11-04-01	Montevideo	Paris St-Germain
+26	Ayden Heaven	ENG	D	-	-	22-09-06	Islington	Arsenal
+27								
+28								
+29								
+30	Benjamin Šeško	SVN	F	1.94	77	31-05-03	Radeče	RB Leipzig
+31	Senne Lammens	BEL	G	1.93	72	07-07-02	Zottegem	Royal Antwerp
+32	Chido Obi	DEN	F	1.88	76	29-12-07	Glostrup	Arsenal
+33	Tyler Fredricson	ENG	D	-	-	23-02-05	Stockport	None
+34	Elyh Harrison	ENG	G	-	-	19-02-06	Redbridge	Stevenage
+35	Diego León	PAR	D	1.77	82	03-04-07	Yguazú	Cerro Porteño
+36								
+37	Kobbie Mainoo	ENG	M	1.75	72	19-04-05	Stockport	None
+38	Jack Fletcher	ENG	M	-	-	19-03-07	Manchester	Manchester C
+39	Tyler Fletcher	SCO	M	-	-	19-03-07	Manchester	Manchester C
+40								
+45	Dermot Mee	NIR	G	-	-	20-11-02	Birmingham	None
+46	Sonny Aljofree	ENG	D	1.86	70	19-12-04	Plymouth	None
+48	Jack Moorhouse	ENG	M	-	-	29-11-05	Manchester	None
+49	Solomon Honor	ENG	G	-	-	08-06-06	-	Blackburn R
+50	Habeeb Ogunneye	ENG	D	-	-	12-11-05	Hackney	None
+54	Louis Jackson	SCO	D	-	-	18-09-05	Oldham	None
+55	Finley McAllister	ENG	M	-	-	16-07-06	Salford	None
+57	Malachi Sharpe	SCO	F	-	-	20-11-05	Nottingham	Derby Co
+58	Ashton Missin	ENG	F	-	-	15-08-06	Halifax	None
+61	Shea Lacey	ENG	M	-	-	14-04-07	-	None
+62	Jayce Fitzgerald	ENG	M	-	-	09-05-07	-	None
+63	William Murdock	NIR	G	-	-	26-05-07	-	None
+64	Victor Musa	ENG	F	-	-	05-09-06	Tudela	None
+65	Reece Munro	ENG	D	-	-	21-07-07	-	None
+66	Jaydan Kamason	ENG	D	-	-	08-12-06	Lambeth	None
+68	Kai Rooney	ENG	F	-	-	02-11-09	Liverpool	None
+69	Dante Plunkett	ENG	D	-	-	09-10-07	-	Aston Villa
+70	Bendito Mantato	ENG	M	-	-	25-01-08	-	None
+71	Albert Mills	ENG	D	-	-	28-02-08	Norwich	None
+72	Godwill Kukonki	ENG	D	-	-	06-02-08	Stoke-on-Trent	None
+73	Amir Ibragimov	ENG	F	-	-	02-04-08	Buynaksk	None
+74	James Bailey	ENG	M	-	-	29-12-07	-	None
+75	Dan Armer	ENG	D	-	-	22-10-07	-	Noe
+76	James Overy	SCO	D	-	-	09-11-07	-	Perth Glory
+77	Jim Thwaites	ENG	M	-	-	20-12-07	-	None
+78	Fred Heath	ENG	G	-	-	06-03-08	-	None
+79	Cameron Byrne-Hughes	WAL	G	-	-	02-11-07	-	None
+80	Samuel Lusale	SVK	F	-	-	07-09-07	Guildford	Crystal Palace
+81	Zac Watson	ENG	G	-	-	-	Harrogate	Doncaster R
+82	Jacob Watson	ENG	D	-	-	16-05-09	Chester	None
+83	Jariyah Shah	AUS	M	-	-	25-05-09	Canberra	Doncaster R
+84	Jayden Ngwashi	ENG	D	-	-	21-09-08	Stoke-on-Trent	None
+85	Jay McEvoy	IRL	M	-	-	16-10-08	-	None
+86	Rafe McCormack	ENG	D	-	-	14-12-08	Bradford	None
+87	Louie Kynaston-Bradbury	WAL	F	-	-	16-09-08	-	Shrewsbury T
+89	Yuel Helafu	ENG	D	-	-	02-09-08	Leeds	None
+90	Nathaniel-Junior Brown	ENG	F	-	-	18-12-08	-	None
+91	Neithan Barbosa	POR	F	-	-	06-12-08	Lisbon	Doncaster R
+92	Noah Ajayi	ENG	F	-	-	23-11-08	Hamburg	None
+93	Bassirou Nkoto Abdoulaye	ENG	M	-	-	27-09-10	-	None
+94	Douka Nkoto Abdoulaye	ENG	M	-	-	27-09-10	-	None
+95	JJ Gabriel	ENG	F	-	-	06-10-10	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+44	Daniel Gore	ENG	M	-	-	26-09-04	-	Rotherham U (On Loan)
+40	Radek Vítek	CZE	G	1.98	76	24-10-03	Vsetín	Bristol C (On Loan)
+17	Alejandro Garnacho	ARG	F	1.80	80	01-07-04	Madrid	Chelsea
+9	Rasmus Højlund	DEN	F	1.92	85	04-02-03	Copenhagen	Napoli (On Loan)
+21	Antony	BRA	F	1.72	63	24-02-00	Osasco	Betis
+49	Ethan Ennis	ENG	M	-	-	11-12-04	-	Fleetwood T (On Loan)
+56	Ethan Williams	ENG	M	-	-	14-11-05	Manchester	Falkirk (On Loan)
+68	Zachary Baumann	UKR	M	-	-	02-01-07	-	Norwich C
+24	André Onana	CMR	G	1.90	82	02-04-96	Nkol Ngok	Trabzonspor (On Loan)
+53	Sam Mather	ENG	F	-	-	03-09-04	Salford	Kayserispor
+41	Harry Amass	ENG	D	-	-	16-05-07	-	Norwich C (On Loan)
+43	Toby Collyer	ENG	M	-	-	03-01-04	Worthing	Hull C (On Loan)
+52	Joe Hugill	ENG	F	1.88	72	19-10-03	Durham	Kilmarnock
+51	Rhys Bennett	ENG	D	-	-	30-10-03	Manchester	Fleetwood T
+36	Ethan Wheatley	ENG	F	-	-	20-01-06	Stockport	Bradford C (On Loan)
+42	Sékou Koné	MLI	M	1.77	63	03-02-06	Bamako	Lausanne-Sport (On Loan)
+59	James Scanlon	GIB	M	-	-	28-09-06	-	Swindon T (On Loan)
+60	Gabriele Biancheri	WAL	F	-	-	18-09-06	Cardiff	Rotherham U (On Loan)
+67	Jacob Devaney	IRL	M	-	-	11-06-07	Barnsley	St Mirren (On Loan)
+88	Edward Ibrovic-Fletcher	SRB	M	-	-	26-09-08	Leeds	Leeds U
+
+Newcastle United
+Official Name: Newcastle United Football Club
+Formed: 1881  Ground: St James' Park (52,257)  Manager: Eddie Howe [ENG]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Nick Pope	ENG	G	1.91	76	19-04-92	Cambridge	Burnley
+2	Kieran Trippier	ENG	D	1.78	71	19-09-90	Bury	Atlético Madrid
+3	Lewis Hall	ENG	D	1.79	71	08-09-04	Slough	Chelsea
+4	Sven Botman	NED	D	1.95	83	12-01-00	Badhoevedorp	Lille
+5	Fabian Schär	SUI	D	1.88	84	20-12-91	Wil	Deportivo La Coruña
+6								
+7	Joelinton	BRA	F	1.90	76	14-08-96	Aliança	1899 Hoffenheim
+8	Sandro Tonali	ITA	M	1.81	80	08-05-00	Lodi	Milan
+9	Yoane Wissa	COD	F	1.76	73	03-09-96	Villeneuve-Saint-Georges	Brentford
+10	Anthony Gordon	ENG	M	1.73	62	24-02-01	Liverpool	Everton
+11	Harvey Barnes	ENG	M	1.74	66	09-12-97	Burnley	Leicester C
+12	Malick Thiaw	GER	D	1.94	89	08-08-01	Düsseldorf	Milan
+13								
+14								
+15								
+16								
+17	Emil Krafth	SWE	D	1.84	83	02-08-94	Stockholm	Amiens
+18	William Osula	DEN	F	1.91	81	04-08-03	Aarhus	Sheffield U
+19								
+20	Anthony Elanga	SWE	F	1.78	65	27-04-02	Hyllie	Nottingham F
+21	Tino Livramento	ENG	D	1.73	63	12-11-02	Croydon	Southampton
+22								
+23	Jacob Murphy	ENG	M	1.76	71	24-02-95	Wembley	Norwich C
+24								
+25								
+26	John Ruddy	ENG	G	1.96	97	24-10-86	St Ives	Birmingham C
+27	Nick Woltemade	GER	F	1.98	75	14-02-02	Bremen	Stuttgart
+28	Joe Willock	ENG	M	1.79	71	20-08-99	Waltham Forest	Arsenal
+29	Mark Gillespie	ENG	G	1.90	86	27-03-92	Newcastle upon Tyne	Motherwell
+30								
+31								
+32	Aaron Ramsdale	ENG	G	1.88	77	14-05-98	Stoke-on-Trent	Southampton
+33	Dan Burn	ENG	D	1.98	83	09-05-92	Blyth	Brighton & HA
+34								
+35	James Taylor	ENG	G	-	-	11-07-06	Kettering	Hemel Hempstead T
+36								
+37	Alex Murphy	IRL	D	-	-	25-06-04	Galway	Galway U
+38								
+39	Bruno Guimarães	BRA	M	1.82	74	16-11-97	Rio de Janeiro	Lyon
+40								
+41	Jacob Ramsey	ENG	M	1.66	61	28-05-01	Birmingham	Aston Villa
+42	Ciaran Thompson	ENG	D	-	-	17-10-04	North Shields	None
+44	Alfie Harrison	ENG	M	-	-	28-11-05	Manchester	Manchester C
+46	Scott Bailey	ENG	M	-	-	22-01-06	Durham	None
+47	Dylan Charlton	ENG	D	-	-	02-07-06	Gateshead	None
+48	Johnny Emerson	SCO	F	-	-	30-11-05	Carlisle	None
+49	Darren Palmer	ENG	M	-	-	24-09-05	South Shields	None
+51	Kyle Fitzgerald	IRL	F	-	-	28-01-07	-	Galway U
+52	Baran Yıldız	TUR	M	-	-	02-01-07	Ankara	Gençlerbirliği
+53	Fraser Harper	ENG	F	-	-	02-10-06	Bristol	Wolverhampton W
+54	Anthony Munda	ENG	M	-	-	08-09-06	Newcastle upon Tyne	None
+55	Joe Brayson	ENG	M	-	-	21-04-07	Newcastle upon Tyne	None
+56	Thomas Bryant	ENG	D	-	-	11-12-06	Newcastle upon Tyne	None
+57	Luke Craggs	ENG	D	-	-	14-07-07	Gateshead	None
+59	Adam Harrison	ENG	G	-	-	20-10-06	Newcastle upon Tyne	None
+61	Leo Shahar	ENG	D	-	-	18-03-07	-	Wolverhampton W
+62	Sean Neave	ENG	F	-	-	27-05-07	Newcastle upon Tyne	None
+63	Logan Watts	ENG	D	-	-	22-01-07	-	None
+64	Park Seung-soo	KOR	F	1.83	62	17-03-07	Seoul	Suwon Samsung Bluewings
+65	Miodrag Pivaš	SRB	D	1.88	80	17-05-05	Novi Sad	Jedinstvo Ub
+66	Isaac Moran	ENG	D	-	-	14-03-09	Liverpool	Liverpool
+67	Lewis Miley	ENG	M	-	-	01-05-06	Gateshead	None
+68	Oliver Goodbrand	SCO	D	-	-	09-02-09	Wishaw	Rangers
+69	Alfie Hutchinson	SCO	D	-	-	22-01-09	Kirkcaldy	Rangers
+70	Will Anderson	ENG	G	-	-	15-07-08	Newcastle upon Tyne	None
+71	Guy Bloomer	ENG	M	-	-	13-09-07	Hexham	None
+72	Jude Cogdon	ENG	M	-	-	19-12-07	Sunderland	None
+73	Jake Durrant	ENG	D	-	-	04-02-08	Newcastle upon Tyne	None
+74	Matheos Ferreira	ENG	F	-	-	02-08-08	Ashington	None
+75	Henry Johnson	ENG	D	-	-	01-01-08	Sunderland	None
+76	Tyler Jones	ENG	G	-	-	18-04-08	Durham	None
+77	Alex O'Donovan	ENG	M	-	-	03-10-07	South Shields	None
+78	Rory Finneran	IRL	M	-	-	29-02-08	-	Blackburn R
+79	Matthew Taylor	ENG	M	-	-	31-03-08	Sunderland	None
+80	Mo Waddani	LBY	F	-	-	07-11-07	Tripoli	None
+81	Kacey Wooster	ENG	F	-	-	04-04-08	Stockton-on-Tees	Southend U
+82	Aaron Epia	ENG	D	-	-	07-04-08	Manchester	Everton
+83	Ezra Tika-Lemba	ENG	D	-	-	07-11-07	London	West Ham U
+84	Kayden Lucas	ENG	F	-	-	30-10-07	Bristol	Clevedon T
+85	Sam Alabi	ENG	M	-	-	09-07-09	Manchester	Oldham Ath
+86	Luke Gilligan	ENG	M	-	-	14-12-08	Stockton-on-Tees	None
+87	Oliver Holland	ENG	G	-	-	03-01-09	Newcastle upon Tyne	None
+88	Mason Miley	ENG	M	-	-	29-09-08	Durham	None
+89	Michael Mills	ENG	M	-	-	18-02-09	Manchester	Port Vale
+90	Noah Morgan	ENG	D	-	-	06-10-08	MIddlesbrough	None
+91	Ethan Ndiweni	ENG	F	-	-	19-09-08	Newcastle upon Tyne	None
+92	Thomas Old	ENG	D	-	-	19-09-08	Gateshead	None
+93	Jack Patterson	ENG	M	-	-	19-09-08	Newcastle upon Tyne	None
+94	Sam Pinnington	ENG	F	-	-	17-11-08	Harpenden	Luton T
+95	Jack Callaghan	ENG	D	-	-	-	-	None
+96	George Mair	ENG	G	-	-	28-09-09	Darlington	None
+97	Roman Dowell	ENG	G	-	-	03-12-09	-	None
+98	Alfie Seddon	ENG	F	-	-	20-10-09	Sunderland	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+58	Aidan Harris	ENG	G	-	-	16-12-06	Sunderland	Coleraine (On Loan)
+41	Ben Parkinson	ENG	F	-	-	10-03-05	Newcastle upon Tyne	Re-Registered (40)
+13	Matt Targett	ENG	D	1.83	70	18-09-95	Eastleigh	Middlesbrough (On Loan)
+34	Garang Kuol	AUS	F	1.75	68	15-09-04	Refugee Camp [EGY]	Sparta Prague
+14	Alexander Isak	SWE	F	1.90	70	21-09-99	Solna	Liverpool
+60	Trevan Sanusi	ENG	F	-	-	25-04-07	-	Lorient (On Loan)
+45	Travis Hernes	NOR	M	1.79	72	04-11-05	Heradsbygd	FC Groningen (On Loan)
+40	Ben Parkinson	ENG	F	-	-	10-03-05	Newcastle upon Tyne	Falkirk
+30	Harrison Ashby	SCO	D	1.79	72	14-11-01	Milton Keynes	Bradford C (On Loan)
+38	Cathal Heffernan	IRL	D	-	-	27-04-05	Cork	Harrogate T
+43	Charlie McArthur	SCO	M	-	-	12-05-05	Irvine	Airdrieonians (On Loan)
+31	Max Thompson	ENG	G	-	-	01-08-04	Newcastle upon Tyne	Ayr U (On Loan)
+6	Jamaal Lascelles	ENG	D	1.88	83	11-12-93	Derby	Leicester C
+
+
+Nottingham Forest
+Official Name: Nottingham Forest Football Club
+Formed: 1865  Ground: City Ground (30,404)  Manager: Vitor Pereira [POR]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1								
+2								
+3	Neco Williams	WAL	D	1.83	76	13-04-01	Wrexham	Liverpool
+4	Morato	BRA	D	1.90	86	30-06-01	Francisco Morato	Benfica
+5	Murillo	BRA	D	1.82	73	04-07-02	São Paulo	Corinthians
+6	Ibrahim Sangaré	CIV	M	1.91	77	02-12-97	Abidjan	PSV Eindhoven
+7	Callum Hudson-Odoi	ENG	M	1.77	75	07-11-00	Wandsworth	Chelsea
+8	Elliot Anderson	ENG	M	1.75	63	06-11-02	North Shields	Newcastle U
+9	Taiwo Awoniyi	NGA	F	1.78	71	12-08-97	Ilorin	Union Berlin
+10	Morgan Gibbs-White	ENG	M	1.78	60	27-01-00	Stafford	Wolverhampton W
+11	Chris Wood	NZL	F	1.91	91	07-12-91	Auckland	Newcastle U
+12								
+13	John	BRA	G	1.96	83	13-02-96	Diadema	Botafogo
+14	Dan Ndoye	SUI	F	1.84	79	25-10-00	Nyon	Bologna
+15								
+16	Nicolás Domínguez	ARG	M	1.79	73	28-06-98	Haedo	Bologna
+17	Eric da Silva Moreira	GER	D	1.84	82	03-05-06	Hamburg	St Pauli
+18	Angus Gunn	SCO	G	1.96	77	22-01-96	Bolton	Norwich C
+19	Igor Jesus	BRA	F	1.80	75	25-02-01	Cuiabá	Botafogo
+20	Lorenzo Lucca	ITA	F	2.01	80	10-09-00	Moncalieri	Napoli
+21	Omari Hutchinson	ENG	M	1.74	66	29-10-03	Redhill	Ipswich T
+22	Ryan Yates	ENG	M	1.90	77	21-11-97	Nottingham	None
+23	Jair Cunha	BRA	D	1.98	87	07-03-05	Orlândia	Botafogo
+24	James McAtee	ENG	M	1.80	72	18-10-02	Salford	Manchester C
+25	Luca Netz	GER	D	1.80	74	15-05-03	Buch	B Mönchengladbach
+26	Matz Sels	BEL	G	1.88	75	26-02-92	Lint	Strasbourg
+27	Stefan Ortega	GER	G	1.83	84	06-11-92	Hofgeismar	Manchester C
+28								
+29	Dilane Bakwa	FRA	F	1.79	76	26-08-02	Créteil	Strasbourg
+30	Willy Boly	CIV	D	1.85	81	03-02-91	Melun	Wolverhampton W
+31	Nikola Milenković	SRB	D	1.95	92	12-10-97	Belgrade	Fiorentina
+32								
+33								
+34	Ola Aina	NGA	D	1.84	82	08-10-96	Southwark	Torino
+35								
+36								
+37	Nicolò Savona	ITA	D	1.87	75	19-03-03	Aosta	Juventus
+38								
+39								
+40								
+44	Zach Abbott	ENG	D	-	-	13-05-06	-	None
+45	Lamin Sillah	GAM	F	-	-	06-06-06	-	Olympiakos
+46	Cherif Yaya	BEN	M	-	-	19-11-06	-	Rio Ave
+47	Luke Campbell	ENG	G	-	-	27-11-05	Slough	Chelsea
+51	Archie Whitehall	ENG	M	-	-	21-05-06	Nottingham	None
+57	Blaine McClure	NIR	M	-	-	05-02-07	Belfast	Rangers
+60	Jamie Newton	SCO	D	-	-	22-07-05	-	Rangers
+61	Jimmy Sinclair	ENG	D	-	-	11-08-06	Nottingham	None
+62	Danni Anisjko	LVA	F	-	-	11-01-06	-	None
+63	Aaron Bott	ENG	G	-	-	06-09-04	Mansfield	None
+65	Justin Hanks	WAL	D	-	-	01-09-04	Slough	None
+67	Keehan Willows	ENG	G	-	-	01-10-05	Nottingham	None
+68	Kristian Clarke	ENG	M	-	-	02-11-06	-	None
+70	Alfie Bradshaw	ENG	M	-	-	12-09-06	-	None
+71	David Modupe	ENG	D	-	-	23-09-06	-	None
+72	Cormac Daly	SCO	M	-	-	17-03-07	-	Hamilton Academical
+73	Fuad Smith	ENG	M	-	-	13-12-07	-	None
+74	Jayden Powell	ENG	F	-	-	12-09-07	-	None
+76	Buba Sanneh	ENG	D	-	-	03-11-07	-	None
+77	Zyan Blake	ENG	F	-	-	13-11-07	-	None
+79	Evan Boulter	NIR	M	-	-	16-08-08	-	None
+84	Jonathan Whiteley	ENG	D	-	-	25-02-08	-	None
+85	Jordan Willows	ENG	M	-	-	16-12-08	-	None
+87	Taeneal Brandy	ENG	F	-	-	17-09-07	-	None
+88	Will Thompson	ENG	D	-	-	23-11-07	-	None
+89	Zac Smith	ENG	G	-	-	14-11-07	-	None
+90	Shakur Samuels	ENG	D	-	-	31-08-09	-	None
+92	Eleazar Lokote	ENG	M	-	-	14-10-08	-	None
+93	Chinaza Nwosu	ENG	M	-	-	17-05-08	-	West Ham U
+94	Harvey Andrews	ENG	D	-	-	25-01-09	-	None
+95	Joe Bailey	ENG	G	-	-	17-10-08	-	None
+96	Kalum Thompson	NIR	M	-	-	27-09-08	Carrickfergus	Linfield
+97	Kanye Bradshaw	ENG	F	-	-	19-01-09	-	None
+98	Riko Robinson	ENG	M	-	-	29-10-08	-	None
+99	Spencer Sutton	ENG	D	-	-	03-04-09	-	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+33	Carlos Miguel	BRA	G	2.04	72	09-10-98	Rio de Janeiro	Palmeiras
+32	Marko Stamenić	NZL	M	1.88	78	19-02-02	Wellington	Swansea C
+36	David Carmo	ANG	D	1.96	82	19-07-99	Aveiro	Oviedo (On Loan)
+27	Omar Richards	ENG	D	1.85	69	15-02-98	Lewisham	Rio Ave (On Loan)
+20	Jota Silva	POR	F	1.79	73	01-08-99	Gondomar	Beşiktaş (On Loan)
+15	Arnaud Kalimuendo	FRA	F	1.75	63	20-01-02	Suresnes	Eintracht Frankfurt (On Loan)
+50	Adam Berry	ENG	M	-	-	09-01-06	Ashton-under-Lyne	Al-Kholood
+12	Douglas Luiz	BRA	M	1.78	65	09-05-98	Rio de Janeiro	Juventus
+58	Jack Thompson	WAL	D	-	-	05-05-05	Mansfield	Barrow (On Loan)
+35	Oleksandr Zinchenko	UKR	D	1.75	61	15-12-96	Illichivsk	Arsenal
+64	Ben Hammond	WAL	D	-	-	01-07-04	-	Northampton T (On Loan)
+82	Isaac Davies	WAL	M	-	-	15-09-07	-	Cardiff C
+33	Cuiabano	BRA	D	1.79	82	16-02-03	Cuiabá	Vasco da Gama (On Loan)
+
+Sunderland
+Official Name: Sunderland Association Football Club
+Formed: 1879  Ground: Sunderland Stadium of Light (48,707)  Manager: Régis Le Bris [FRA]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1								
+2								
+3	Dennis Cirkin	LVA	D	1.82	72	06-04-02	Dublin	Tottenham H
+4								
+5	Daniel Ballard	NIR	D	1.87	85	22-09-99	Stevenage	Arsenal
+6	Lutsharel Geertruida	NED	D	1.80	69	18-07-00	Rotterdam	RB Leipzig
+7	Chemsdine Talbi	MAR	M	1.75	68	09-05-05	Sambrevile	Club Brugge
+8								
+9	Brian Brobbey	NED	F	1.80	78	01-02-02	Amsterdam	Ajax
+10	Nilson Angulo	ECU	F	1.82	64	19-06-03	Quito	Anderlecht
+11	Chris Rigg	ENG	M	1.75	68	18-06-07	Hebburn	None
+12	Eliezer Mayenda	ESP	F	1.80	75	08-05-05	Zaragoza	Sochaux
+13	Luke O'Nien	ENG	D	1.74	74	21-11-94	Hemel Hempstead	Wycombe W
+14	Romaine Mundle	ENG	M	1.77	61	24-04-03	Edmonton	Standard Liège
+15	Omar Alderete	PAR	D	1.87	77	26-12-96	Asunción	Getafe
+16								
+17	Reinildo Mandava	MOZ	D	1.80	74	21-01-94	Beira	Atlético Madrid
+18	Wilson Isidor	HAI	F	1.80	70	27-08-00	Rennes	Zenit St Petersburg
+19	Habib Diarra	SEN	M	1.79	74	03-01-04	Guédiawaye	Strasbourg
+20	Nordi Mukiele	FRA	D	1.85	74	01-11-97	Montreuil	Paris St-Germain
+21	Simon Moore	ENG	G	1.91	83	19-05-90	Sandown	Coventry C
+22	Robin Roefs	NED	G	1.92	72	17-01-03	Heeswijk	NEC Nijmegen
+23								
+24								
+25	Bertrand Traoré	BFA	F	1.80	72	06-09-95	Bobo-Dioulasso	Ajax
+26								
+27	Noah Sadiki	COD	M	1.73	67	17-12-04	Brussels	Union St-Gilloise
+28	Enzo Le Fée	FRA	M	1.70	58	03-02-00	Lorient	Roma
+29	Ahmed Abdullahi	NGA	F	-	-	19-06-04	Nasarawa	KAA Gent
+30	Milan Aleksić	SRB	M	1.79	70	30-08-05	Kragujevac	Radnički 1923
+31	Melker Ellborg	SWE	G	1.91	84	22-05-03	Kalmar	Malmö FF
+32	Trai Hume	NIR	D	1.80	75	18-03-02	Ballymena	Linfield
+33								
+34	Granit Xhaka	SUI	M	1.85	82	27-09-92	Gnjilane	Bayer Leverkusen
+35								
+36								
+37	Jocelin Ta Bi	CIV	F	1.72	65	09-02-05	Attécoubé	Maccabi Netanya
+38								
+39								
+40								
+46	Abdoullah Ba	FRA	M	1.79	68	31-07-03	Saint-Aubin-lès-Elbeuf	Le Havre
+50	Harrison Jones	ENG	M	1.78	68	25-12-04	York	None
+51	Jenson Jones	ENG	D	-	-	26-06-06	-	None
+52	Jaydon Jones	ENG	M	-	-	03-11-06	-	None
+53	Jack Whittaker	ENG	M	-	-	14-10-06	-	None
+74	Finn Geragusian	ARM	F	1.91	80	28-10-07	Durham	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+25	Nectarios Triantis	AUS	D	1.91	78	11-05-03	Sydney	Minnesota U
+43	Luís Hemir	POR	F	1.92	73	11-08-03	Lisbon	Moreirense (On Loan)
+2	Niall Huggins	WAL	D	1.73	70	18-12-00	York	Wycombe W (On Loan)
+8	Alan Browne	IRL	M	1.73	71	15-04-95	Cork	Middlesbrough (On Loan)
+9	Marc Guiu	ESP	F	1.87	82	04-01-06	Granollers	Chelsea
+10	Patrick Roberts	ENG	M	1.67	58	05-02-97	Kingston-upon-Thames	Birmingham C
+23	Jenson Seelt	NED	D	1.92	84	23-05-03	Ede	Wolfsburg (On Loan)
+44	Nazariy Rusyn	UKR	F	1.77	68	25-10-98	Novoyavorivsk	Arka Gdynia (On Loan)
+41	Zak Johnson	ENG	D	1.88	78	30-07-04	Sunderland	York C (On Loan)
+40	Timothée Pembele	FRA	D	1.84	72	09-09-02	Beaumont-sur-Oise	Le Havre (On Loan)
+47	Trey Samuel-Ogunsuyi	BEL	F	1.90	82	26-12-06	Bradford	Shrewsbury T (On Loan)
+48	Jay Matete	ENG	M	1.73	61	11-02-01	Lambeth	MK Dons
+55	Ben Middlemas	ENG	M	1.82	64	13-12-04	Ashington	Swindon T
+45	Joe Anderson	ENG	D	1.86	81	06-02-01	Stalybridge	Barrow
+57	Timur Tutierov	UKR	F	1.83	70	11-06-05	Bakhchysarai	Exeter C (On Loan)
+16	Blondy Nna Noukeu	CMR	G	1.84	70	17-09-01	Douala	Boulogne
+4	Dan Neil	ENG	M	1.78	65	13-12-01	South Shields	Ipswich T (On Loan)
+26	Arthur Masuaku	COD	D	1.79	70	07-11-93	Lille	Lens (On Loan)
+42	Aji Alese	ENG	D	1.92	78	17-01-01	Islington	Portsmouth (On Loan)
+1	Anthony Patterson	ENG	G	1.89	77	10-05-00	North Shields	Millwall (On Loan)
+24	Simon Adingra	CIV	F	1.75	68	01-01-02	Yamoussoukro	Monaco (On Loan)
+33	Leo Hjelde	NOR	D	1.88	76	26-08-03	Nottingham	Sheffield U (On Loan)
+49	Ian Poveda	COL	M	1.65	61	09-02-00	Southwark	Internacional de Bogotá
+
+Tottenham Hotspur
+Official Name: Tottenham Hotspur Football Club
+Formed: 1882  Ground: Tottenham Hotspur Stadium (62,850)  Manager: Igor Tudor [CRO]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Guglielmo Vicario	ITA	G	1.88	83	07-10-96	Udine	Empoli
+2								
+3	Radu Drăgușin	ROU	D	1.91	82	03-02-02	Bucharest	Genoa
+4	Kevin Danso	AUT	D	1.90	75	19-09-98	Voitsberg	Lens
+5								
+6	João Palhinha	POR	M	1.90	82	09-07-95	Lisbon	Bayern Munich
+7	Xavi Simons	NED	M	1.68	58	21-04-03	Amsterdam	RB Leipzig
+8	Yves Bissouma	MLI	M	1.81	78	30-08-96	Issia	Brighton & HA
+9	Richarlison	BRA	F	1.79	71	10-05-97	Nova Venécia	Everton
+10	James Maddison	ENG	M	1.79	73	23-11-96	Coventry	Leicester C
+11	Mathys Tel	FRA	F	1.83	75	27-04-05	Sarcelles	Bayern Munich
+12								
+13	Destiny Udogie	ITA	D	1.86	67	28-11-02	Verona	Udinese
+14	Archie Gray	ENG	M	1.83	70	12-03-06	Durham	Leeds U
+15	Lucas Bergvall	SWE	M	1.86	74	02-02-06	Bromma	Djurgårdens IF
+16								
+17	Cristian Romero	ARG	D	1.85	79	27-04-98	Córdoba	Atalanta
+18								
+19	Dominic Solanke	ENG	F	1.87	80	14-09-97	Reading	Bournemouth
+20	Mohammed Kudus	GHA	M	1.77	70	02-08-00	Accra	West Ham U
+21	Dejan Kulusevski	SWE	M	1.86	79	25-04-00	Stockholm	Juventus
+22	Conor Gallagher	ENG	M	1.82	74	06-02-00	Epsom	Atlético Madrid
+23	Pedro Porro	ESP	D	1.76	71	13-09-99	Don Benito	Sporting CP
+24	Djed Spence	ENG	D	1.84	71	09-08-00	London	Middlesbrough
+25								
+26								
+27								
+28	Wilson Odobert	FRA	F	1.82	74	28-11-04	Meaux	Burnley
+29	Pape Matar Sarr	SEN	M	1.84	70	14-09-02	Thiaroye	Metz
+30	Rodrigo Bentancur	URU	M	1.87	72	25-06-97	Nueva Helvecia	Juventus
+31	Antonín Kinský	CZE	G	1.90	80	13-03-03	Prague	Slavia Prague
+32								
+33	Ben Davies	WAL	D	1.82	76	24-04-93	Neath	Swansea C
+34								
+35								
+36								
+37	Micky van de Ven	NED	D	1.93	81	19-04-01	Wormer	Wolfsburg
+38	Souza	BRA	D	1.80	73	16-06-06	Mauá	Santos
+39	Randal Kolo Muani	FRA	F	1.87	73	05-12-98	Bondy	Paris St-Germain
+40	Brandon Austin	USA	G	1.88	82	08-01-99	Hemel Hempstead	None
+46	Luca Gunter	ENG	G	-	-	23-03-05	Enfield	None
+52	Callum Olusesi	ENG	M	-	-	11-03-07	Lambeth	None
+53	Reiss-Alexander Russell-Denny	ENG	M	-	-	11-05-06	Reading	Chelsea
+54	Tynan Thompson	ENG	F	-	-	17-04-08	Croydon	None
+55	Tyrell Ashcroft	ENG	D	-	-	07-03-02	-	Reading
+56	Aaron Maguire	IRL	G	-	-	25-07-04	Leytonstone	None
+57	Rio Kyerematen	ENG	M	-	-	09-06-05	Westminster	None
+58	Ellis Lehane	ENG	F	-	-	02-10-06	Hillingdon	None
+59	Dante Cassanova	JAM	M	-	-	21-06-04	-	None
+60	Dan Batty	ENG	M	-	-	30-09-06	Stalybridge	Manchester C
+61	Luca Furnell-Gill	ENG	D	-	-	29-12-06	Keighley	Liverpool
+62	Max McFadden	ENG	M	-	-	02-10-05	Havering	Leeds U
+65	Leo Black	ENG	D	-	-	09-02-06	Hackney	None
+66	Malachi Hardy	ENG	D	-	-	10-03-08	Watford	None
+67	Jun'ai Byfield	ENG	D	-	-	06-12-08	Lambeth	None
+68	Lucá Williams-Barnett	ENG	M	-	-	01-10-08	Luton	None
+71	Pele Arganese-McDermott	ESP	D	-	-	02-09-05	Marbella	Luton T
+72	Reiss Elliott-Parris	ENG	F	-	-	04-11-07	Barking	None
+76	James Rowswell	ENG	D	-	-	13-07-06	Welwyn Garden City	None
+77	Samual Archer	ENG	G	-	-	20-01-07	Hertford	None
+78	Harry Byrne	ENG	M	-	-	20-11-07	Croydon	None
+79	James Wilson	SCO	F	-	-	06-03-07	-	Hearts
+82	Calum Logan	ENG	D	-	-	24-11-06	Cambridge	None
+83	Blake Irow	ENG	G	-	-	01-09-08	Tokyo	None
+84	Miracle Adewole	GER	D	-	-	12-10-07	Stuttgart	None
+85	Jamel Beggs	ENG	M	-	-	16-12-07	Chelsea	None
+86	Ronny Moncur	ENG	M	-	-	14-10-07	Ongar	None
+87	Elijah Upson	ENG	D	-	-	26-03-08	London	None
+88	Tyler Tingey	ENG	D	-	-	11-09-08	Burton upon Trent	None
+89	Tye Hall	ENG	M	-	-	01-10-07	Warrington	None
+90	Leon Myrtaj	ALB	F	-	-	28-03-08	London	None
+91	Samal Bangura	SLE	M	-	-	30-11-07	Bermondsey	None
+92	Armend Musliga	ALB	M	-	-	08-03-09	Brenogë	None
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+16	Luka Vušković	CRO	D	1.93	86	24-02-07	Split	Hamburg (On Loan)
+22	Brennan Johnson	WAL	F	1.79	73	23-05-01	Nottingham	Crystal Palace
+25	Kota Takai	JPN	D	1.92	84	04-09-04	Yokohama	B Mönchengladbach (On Loan)
+27	Manor Solomon	ISR	M	1.69	62	24-07-99	Kfar Saba	Fiorentina (On Loan)
+73	Oliver Irow	ENG	F	-	-	10-05-06	Walthamstow	Mansfield T (On Loan)
+70	Yusuf Akhamrich	ENG	M	-	-	05-09-05	Tower Hamlets	Bristol R (On Loan)
+44	Dane Scarlett	ENG	F	1.80	76	24-03-04	Hillingdon	Hibernian (On Loan)
+81	Herbie James	ENG	F	-	-	24-11-06	Macclesfield	Cardiff C
+80	Roman Egan-Riley	ENG	D	-	-	14-12-06	Manchester	Burnley
+
+West Ham United
+Official Name: West Ham United Football Club
+Formed: 1895  Ground: London Stadium (62,500)  Manager: Nuno Espírito Santo [POR]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	Mads Hermansen	DEN	G	1.84	78	11-07-00	Odense	Leicester C
+2	Kyle Walker-Peters	ENG	D	1.73	62	13-04-97	Edmonton	Southampton
+3	Max Kilman	ENG	D	1.86	80	23-05-97	Chelsea	Wolverhampton W
+4	Axel Disasi	FRA	D	1.90	86	11-03-98	Gonesse	Chelsea
+5								
+6								
+7	Crysencio Summerville	NED	M	1.74	68	30-10-01	Rotterdam	Leeds U
+8								
+9	Callum Wilson	ENG	F	1.80	66	27-02-92	Coventry	Newcastle U
+10								
+11	Valentin Castellanos	ARG	F	1.79	69	03-10-98	Mendoza	Lazio
+12	El Hadji Malick Diouf	SEN	D	1.83	77	28-12-04	Ziguinchor	Slavia Prague
+13								
+14								
+15	Konstantinos Mavropanos	GRE	D	1.92	80	11-12-97	Athens	Stuttgart
+16								
+17	Adama Traoré	ESP	F	1.78	76	25-01-96	L'Hospitalet de Llobregat	Fulham
+18	Mateus Fernandes	POR	M	1.78	72	10-07-04	Olhão	Southampton
+19	Pablo	BRA	F	1.84	76	02-01-04	Braga	Gil Vicente
+20	Jarrod Bowen	ENG	F	1.74	70	20-12-96	Leominster	Hull C
+21	Keiber Lamadrid	VEN	F	1.77	69	18-11-03	Caracas	Deportivo La Guaira
+22	Łukasz Fabiański	POL	G	1.90	83	18-04-85	Kostrzyn nad Odrą	Swansea C
+23	Alphonse Areola	FRA	G	1.90	85	27-02-93	Paris	Paris St-Germain
+24								
+25	Jean-Clair Todibo	FRA	D	1.90	81	30-12-99	Cayenne	Nice
+26								
+27	Soungoutou Magassa	FRA	M	1.88	70	08-10-03	Stains	Monaco
+28	Tomáš Souček	CZE	M	1.90	84	27-02-95	Havlíčkův Brod	Slavia Prague
+29	Aaron Wan-Bissaka	COD	D	1.83	72	26-11-97	Croydon	Manchester U
+30	Oliver Scarles	ENG	D	1.80	75	12-12-05	Bromley	None
+31								
+32	Freddie Potts	ENG	M	1.83	70	12-09-03	Romford	None
+33								
+34								
+35								
+36	Reece Byrne	IRL	G	-	-	20-11-04	-	Newcastle U
+37	Dimitri Colau	FRA	D	1.83	75	23-02-06	Paris	Paris FC
+38								
+39								
+40								
+43	Regan Clayton	ENG	D	-	-	11-11-04	Havering	None
+45	Daniel Rigge	ENG	M	1.68	55	25-03-06	Stockport	Manchester C
+48	Josh Landers	SCO	F	-	-	27-02-07	-	Hibernian
+49	Finlay Herrick	ENG	G	1.87	70	18-01-06	Hatfield	None
+51	Josh Briggs	NIR	D	-	-	14-03-06	Belfast	Linfield
+52	Luis Brown	ENG	D	-	-	25-09-05	-	Arsenal
+53	Daniel Cummings	SCO	F	-	-	14-04-06	-	Celtic
+54	Tom Wooster	ENG	G	-	-	30-03-05	Sheffield	Manchester U
+55	Mohamadou Kanté	FRA	M	1.78	74	20-09-05	Paris	Paris FC
+58	Airidas Golambeckis	ENG	D	-	-	04-11-07	-	None
+59	Tyron Akpata	ENG	M	1.67	58	12-08-06	Havering	None
+61	Lewis Orford	ENG	M	1.82	70	18-02-06	Havering	None
+63	Ezra Mayers	ENG	D	-	-	16-01-07	-	None
+66	Joshua Ajala	ENG	F	-	-	13-11-06	Redbridge	Chelsea
+67	Riley Hargan	ENG	M	-	-	04-09-06	Havering	None
+68	Preston Fearon	ENG	M	-	-	16-01-07	-	None
+71	Gabriel Caliste	MRI	M	-	-	18-11-06	Redbridge	None
+72	Tommy Goodger	ENG	G	-	-	10-02-09	-	Exeter C
+73	Vinnie Perkins	ENG	D	-	-	17-02-09	-	None
+74	Tomas Jonyla	LTU	D	-	-	07-01-09	-	None
+75	Jethro Medine	ENG	D	-	-	22-02-07	-	None
+76	Rayan Oyebade	ENG	D	-	-	30-04-07	-	None
+77	Lanre Awesu	ENG	G	-	-	25-01-08	-	None
+78	Finley Hooper	ENG	G	-	-	19-02-08	-	None
+79	Lewis Beckford	ENG	M	-	-	24-01-07	-	None
+80	Andre Dike	ENG	F	-	-	16-05-08	-	None
+81	Harry Montague	ENG	D	-	-	09-02-09	-	None
+82	Aaron Kamara	ENG	M	-	-	14-10-07	-	None
+83	Jonathan Unwin	ENG	M	-	-	30-10-07	-	None
+84	David Chigwada	ENG	F	-	-	15-10-07	-	None
+85	Majid Balogun	ENG	F	-	-	10-03-08	-	None
+87	Joe Scanlon	ENG	D	-	-	19-11-08	-	None
+88	Reggie Morris-Agyemang	ENG	M	-	-	16-02-09	-	None
+89	Tyrone Omotoye	ENG	M	-	-	31-01-09	-	None
+90	Martin Peychev	BUL	M	-	-	20-10-08	Szolnok	None
+91	Jephthah Medine	ENG	F	-	-	19-12-08	-	None
+92	Chukwuemeka Obi	DEN	F	-	-	01-07-09	-	Arsenal
+93	Joel Kerr	NIR	F	-	-	24-03-09	-	Glentoran
+94	Callum Leacock	NIR	D	-	-	19-08-08	Magherafelt	Linfield
+95	Connor Brooks	ENG	M	-	-	09-07-08	-	Concord Rangers
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+56	Gideon Kodua	ENG	F	-	-	02-10-04	Newham	Luton T (On Loan)
+65	Michael Forbes	NIR	D	1.88	78	29-04-04	Ardboe	Northampton T (On Loan)
+46	Mason Terry	ENG	G	1.96	80	20-09-04	Southend-on-Sea	Braintree T (On Loan)
+4	Edson Álvarez	MEX	M	1.85	73	24-10-97	Tlalnepantla de Baz	Fenerbahçe (On Loan)
+5	Nayef Aguerd	MAR	D	1.88	76	30-03-96	Kenitra	Marseille
+22	Maxwel Cornet	CIV	M	1.79	69	27-09-96	Bregbo	Genoa (On Loan)
+33	Emerson Palmieri	ITA	D	1.76	63	03-08-94	Santos	Marseille
+86	Chinaza Nwosu	ENG	M	-	-	17-05-08	-	Nottingham F
+21	Wes Foderingham	ENG	G	1.85	75	14-01-91	Hammersmith	Aris Limassol
+47	Krisztián Hegyi	HUN	G	1.93	85	24-09-02	Budapest	MTK (On Loan)
+11	Niclas Füllkrug	GER	F	1.88	78	09-02-93	Hannover	Milan (On Loan)
+17	Luis Guilherme	BRA	F	1.75	65	09-02-06	Aracaju	Sporting CP
+50	Callum Marshall	NIR	F	1.78	70	28-11-04	Glengormley	Bochum (On Loan)
+44	Junior Robinson	ENG	D	1.65	62	06-04-04	Bethnal Green	Boreham Wood (On Loan)
+40	George Earthy	ENG	M	-	-	05-09-04	Havering	Bristol C (On Loan)
+39	Andy Irving	SCO	M	1.90	80	13-05-00	Edinburgh	Sparta Prague
+24	Guido Rodríguez	ARG	M	1.85	78	12-04-94	Sáenz Peña	Valencia
+5	Igor	BRA	D	1.84	85	07-02-98	Bom Sucesso	Brighton & HA
+8	James Ward-Prowse	ENG	M	1.73	66	01-11-94	Southampton	Burnley (On Loan)
+10	Lucas Paquetá	BRA	M	1.80	72	27-08-97	Rio de Janeiro	Flamengo
+70	Elisha Sowunmi	ENG	M	-	-	01-06-07	-	Tottenham H
+69	Emeka Adiele	ENG	D	-	-	31-07-07	-	FC Utrecht
+64	Ryan Battrum	ENG	D	1.73	65	08-09-05	Havering	Braintree T (On Loan)
+
+Wolverhampton Wanderers
+Official Name: Wolverhampton Wanderers Football Club
+Formed: 1877  Ground: Molineux Stadium (31,750)  Manager: Rob Edwards [WAL]
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	Previous Club
+1	José Sá	POR	G	1.92	84	17-01-93	Braga	Olympiakos
+2	Matt Doherty	IRL	D	1.82	80	16-01-92	Dublin	Atlético Madrid
+3	Hugo Bueno	ESP	D	1.80	73	18-09-02	Vigo	Areosa
+4	Santiago Bueno	URU	D	1.89	78	09-11-98	Montevideo	Girona
+5								
+6	David Møller Wolfe	NOR	D	1.82	73	23-04-02	Bergen	AZ Alkmaar
+7	André	BRA	M	1.76	77	16-07-01	Algodão	Fluminense
+8	João Gomes	BRA	M	1.76	74	12-02-01	Rio de Janeiro	Flamengo
+9	Adam Armstrong	ENG	F	1.72	69	10-02-97	Newcastle upon Tyne	Southampton
+10								
+11	Hwang Hee-Chan	KOR	F	1.77	65	26-01-96	Chuncheon	RB Leipzig
+12								
+13								
+14	Tolu Arokodare	NGA	F	1.97	95	23-11-00	Festac Town	KRC Genk
+15	Yerson Mosquera	COL	D	1.88	84	02-05-01	Apartadó	Atlético Nacional
+16								
+17	Pedro Lima	BRA	D	1.78	57	01-07-06	Cabedelo	Sport Recife
+18								
+19								
+20								
+21	Rodrigo Gomes	POR	D	1.75	69	07-07-03	Braga	Sporting Braga
+22								
+23								
+24	Toti Gomes	POR	D	1.87	83	16-01-99	Bissau	Estoril
+25	Daniel Bentley	ENG	G	1.88	72	13-07-93	Basildon	Bristol C
+26								
+27	Jean-Ricner Bellegarde	FRA	M	1.70	66	27-06-98	Colombe	Strasbourg
+28								
+29								
+30	Enso González	PAR	F	1.69	69	20-01-05	Asunción	Libertad
+31	Sam Johnstone	ENG	G	1.93	85	25-03-93	Preston	Crystal Palace
+32								
+33								
+34								
+35								
+36	Mateus Mané	ENG	M	-	-	16-09-07	Barreiro	Rochdale
+37	Ladislav Krejčí	CZE	D	1.87	78	20-04-99	Brno	Girona
+38	Jackson Tchatchoua	CMR	M	1.78	79	23-06-01	Ixelles	Verona
+39								
+40	Alfie Brooks	ENG	G	-	-	15-10-03	-	AFC Telford U
+45	Ty Barnett	ENG	M	-	-	19-07-05	Birmingham	None
+47	Angel Gomes	ENG	M	1.68	56	31-08-00	Enfield	Marseille
+50	Jerome Abbey	ENG	M	-	-	16-09-09	-	None
+54	Dani Ángel	ESP	F	-	-	28-03-06	-	Clapton
+55	Alfe White	ENG	M	-	-	23-07-07	Telford	None
+56	Makenzie Bradbury	WAL	M	-	-	-	-	None
+59	Saheed Olagunju	ENG	D	-	-	07-01-07	Greenwich	Chelsea
+60	Ethan Sutherland	SCO	M	-	-	25-04-06	-	St Mirren
+61	Wesley Okoduwa	ENG	D	-	-	12-05-08	The Bronx	None
+62	Luke Rawlings	ENG	M	-	-	-	Tokyo	None
+63	Ji Min-Kyu	KOR	F	-	-	16-10-06	-	None
+64	Myles Dayman	ENG	M	-	-	-	Solihull	None
+70	Josh Gracey	NIR	G	-	-	14-12-07	Portadown	Glenavon
+72	Finn Ashworth	WAL	M	-	-	18-09-05	Wolverhampton	None
+74	Tom Edozie	ENG	M	-	-	18-05-06	Lewisham	None
+75	Alfie Arnold	ENG	G	-	-	-	-	None
+78	Emilio Ballard-Matthews	ENG	F	-	-	30-11-07	-	Watford
+79	Sebastian Lochhead	SCO	D	-	-	-	-	Dundee
+80	Mason Stevens	ENG	M	-	-	05-03-09	-	None
+81	Ashton Williams	WAL	D	-	-	13-05-09	-	Bristol C
+Players no longer at this club
+Number	Name	Nat	Pos	Height	Weight	Date of Birth	Birth Place	New Club
+20	Fábio Silva	POR	F	1.85	75	19-07-02	Rio Tinto	Borussia Dortmund
+18	Saša Kalajdžić	AUT	F	2.00	76	07-07-97	Vienna	LASK Linz (On Loan)
+17	Ladislav Krejčí	CZE	D	1.87	78	20-04-99	Brno	Re-Registered (37)
+46	Alfie Pond	ENG	D	1.91	86	17-02-04	Exeter	Crewe Alex (On Loan)
+37	Pedro Lima	BRA	D	1.78	57	01-07-06	Cabedelo	Re-Registered (17)
+26	Ki-Jana Hoever	NED	D	1.80	67	18-01-02	Amsterdam	Sheffield U (On Loan)
+52	Fletcher Holman	ENG	F	-	-	12-10-04	Eastbourne	Swindon T
+5	Marshall Munetsi	ZIM	M	1.88	83	22-06-96	Mabvuku	Paris FC (On Loan)
+76	Caden Voice	ENG	D	-	-	14-09-06	Walsall	Cardiff C
+57	Temple Ojinnaka	ITA	M	-	-	30-03-05	Venice	Shrewsbury T (On Loan)
+28	Fer López	ESP	M	1.88	76	24-05-04	Madrid	Celta Vigo (On Loan)
+23	Tawanda Chirewa	ZIM	M	1.81	72	11-10-03	Chelmsford	Barnsley (On Loan)
+9	Jörgen Strand Larsen	NOR	F	1.93	79	06-02-00	Halden	Crystal Palace
+41	Josh Esen	WAL	M	-	-	24-11-04	Swansea	-
+68	Leo Lopes	POR	F	-	-	05-11-04	-	Trofense
+12	Emmanuel Agbadou	CIV	D	1.92	80	17-06-97	Abidjan	Beşiktaş
+10	Jhon Arias	COL	M	1.68	70	21-09-97	Quibdó	Palmeiras
+
