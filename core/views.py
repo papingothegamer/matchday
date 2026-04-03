@@ -65,6 +65,8 @@ def index(request):
 
     if request.user.is_authenticated and active_gw:
         user_team = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
+        if not user_team:
+            user_team = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
         if user_team:
             picks = list(user_team.picks.select_related('player__team').all())
 
@@ -95,6 +97,8 @@ def pick_team(request):
     saved_formation = '433'
     if active_gw:
         ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
+        if not ft:
+            ft = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
         if ft:
             saved_formation = ft.formation
             for pick in ft.picks.all():

@@ -1,198 +1,120 @@
-﻿import random
-from datetime import timedelta
-from django.utils import timezone
+import random
+from .models import Gameweek, Match, PlayerStat, Player, FantasyTeam, FantasyPick, Notification
 
+def simulate_match(match):
+    # Realistic Poisson-style distribution for Premier League goals
+    # Averages ~2.7 goals per match overall. Massive scores (>4) are incredibly rare.
+    goal_weights = [0.26, 0.34, 0.22, 0.11, 0.05, 0.015, 0.005] # Probability of 0 to 6 goals
+    
+    home_goals = random.choices(range(7), weights=goal_weights)[0]
+    away_goals = random.choices(range(7), weights=goal_weights)[0]
+    
+    match.home_score = home_goals
+    match.away_score = away_goals
+    match.is_played = True
+    match.save()
+    
+    home_players = list(Player.objects.filter(team=match.home_team, is_active=True))
+    away_players = list(Player.objects.filter(team=match.away_team, is_active=True))
+    
+    _distribute_stats(home_players, match, home_goals, away_goals == 0)
+    _distribute_stats(away_players, match, away_goals, home_goals == 0)
 
-def get_price_tier(price):
-    if price >= 9.0:
-        return 'elite'
-    elif price >= 7.0:
-        return 'premium'
-    elif price >= 5.0:
-        return 'mid'
-    else:
-        return 'budget'
+def _distribute_stats(players, match, goals_scored, clean_sheet):
+    if not players: return
+        
+    for p in players:
+        # Handle existing injuries
+        if p.is_injured:
+            p.injury_weeks -= 1
+            if p.injury_weeks <= 0:
+                p.is_injured = False
+                p.injury_weeks = 0
+            p.save()
+            continue
 
+        # New Injury Roll (3% chance per game)
+        if random.random() < 0.03:
+            p.is_injured = True
+            p.injury_weeks = random.randint(1, 3)
+            p.save()
+            # Send Notification to users who own this player
+            impacted_picks = FantasyPick.objects.filter(player=p, fantasy_team__gameweek=match.gameweek)
+            for pick in impacted_picks:
+                Notification.objects.get_or_create(
+                    user=pick.fantasy_team.user, 
+                    message=f"🚨 INJURY ALERT: {p.display_name} has been injured for {p.injury_weeks} week(s)! Transfer them out before the next deadline."
+                )
+            continue
 
-TIER_PROBS = {
-    'elite':   {'goal': 0.35, 'assist': 0.40, 'clean': 0.45, 'bonus': 0.50},
-    'premium': {'goal': 0.22, 'assist': 0.30, 'clean': 0.35, 'bonus': 0.35},
-    'mid':     {'goal': 0.12, 'assist': 0.20, 'clean': 0.28, 'bonus': 0.20},
-    'budget':  {'goal': 0.05, 'assist': 0.10, 'clean': 0.20, 'bonus': 0.10},
-}
+        # Playing Time Distribution
+        minutes = 0
+        if random.random() < 0.85: minutes = random.randint(60, 90)
+        elif random.random() < 0.40: minutes = random.randint(1, 59)
+            
+        if minutes == 0: continue
 
+        stat, _ = PlayerStat.objects.get_or_create(player=p, match=match)
+        stat.minutes_played = minutes
+        stat.clean_sheet = clean_sheet and minutes >= 60
+        
+        if random.random() < 0.15: stat.yellow_cards = 1
+        if random.random() < 0.02: stat.red_cards = 1
+        stat.save()
 
-def simulate_minutes():
-    roll = random.random()
-    if roll < 0.05:
-        return 0
-    elif roll < 0.15:
-        return random.randint(45, 60)
-    else:
-        return random.randint(80, 90)
+    active_players = [p for p in players if not p.is_injured]
+    if not active_players: return
 
+    # Distribute actual goals to random active players
+    for _ in range(goals_scored):
+        scorer = random.choice(active_players)
+        stat, _ = PlayerStat.objects.get_or_create(player=scorer, match=match)
+        stat.goals += 1
+        stat.save()
+        
+        # 70% chance a goal has an assist
+        if random.random() < 0.70:
+            assisters = [p for p in active_players if p != scorer]
+            if assisters:
+                assister = random.choice(assisters)
+                a_stat, _ = PlayerStat.objects.get_or_create(player=assister, match=match)
+                a_stat.assists += 1
+                a_stat.save()
 
-def simulate_player_stat(player, match):
-    from core.models import PlayerStat
-    tier = get_price_tier(player.price)
-    probs = TIER_PROBS[tier]
-    minutes = simulate_minutes()
-
-    goals = 0
-    assists = 0
-    clean_sheet = False
-    yellow = 0
-    red = 0
-
-    if minutes > 0:
-        if player.position == 'GK':
-            clean_sheet = random.random() < probs['clean']
-            yellow = 1 if random.random() < 0.05 else 0
-
-        elif player.position == 'DEF':
-            clean_sheet = random.random() < probs['clean']
-            goals = 1 if random.random() < probs['goal'] * 0.4 else 0
-            assists = 1 if random.random() < probs['assist'] * 0.5 else 0
-            yellow = 1 if random.random() < 0.08 else 0
-            red = 1 if random.random() < 0.02 else 0
-
-        elif player.position == 'MID':
-            goals = 1 if random.random() < probs['goal'] else 0
-            if goals == 0:
-                goals = 2 if random.random() < probs['goal'] * 0.15 else 0
-            assists = 1 if random.random() < probs['assist'] else 0
-            if assists == 0:
-                assists = 2 if random.random() < probs['assist'] * 0.1 else 0
-            clean_sheet = random.random() < probs['clean'] * 0.3
-            yellow = 1 if random.random() < 0.10 else 0
-            red = 1 if random.random() < 0.02 else 0
-
-        elif player.position == 'FWD':
-            goals = 1 if random.random() < probs['goal'] else 0
-            if goals == 0:
-                goals = 2 if random.random() < probs['goal'] * 0.25 else 0
-            if goals == 0:
-                goals = 3 if random.random() < probs['goal'] * 0.05 else 0
-            assists = 1 if random.random() < probs['assist'] * 0.7 else 0
-            yellow = 1 if random.random() < 0.08 else 0
-            red = 1 if random.random() < 0.02 else 0
-
-    stat, _ = PlayerStat.objects.update_or_create(
-        player=player, match=match,
-        defaults={
-            'goals': goals,
-            'assists': assists,
-            'minutes_played': minutes,
-            'clean_sheet': clean_sheet,
-            'yellow_cards': yellow,
-            'red_cards': red,
-        }
-    )
-    return stat
-
-
-def simulate_gameweek(gameweek_number):
-    from core.models import Gameweek, Match, Team, Player, FantasyTeam, FantasyPick
-
-    try:
-        gw = Gameweek.objects.get(number=gameweek_number)
-    except Gameweek.DoesNotExist:
-        print(f'Gameweek {gameweek_number} not found.')
-        return
-
-    teams = list(Team.objects.all())
-    random.shuffle(teams)
-
-    # Pair teams into fixtures if none exist
-    existing_matches = Match.objects.filter(gameweek=gw)
-    if not existing_matches.exists():
-        kick_off_times = _get_kickoff_times(gw.deadline)
-        fixtures = []
-        paired = []
-        for i in range(0, min(len(teams), 20), 2):
-            if i + 1 < len(teams):
-                paired.append((teams[i], teams[i+1]))
-        for idx, (home, away) in enumerate(paired):
-            ko = kick_off_times[idx % len(kick_off_times)]
-            match = Match.objects.create(
-                home_team=home, away_team=away,
-                gameweek=gw, match_date=ko,
-                is_played=False,
-            )
-            fixtures.append(match)
-    else:
-        fixtures = list(existing_matches)
-
-    print(f'Simulating {len(fixtures)} matches for GW{gameweek_number}...')
-
-    total_goals_home = 0
-    total_goals_away = 0
-
-    for match in fixtures:
-        home_players = Player.objects.filter(team=match.home_team, is_active=True)
-        away_players = Player.objects.filter(team=match.away_team, is_active=True)
-
-        home_goals = 0
-        away_goals = 0
-
-        for player in home_players:
-            stat = simulate_player_stat(player, match)
-            home_goals += stat.goals
-
-        for player in away_players:
-            stat = simulate_player_stat(player, match)
-            away_goals += stat.goals
-
-        match.home_score = home_goals
-        match.away_score = away_goals
-        match.is_played = True
-        match.save()
-
-        total_goals_home += home_goals
-        total_goals_away += away_goals
-        print(f'  {match.home_team.short_name} {home_goals} - {away_goals} {match.away_team.short_name}')
-
-    # Update fantasy team points
-    fantasy_teams = FantasyTeam.objects.filter(gameweek=gw)
-    for ft in fantasy_teams:
-        gw_points = 0
-        for pick in ft.picks.select_related('player'):
-            player_stats = pick.player.stats.filter(match__gameweek=gw)
-            pts = sum(s.fantasy_points for s in player_stats)
+def simulate_gameweek():
+    active_gw = Gameweek.objects.filter(is_active=True).first()
+    if not active_gw:
+        return False
+        
+    matches = Match.objects.filter(gameweek=active_gw, is_played=False)
+    for match in matches:
+        simulate_match(match)
+        
+    fantasy_teams = FantasyTeam.objects.filter(gameweek=active_gw)
+    for fteam in fantasy_teams:
+        total_points = 0
+        for pick in fteam.picks.all():
+            if pick.is_sub:
+                continue 
+                
+            stats = PlayerStat.objects.filter(player=pick.player, match__gameweek=active_gw)
+            pts = sum(s.fantasy_points for s in stats)
             if pick.is_captain:
                 pts *= 2
             pick.points_scored = pts
             pick.save()
-            gw_points += pts
-        ft.total_points = gw_points
-        ft.save()
-        print(f'  {ft.user.username}: {gw_points} pts')
+            total_points += pts
+            
+        fteam.total_points = total_points
+        fteam.save()
 
-    gw.is_active = False
-    gw.save()
-
-    # Activate next gameweek
-    next_gw = Gameweek.objects.filter(number=gameweek_number + 1).first()
+    # Move timeline forward
+    active_gw.is_active = False
+    active_gw.save()
+    
+    next_gw = Gameweek.objects.filter(number=active_gw.number + 1).first()
     if next_gw:
         next_gw.is_active = True
         next_gw.save()
-        print(f'GW{next_gw.number} is now active.')
-
-    print(f'GW{gameweek_number} simulation complete.')
-
-
-def _get_kickoff_times(deadline):
-    base = deadline - timedelta(days=7)
-    times = [
-        base + timedelta(days=0, hours=15),
-        base + timedelta(days=0, hours=17, minutes=30),
-        base + timedelta(days=1, hours=14),
-        base + timedelta(days=1, hours=16, minutes=30),
-        base + timedelta(days=3, hours=19, minutes=45),
-        base + timedelta(days=3, hours=19, minutes=45),
-        base + timedelta(days=4, hours=19, minutes=45),
-        base + timedelta(days=4, hours=19, minutes=45),
-        base + timedelta(days=5, hours=19, minutes=45),
-        base + timedelta(days=6, hours=12, minutes=30),
-    ]
-    return times
+        
+    return True
