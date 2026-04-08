@@ -118,78 +118,6 @@ def pick_team(request):
 
 @csrf_exempt
 @login_required
-@player_only
-def save_picks(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'POST required'}, status=405)
-    try:
-        data = json.loads(request.body)
-        picks = data.get('picks', [])
-        formation = data.get('formation', '433')
-        gw = Gameweek.objects.filter(is_active=True).first()
-        if not gw:
-            return JsonResponse({'error': 'No active gameweek'})
-        ft, _ = FantasyTeam.objects.get_or_create(
-            user=request.user, gameweek=gw,
-            defaults={'name': request.user.username + ' FC'}
-        )
-        ft.formation = formation
-        ft.save()
-        ft.picks.all().delete()
-        for pick in picks:
-            player = Player.objects.get(id=pick['player_id'])
-            FantasyPick.objects.create(
-                fantasy_team=ft, player=player,
-                is_captain=pick.get('is_captain', False),
-                is_sub=pick.get('is_sub', False)
-            )
-        return JsonResponse({'ok': True})
-    except Exception as e:
-        return JsonResponse({'error': str(e)})
-
-@login_required
-def leaderboard(request):
-    from django.db.models import Sum
-    from .models import FantasyTeam, LeagueMember, Player
-    
-    # Get user's leagues
-    user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
-    
-    # Calculate Simulation Engine Stats dynamically
-    top_scorers = Player.objects.annotate(total_goals=Sum('stats__goals')).filter(total_goals__gt=0).order_by('-total_goals')[:5]
-    top_assists = Player.objects.annotate(total_assists=Sum('stats__assists')).filter(total_assists__gt=0).order_by('-total_assists')[:5]
-    top_points = Player.objects.annotate(total_pts=Sum('stats__fantasy_points')).filter(total_pts__gt=0).order_by('-total_pts')[:5]
-
-    context = {
-        'user_leagues': user_leagues,
-        'top_scorers': top_scorers,
-        'top_assists': top_assists,
-        'top_points': top_points,
-    }
-    return render(request, 'core/leaderboard.html', context)
-def create_league(request):
-    if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        if name:
-            league = League.objects.create(name=name, created_by=request.user)
-            LeagueMember.objects.create(league=league, user=request.user)
-            return redirect('league_detail', code=league.code)
-    return render(request, 'core/create_league.html')
-
-
-@login_required
-@player_only
-def join_league(request):
-    if request.method == 'POST':
-        code = request.POST.get('code', '').strip().upper()
-        league = League.objects.filter(code=code).first()
-        if not league:
-            return render(request, 'core/join_league.html', {'error': 'Invalid code.'})
-        LeagueMember.objects.get_or_create(league=league, user=request.user)
-        return redirect('league_detail', code=league.code)
-    return render(request, 'core/join_league.html')
-
-
 def league_detail(request, code):
     league = get_object_or_404(League, code=code)
     members = LeagueMember.objects.filter(league=league).select_related('user')
@@ -295,3 +223,29 @@ def get_team_of_the_week(request):
         top_scorer['is_captain'] = True
 
     return JsonResponse({'gameweek': gw.number, 'players': totw_players})
+
+@login_required
+def create_league(request):
+    from django.shortcuts import render, redirect, get_object_or_404
+    from .models import League, LeagueMember
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        if name:
+            league = League.objects.create(name=name, created_by=request.user)
+            # Fix: Automatically add the creator as a member!
+            LeagueMember.objects.create(league=league, user=request.user)
+            return redirect('league_detail', code=league.code)
+    return render(request, 'core/create_league.html')
+
+@login_required
+def join_league(request):
+    from django.shortcuts import render, redirect, get_object_or_404
+    from .models import League, LeagueMember
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        if code:
+            # Fix: Look up by Share Code and redirect properly
+            league = get_object_or_404(League, code=code)
+            LeagueMember.objects.get_or_create(league=league, user=request.user)
+            return redirect('league_detail', code=league.code)
+    return render(request, 'core/join_league.html')
