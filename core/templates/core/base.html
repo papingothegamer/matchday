@@ -49,7 +49,31 @@
         .notif-wrapper { margin-right: 10px; }
         .navbar { padding: 0.5rem 1rem; }
     }
-    </style>
+    
+    /* Mobile App Bottom Nav */
+    @media (max-width: 768px) {
+        body { padding-bottom: 75px; } /* Ensure content doesn't hide behind nav */
+        .mobile-bottom-nav {
+            display: flex; justify-content: space-around; align-items: center;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #0d1117; border-top: 1px solid #30363d;
+            height: 65px; z-index: 9999; box-shadow: 0 -4px 10px rgba(0,0,0,0.6);
+        }
+        .mobile-bottom-nav a {
+            color: #8b949e; text-decoration: none; font-size: 11px; font-weight: 500;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            flex: 1; padding: 8px 0;
+        }
+        .mobile-bottom-nav a:active { color: #fff; }
+        .mobile-bottom-nav span { font-size: 22px; margin-bottom: 2px; }
+        
+        /* Clean up top header for mobile */
+        .nav-links, .mobile-menu-btn { display: none !important; }
+    }
+    @media (min-width: 769px) {
+        .mobile-bottom-nav { display: none; }
+    }
+</style>
     
 </head>
 <body>

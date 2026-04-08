@@ -147,65 +147,26 @@ def save_picks(request):
     except Exception as e:
         return JsonResponse({'error': str(e)})
 
+@login_required
 def leaderboard(request):
-    gameweeks = Gameweek.objects.all()
-    from django.contrib.auth.models import User
-
-    global_rankings = []
-    for user in User.objects.filter(fantasy_teams__isnull=False).distinct():
-        teams = FantasyTeam.objects.filter(user=user)
-        total = teams.aggregate(t=Sum('total_points'))['t'] or 0
-        gw_scores = list(teams.order_by('gameweek__number').values_list('total_points', flat=True))
-        global_rankings.append({'user': user, 'total': total, 'gw_scores': gw_scores[-5:]})
-    global_rankings.sort(key=lambda x: x['total'], reverse=True)
-    for i, r in enumerate(global_rankings):
-        r['rank'] = i + 1
-
-    selected_gw_num = request.GET.get('gw')
-    selected_gw = Gameweek.objects.filter(number=selected_gw_num).first() if selected_gw_num else None
-    if not selected_gw:
-        selected_gw = Gameweek.objects.filter(is_active=True).first()
-    gw_standings = []
-    if selected_gw:
-        gw_standings = list(FantasyTeam.objects.filter(gameweek=selected_gw).select_related('user').order_by('-total_points'))
-        for i, ft in enumerate(gw_standings):
-            ft.rank = i + 1
-
-    top_scorers = (
-        Player.objects.filter(stats__isnull=False)
-        .annotate(total_pts=Sum('stats__fantasy_points'), total_goals=Sum('stats__goals'), total_assists=Sum('stats__assists'))
-        .order_by('-total_pts')[:50]
-    )
-
-    last5_gws = list(Gameweek.objects.order_by('-number')[:5])
-    last5_gws.reverse()
-    form_data = []
-    for user in User.objects.filter(fantasy_teams__isnull=False).distinct():
-        row = {'user': user, 'scores': [], 'total': 0}
-        for gw in last5_gws:
-            ft = FantasyTeam.objects.filter(user=user, gameweek=gw).first()
-            pts = ft.total_points if ft else None
-            row['scores'].append(pts)
-            if pts:
-                row['total'] += pts
-        form_data.append(row)
-    form_data.sort(key=lambda x: x['total'], reverse=True)
-
-    user_leagues = []
-    if request.user.is_authenticated:
-        user_leagues = League.objects.filter(members__user=request.user)
+    from django.db.models import Sum
+    from .models import FantasyTeam, LeagueMember, Player
+    
+    # Get user's leagues
+    user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
+    
+    # Calculate Simulation Engine Stats dynamically
+    top_scorers = Player.objects.annotate(total_goals=Sum('stats__goals')).filter(total_goals__gt=0).order_by('-total_goals')[:5]
+    top_assists = Player.objects.annotate(total_assists=Sum('stats__assists')).filter(total_assists__gt=0).order_by('-total_assists')[:5]
+    top_points = Player.objects.annotate(total_pts=Sum('stats__fantasy_points')).filter(total_pts__gt=0).order_by('-total_pts')[:5]
 
     context = {
-        'global_rankings': global_rankings, 'gameweeks': gameweeks,
-        'selected_gw': selected_gw, 'gw_standings': gw_standings,
-        'top_scorers': top_scorers, 'last5_gws': last5_gws,
-        'form_data': form_data, 'user_leagues': user_leagues,
+        'user_leagues': user_leagues,
+        'top_scorers': top_scorers,
+        'top_assists': top_assists,
+        'top_points': top_points,
     }
     return render(request, 'core/leaderboard.html', context)
-
-
-@login_required
-@player_only
 def create_league(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()

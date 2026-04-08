@@ -7,7 +7,6 @@
 .tab-btn { background: none; border: none; color: #8b949e; padding: 10px 15px; font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; }
 .tab-btn.active { color: #fff; border-bottom-color: #238636; }
 .tab-btn:hover:not(.active) { color: #c9d1d9; }
-
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
@@ -20,13 +19,23 @@
 .penalty-box-bottom { position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
 .goal-area-top { position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
 .goal-area-bottom { position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
-
 .pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; position: relative; z-index: 10; }
 .player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 70px; }
 .shirt { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; position: relative; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
 .captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 75px; background: rgba(13, 17, 23, 0.7); padding: 2px 6px; border-radius: 10px; }
 .slot-pts { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+/* League & Stats UI */
+.action-bar { display: flex; gap: 10px; margin-bottom: 2rem; flex-wrap: wrap; }
+.btn-primary { padding: 8px 16px; background: #238636; color: #fff; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500; }
+.btn-secondary { padding: 8px 16px; background: transparent; border: 1px solid #30363d; color: #c9d1d9; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500; }
+.league-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.share-code { font-family: monospace; font-size: 15px; font-weight: bold; background: #0d1117; color: #3fb950; padding: 4px 8px; border-radius: 4px; border: 1px dashed #30363d; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.stat-box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; }
+.stat-row { display: flex; justify-content: space-between; font-size: 13px; color: #c9d1d9; padding: 8px 0; border-bottom: 1px solid #21262d; }
+.stat-row:last-child { border-bottom: none; }
 {% endblock %}
 
 {% block content %}
@@ -37,11 +46,68 @@
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('totw')">Team of the Week</button>
-    <button class="tab-btn" onclick="switchTab('global')">Global Ranking</button>
+    <button class="tab-btn" onclick="switchTab('leagues')">Leagues & Rankings</button>
   </div>
 
-  <div id="global" class="tab-content">
-    <p style="color:#8b949e;">Global rankings will be displayed here.</p>
+  <div id="leagues" class="tab-content">
+    <div class="action-bar">
+      <a href="/league/create/" class="btn-primary">Create League</a>
+      <a href="/league/join/" class="btn-secondary">Join League</a>
+    </div>
+
+    <h3 style="color:#fff; font-size: 16px; margin-bottom: 1rem;">My Leagues</h3>
+    {% for lm in user_leagues %}
+    <div class="league-card">
+      <div>
+        <div style="font-weight: 600; font-size: 16px; color: #fff;">{{ lm.league.name }}</div>
+        <div style="font-size: 12px; color: #8b949e; margin-top: 4px;">
+          Share Code: <span class="share-code">{{ lm.league.code }}</span>
+        </div>
+      </div>
+      <a href="/league/{{ lm.league.id }}/" class="btn-secondary" style="font-size: 12px; padding: 6px 12px;">View Standings &rarr;</a>
+    </div>
+    {% empty %}
+    <div style="padding: 2rem; border: 1px dashed #30363d; border-radius: 8px; text-align: center; color: #8b949e;">
+      You are not participating in any leagues. Join one to compete!
+    </div>
+    {% endfor %}
+
+    <h3 style="color:#fff; font-size: 16px; margin-top: 3rem; margin-bottom: 1rem;">Simulation Engine Stats</h3>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <h4 style="color:#8b949e; margin-bottom: 15px; font-size: 13px; text-transform: uppercase;">Top Scorers</h4>
+        {% for p in top_scorers %}
+        <div class="stat-row">
+          <span>{{ p.display_name }} ({{ p.team.short_name }})</span>
+          <span style="color:#3fb950; font-weight:bold;">{{ p.total_goals }}</span>
+        </div>
+        {% empty %}
+        <div style="color: #8b949e; font-size: 12px;">No data available yet.</div>
+        {% endfor %}
+      </div>
+      <div class="stat-box">
+        <h4 style="color:#8b949e; margin-bottom: 15px; font-size: 13px; text-transform: uppercase;">Top Assists</h4>
+        {% for p in top_assists %}
+        <div class="stat-row">
+          <span>{{ p.display_name }} ({{ p.team.short_name }})</span>
+          <span style="color:#3fb950; font-weight:bold;">{{ p.total_assists }}</span>
+        </div>
+        {% empty %}
+        <div style="color: #8b949e; font-size: 12px;">No data available yet.</div>
+        {% endfor %}
+      </div>
+      <div class="stat-box">
+        <h4 style="color:#8b949e; margin-bottom: 15px; font-size: 13px; text-transform: uppercase;">Highest FPL Points</h4>
+        {% for p in top_points %}
+        <div class="stat-row">
+          <span>{{ p.display_name }} ({{ p.team.short_name }})</span>
+          <span style="color:#3fb950; font-weight:bold;">{{ p.total_pts }} pts</span>
+        </div>
+        {% empty %}
+        <div style="color: #8b949e; font-size: 12px;">No data available yet.</div>
+        {% endfor %}
+      </div>
+    </div>
   </div>
 
   <div id="totw" class="tab-content active">
@@ -49,7 +115,6 @@
       <h3 style="color: #fff; font-size: 18px;" id="totw-title">Loading Team of the Week...</h3>
       <p style="color: #8b949e; font-size: 13px;">The highest scoring players across the simulated gameweek in a 3-4-3 formation.</p>
     </div>
-
     <div class="pitch-wrapper">
       <div class="pitch">
         <div class="penalty-box-top"></div>
@@ -81,13 +146,10 @@ fetch('/api/totw/')
             return;
         }
         document.getElementById('totw-title').textContent = `Gameweek ${data.gameweek} — Team of the Week`;
-        
         const rows = { GK:[], DEF:[], MID:[], FWD:[] };
         data.players.forEach(p => rows[p.pos] && rows[p.pos].push(p));
-        
         const order = ['FWD','MID','DEF','GK'];
         const pitch = document.getElementById('totw-pitch-rows');
-        
         order.forEach(pos => {
             if(!rows[pos].length) return;
             const rowEl = document.createElement('div');
