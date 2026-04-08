@@ -41,25 +41,14 @@
     .mobile-menu-btn { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 0 10px; }
     .nav-links { display: flex; align-items: center; }
     
-    @media (max-width: 768px) {
-        .mobile-menu-btn { display: block; }
-        .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 0; z-index: 999; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .nav-links.show { display: flex; }
-        .nav-links a { margin: 10px 0; font-size: 16px; width: 100%; text-align: center; }
-        .notif-wrapper { margin-right: 10px; }
-        .navbar { padding: 0.5rem 1rem; }
-    }
     
-    /* Hamburger Menu Navigation */
-    .mobile-menu-btn { display: none; background: transparent; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 0 5px; }
-    @media (max-width: 768px) {
-        .mobile-menu-btn { display: block; }
-        .nav-links { display: none; width: 100%; flex-direction: column; position: absolute; top: 60px; left: 0; background: #161b22; padding: 1rem; border-bottom: 1px solid #30363d; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .nav-links.show { display: flex; }
-        .nav-links a { margin: 10px 0; font-size: 16px; display: block; width: 100%; }
-        .navbar { flex-wrap: wrap; }
-        .notif-wrapper { margin-left: auto; margin-right: 15px; }
-    }
+@media (max-width: 768px) {
+    .mobile-menu-btn { display: block !important; }
+    .nav-links { display: none !important; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #161b22; padding: 1rem 0; border-bottom: 1px solid #30363d; z-index: 1000; align-items: center !important; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .nav-links.show { display: flex !important; }
+    .nav-links a { margin: 10px 0; width: 100%; text-align: center; padding: 10px 0; }
+    .notif-wrapper { margin: 10px 0 !important; }
+}
 </style>
     
 </head>
