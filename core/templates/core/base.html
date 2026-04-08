@@ -20,7 +20,23 @@
     .logout-btn:hover { background: #4a1a1a; }
     .footer { padding-top: 1rem; border-top: 1px solid #21262d; font-size: 12px; color: #484f58; margin-top: 2rem; }
     {% block extra_style %}{% endblock %}
-  </style>
+  
+    .notif-wrapper { position: relative; display: inline-block; margin-right: 15px; }
+    .notif-btn { background: none; border: none; color: #8b949e; font-size: 18px; cursor: pointer; position: relative; padding: 0; outline: none; }
+    .notif-btn:hover { color: #fff; transform: scale(1.1); transition: transform 0.2s;}
+    .notif-badge { position: absolute; top: -5px; right: -8px; background: #f85149; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 10px; display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .notif-dropdown { display: none; position: absolute; right: 0; top: 35px; width: 320px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.8); z-index: 1000; overflow: hidden; text-align: left;}
+    .notif-dropdown.show { display: block; }
+    .notif-header { padding: 12px 15px; border-bottom: 1px solid #30363d; font-size: 13px; font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; background: #0d1117;}
+    .notif-list { max-height: 300px; overflow-y: auto; }
+    .notif-list::-webkit-scrollbar { width: 6px; }
+    .notif-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+    .notif-item { padding: 12px 15px; border-bottom: 1px solid #21262d; font-size: 12px; color: #c9d1d9; transition: background 0.2s; line-height: 1.4; cursor: default;}
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: #21262d; }
+    .notif-item.unread { background: rgba(31, 111, 235, 0.1); border-left: 3px solid #1f6feb; }
+    .notif-time { font-size: 10px; color: #8b949e; margin-top: 6px; display: block; }
+</style>
 </head>
 <body>
 <div class="page">
@@ -46,5 +62,76 @@
   <div class="footer">MatchDay &mdash; Premier League Fantasy &mdash; University of Lodz</div>
 </div>
 {% block extra_script %}{% endblock %}
+
+<script>
+{% if request.user.is_authenticated and not request.user.is_staff %}
+function fetchNotifs() {
+    fetch('/api/notifications/')
+    .then(r => r.json())
+    .then(data => {
+        const list = document.getElementById('notifList');
+        const badge = document.getElementById('notifBadge');
+        if (!list) return;
+        list.innerHTML = '';
+        let unreadCount = 0;
+        
+        if (data.notifications.length === 0) {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#8b949e;font-size:12px;">No notifications yet.</div>';
+        } else {
+            data.notifications.forEach(n => {
+                if (!n.is_read) unreadCount++;
+                list.innerHTML += `<div class="notif-item ${n.is_read ? '' : 'unread'}">${n.message}<span class="notif-time">${n.date}</span></div>`;
+            });
+        }
+        
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }).catch(e => console.log('Notification fetch error', e));
+}
+
+function toggleNotifs(e) {
+    e.stopPropagation();
+    document.getElementById('notifDropdown').classList.toggle('show');
+}
+
+function markRead(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    fetch('/api/notifications/read/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCookie('csrftoken')}
+    }).then(() => fetchNotifs());
+}
+
+document.addEventListener('click', function(e) {
+    const wrap = document.querySelector('.notif-wrapper');
+    const drop = document.getElementById('notifDropdown');
+    if (wrap && drop && !wrap.contains(e.target) && drop.classList.contains('show')) {
+        drop.classList.remove('show');
+    }
+});
+
+fetchNotifs();
+setInterval(fetchNotifs, 60000); // Check for new alerts every 60 seconds
+{% endif %}
+</script>
 </body>
 </html>

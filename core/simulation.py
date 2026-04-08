@@ -139,14 +139,12 @@ def simulate_gameweek():
             pick.save()
             raw_total_points += pts
             
+        fteam.total_points = raw_total_points
         if not in_league:
-            fteam.total_points = 0
             Notification.objects.get_or_create(
                 user=fteam.user,
-                message=f"GW{active_gw.number} Over: Your squad gathered 0 points because you are not in any leagues! Join one to compete."
+                message=f"GW{active_gw.number} finished! You scored {raw_total_points} pts. Join a league to see how you rank!"
             )
-        else:
-            fteam.total_points = raw_total_points
         fteam.save()
 
     active_gw.is_active = False

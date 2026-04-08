@@ -246,3 +246,27 @@ def league_detail(request, code):
         'is_member': request.user.is_authenticated and members.filter(user=request.user).exists(),
     }
     return render(request, 'core/league_detail.html', context)
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import Notification
+
+@login_required
+def get_notifications(request):
+    notifs = Notification.objects.filter(user=request.user).order_by('-created_at')[:15]
+    data = [{
+        'id': n.id,
+        'message': n.message,
+        'is_read': n.is_read,
+        'date': n.created_at.strftime("%b %d, %H:%M")
+    } for n in notifs]
+    return JsonResponse({'notifications': data})
+
+@csrf_exempt
+@login_required
+def mark_notifications_read(request):
+    if request.method == 'POST':
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return JsonResponse({'ok': True})
+    return JsonResponse({'error': 'POST required'}, status=405)

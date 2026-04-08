@@ -2,6 +2,8 @@
 from . import views
 
 urlpatterns = [
+    path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/read/', views.mark_notifications_read, name='mark_notifications_read'),
     path('', views.index, name='index'),
     path('auth/login/', views.auth_login, name='login'),
     path('auth/register/', views.auth_register, name='register'),
