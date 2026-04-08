@@ -36,7 +36,21 @@
     .notif-item:hover { background: #21262d; }
     .notif-item.unread { background: rgba(31, 111, 235, 0.1); border-left: 3px solid #1f6feb; }
     .notif-time { font-size: 10px; color: #8b949e; margin-top: 6px; display: block; }
-</style>
+
+    /* Mobile Navigation */
+    .mobile-menu-btn { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 0 10px; }
+    .nav-links { display: flex; align-items: center; }
+    
+    @media (max-width: 768px) {
+        .mobile-menu-btn { display: block; }
+        .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 0; z-index: 999; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .nav-links.show { display: flex; }
+        .nav-links a { margin: 10px 0; font-size: 16px; width: 100%; text-align: center; }
+        .notif-wrapper { margin-right: 10px; }
+        .navbar { padding: 0.5rem 1rem; }
+    }
+    </style>
+    
 </head>
 <body>
 <div class="page">
@@ -146,6 +160,10 @@ document.addEventListener('click', function(e) {
 fetchNotifs();
 setInterval(fetchNotifs, 60000); // Check for new alerts every 60 seconds
 {% endif %}
+
+function toggleMobileMenu() {
+    document.getElementById('navLinks').classList.toggle('show');
+}
 </script>
 </body>
 </html>

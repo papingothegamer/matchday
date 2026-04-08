@@ -270,3 +270,40 @@ def mark_notifications_read(request):
         Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
         return JsonResponse({'ok': True})
     return JsonResponse({'error': 'POST required'}, status=405)
+
+@login_required
+def get_team_of_the_week(request):
+    # Get the most recently finished gameweek (or active if none finished)
+    gw = Gameweek.objects.filter(is_active=False).order_by('-number').first()
+    if not gw:
+        gw = Gameweek.objects.filter(is_active=True).first()
+        
+    if not gw:
+        return JsonResponse({'error': 'No gameweeks available'})
+
+    # Dynamic 3-4-3 Formation for TOTW
+    totw_players = []
+    
+    def get_top_players(pos, count):
+        stats = PlayerStat.objects.filter(match__gameweek=gw, player__position=pos).order_by('-fantasy_points')[:count]
+        for s in stats:
+            totw_players.append({
+                'name': s.player.display_name,
+                'team': s.player.team.short_name,
+                'pos': s.player.position,
+                'color': s.player.team.primary_color,
+                'color2': s.player.team.secondary_color,
+                'pts': s.fantasy_points,
+                'is_captain': False
+            })
+
+    get_top_players('GK', 1)
+    get_top_players('DEF', 3)
+    get_top_players('MID', 4)
+    get_top_players('FWD', 3)
+
+    if totw_players:
+        top_scorer = max(totw_players, key=lambda p: p['pts'])
+        top_scorer['is_captain'] = True
+
+    return JsonResponse({'gameweek': gw.number, 'players': totw_players})
