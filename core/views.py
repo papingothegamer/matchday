@@ -293,3 +293,25 @@ def save_picks(request):
             return JsonResponse({'error': str(e)})
             
     return JsonResponse({'error': 'POST required'}, status=405)
+
+
+@login_required
+def leaderboard(request):
+    from django.db.models import Sum
+    from .models import FantasyTeam, LeagueMember, Player
+    
+    # Get user's leagues
+    user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
+    
+    # Calculate Simulation Engine Stats dynamically
+    top_scorers = Player.objects.annotate(total_goals=Sum('stats__goals')).filter(total_goals__gt=0).order_by('-total_goals')[:5]
+    top_assists = Player.objects.annotate(total_assists=Sum('stats__assists')).filter(total_assists__gt=0).order_by('-total_assists')[:5]
+    top_points = Player.objects.annotate(total_pts=Sum('stats__fantasy_points')).filter(total_pts__gt=0).order_by('-total_pts')[:5]
+
+    context = {
+        'user_leagues': user_leagues,
+        'top_scorers': top_scorers,
+        'top_assists': top_assists,
+        'top_points': top_points,
+    }
+    return render(request, 'core/leaderboard.html', context)
