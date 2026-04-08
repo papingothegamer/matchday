@@ -249,3 +249,47 @@ def join_league(request):
             LeagueMember.objects.get_or_create(league=league, user=request.user)
             return redirect('league_detail', code=league.code)
     return render(request, 'core/join_league.html')
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+@login_required
+def save_picks(request):
+    import json
+    from django.http import JsonResponse
+    from .models import Gameweek, FantasyTeam, Player, FantasyPick
+    
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            picks = data.get('picks', [])
+            formation = data.get('formation', '433')
+            
+            active_gw = Gameweek.objects.filter(is_active=True).first()
+            if not active_gw:
+                return JsonResponse({'error': 'No active gameweek'})
+                
+            ft, created = FantasyTeam.objects.get_or_create(user=request.user, gameweek=active_gw)
+            ft.formation = formation
+            ft.save()
+            
+            # Clear old picks and save the new 15-man roster
+            ft.picks.all().delete()
+            
+            for p in picks:
+                try:
+                    player = Player.objects.get(id=p['player_id'])
+                    FantasyPick.objects.create(
+                        fantasy_team=ft,
+                        player=player,
+                        is_captain=p.get('is_captain', False),
+                        is_sub=p.get('is_sub', False)
+                    )
+                except Exception:
+                    pass
+                    
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+            
+    return JsonResponse({'error': 'POST required'}, status=405)
