@@ -235,12 +235,10 @@ def mark_notifications_read(request):
 @login_required
 def get_team_of_the_week(request):
     # Get the most recently finished gameweek (or active if none finished)
-    gw = Gameweek.objects.filter(is_active=False).order_by('-number').first()
-    if not gw:
-        gw = Gameweek.objects.filter(is_active=True).first()
-        
-    if not gw:
-        return JsonResponse({'error': 'No gameweeks available'})
+    latest_match = Match.objects.filter(is_played=True).order_by('-gameweek__number').first()
+    if not latest_match:
+        return JsonResponse({'error': 'No matches played yet'})
+    gw = latest_match.gameweek
 
     # Dynamic 3-4-3 Formation for TOTW
     totw_players = []
