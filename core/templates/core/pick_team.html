@@ -1,5 +1,16 @@
 {% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay{% endblock %}
+{% block title %}Pick Your Team — MatchDay
+/* Ultra-Mobile Pitch Scaling */
+@media screen and (max-width: 500px) {
+    .pitch { min-width: 100% !important; min-height: 400px !important; padding: 10px 0 !important; }
+    .player-slot { width: 45px !important; }
+    .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
+    .slot-name { font-size: 8px !important; padding: 2px !important; }
+    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
+    .bench-area { padding: 1rem 0.2rem !important; }
+}
+
+{% endblock %}
 
 {% block extra_style %}
 /* Layout Grid */
