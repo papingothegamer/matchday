@@ -16,18 +16,31 @@
   .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 13px; color: #8b949e; }
   .auth-footer a { color: #3fb950; text-decoration: none; font-weight: 600; }
   .auth-footer a:hover { text-decoration: underline; }
-  .errorlist { color: #f85149; font-size: 13px; margin-bottom: 1rem; list-style: none; padding: 10px; background: rgba(248,81,73,0.1); border-radius: 6px; border: 1px solid #f85149; }
-  .helptext { font-size: 11px; color: #8b949e; display: block; margin-top: 4px; }
+  .error-msg { color: #f85149; font-size: 13px; margin-bottom: 1rem; text-align: center; padding: 10px; background: rgba(248,81,73,0.1); border-radius: 6px; border: 1px solid #f85149; font-weight: 500;}
 </style>
 <div class="auth-wrapper">
   <div class="auth-card">
     <h2 class="auth-title">Welcome Back</h2>
     <p class="auth-subtitle">Log in to manage your MatchDay squad.</p>
+    
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
     <form method="POST" class="auth-form">
       {% csrf_token %}
-      {{ form.as_p }}
+      
+      <p>
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required>
+      </p>
+      <p>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+      </p>
       <button type="submit" class="auth-btn">Sign In</button>
     </form>
+    
     <div class="auth-footer">
       Don't have an account? <a href="/auth/register/">Draft your team</a>
     </div>
