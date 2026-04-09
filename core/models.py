@@ -119,6 +119,9 @@ class FantasyTeam(models.Model):
     name = models.CharField(max_length=100)
     total_points = models.IntegerField(default=0)
     formation = models.CharField(max_length=3, default='433')
+    bank = models.FloatField(default=100.0)
+    free_transfers = models.IntegerField(default=1)
+    points_hit = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ('user', 'gameweek')
@@ -132,6 +135,7 @@ class FantasyPick(models.Model):
     is_captain = models.BooleanField(default=False)
     is_sub = models.BooleanField(default=False)
     points_scored = models.IntegerField(default=0)
+    purchase_price = models.FloatField(default=0.0)
 
     class Meta:
         unique_together = ('fantasy_team', 'player')
@@ -179,3 +183,17 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"To {self.user.username}: {self.message}"
+
+
+class Transfer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transfers')
+    gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE, related_name='transfers')
+    player_in = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='transfers_in')
+    player_out = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='transfers_out')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f'{self.user.username}: {self.player_out} OUT -> {self.player_in} IN (GW{self.gameweek.number})'
