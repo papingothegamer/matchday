@@ -51,6 +51,40 @@
 }
 </style>
     
+
+<style>
+/* =========================================
+   BULLETPROOF MOBILE RESPONSIVE OVERRIDES
+   ========================================= */
+.mobile-menu-btn { display: none; background: transparent; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 0 5px; }
+
+@media screen and (max-width: 768px) {
+    .navbar { display: flex !important; justify-content: space-between !important; align-items: center !important; flex-wrap: wrap !important; padding: 10px 15px !important; }
+    .mobile-menu-btn { display: block !important; }
+
+    /* The Dropdown Menu */
+    .nav-links {
+        display: none !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        background: #161b22 !important;
+        padding: 1rem 0 !important;
+        border-top: 1px solid #30363d !important;
+        border-bottom: 1px solid #30363d !important;
+        z-index: 1000 !important;
+    }
+
+    /* When the JS adds the 'show' class */
+    .nav-links.show { display: flex !important; }
+
+    .nav-links a { width: 100% !important; text-align: center !important; padding: 12px 0 !important; margin: 0 !important; border: none !important; border-bottom: 1px solid #21262d !important; border-radius: 0 !important; }
+    .notif-wrapper { margin: 10px auto !important; text-align: center !important; }
+    .notif-dropdown { right: auto !important; left: 50% !important; transform: translateX(-50%) !important; width: 90vw !important; max-width: 350px !important; }
+}
+</style>
 </head>
 <body>
 <div class="page">

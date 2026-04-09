@@ -1,5 +1,23 @@
 ﻿{% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay{% endblock %}
+{% block title %}Pick Your Team — MatchDay
+/* =========================================
+   BULLETPROOF PITCH RESPONSIVENESS
+   ========================================= */
+@media screen and (max-width: 900px) {
+    .pick-wrap { display: flex !important; flex-direction: column !important; gap: 20px !important; }
+    .pitch-container { width: 100% !important; overflow-x: auto !important; padding-bottom: 15px !important; }
+    .selector-panel { width: 100% !important; height: auto !important; min-height: 400px !important; margin-top: 10px !important; }
+}
+
+@media screen and (max-width: 500px) {
+    .pitch { min-width: 100% !important; min-height: 400px !important; padding: 10px 0 !important; }
+    .player-slot { width: 45px !important; }
+    .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
+    .slot-name { width: 55px !important; font-size: 8px !important; padding: 2px !important; }
+    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
+}
+
+{% endblock %}
 
 {% block extra_style %}
 .pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; }
