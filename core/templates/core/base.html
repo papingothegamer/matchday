@@ -88,9 +88,12 @@
 </head>
 <body>
 <div class="page">
-  <div class="header">
+  <div class="header navbar">
     <a href="/" class="logo">Match<span>Day</span></a>
-    <div class="nav-right">
+    
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+    
+    <div class="nav-links" id="navLinks">
       <nav>
         <a href="/">Home</a>
         <a href="/leaderboard/">Leaderboard</a>
@@ -98,25 +101,27 @@
         <a href="/pick/">Pick Team</a>
         {% if request.user.is_staff %}<a href="/admin/">Admin</a>{% endif %}
       </nav>
+      
       {% if request.user.is_authenticated %}
-        <span class="user-chip">{{ request.user.username }}</span>
+        <span class="user-chip" style="margin: 0 10px;">{{ request.user.username }}</span>
         
-    <div class="notif-wrapper">
-      <button class="notif-btn" onclick="toggleNotifs(event)" id="notifBtn">
-        🔔<span class="notif-badge" id="notifBadge">0</span>
-      </button>
-      <div class="notif-dropdown" id="notifDropdown">
-        <div class="notif-header">
-          Notifications <a href="#" style="color:#1f6feb; font-size:11px; text-decoration:none;" onclick="markRead(event)">Mark all as read</a>
+        <div class="notif-wrapper">
+          <button class="notif-btn" onclick="toggleNotifs(event)" id="notifBtn">
+            🔔<span class="notif-badge" id="notifBadge">0</span>
+          </button>
+          <div class="notif-dropdown" id="notifDropdown">
+            <div class="notif-header">
+              Notifications <a href="#" style="color:#1f6feb; font-size:11px; text-decoration:none;" onclick="markRead(event)">Mark all as read</a>
+            </div>
+            <div class="notif-list" id="notifList">
+              <div style="padding: 15px; text-align: center; color: #8b949e; font-size: 12px;">Loading...</div>
+            </div>
+          </div>
         </div>
-        <div class="notif-list" id="notifList">
-          <div style="padding: 15px; text-align: center; color: #8b949e; font-size: 12px;">Loading...</div>
-        </div>
-      </div>
-    </div>
-    <a href="/auth/logout/" class="logout-btn">Logout</a>
+        
+        <a href="/auth/logout/" class="logout-btn">Logout</a>
       {% else %}
-        <a href="/auth/login/" style="font-size:13px;color:#58a6ff;text-decoration:none;padding:5px 12px;border:1px solid #30363d;border-radius:6px;">Login</a>
+        <a href="/auth/login/" style="font-size:13px;color:#58a6ff;text-decoration:none;padding:5px 12px;border:1px solid #30363d;border-radius:6px; margin-right: 5px;">Login</a>
         <a href="/auth/register/" style="font-size:13px;color:#fff;text-decoration:none;padding:5px 12px;background:#238636;border:1px solid #238636;border-radius:6px;">Register</a>
       {% endif %}
     </div>

@@ -1,5 +1,8 @@
 ﻿{% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay
+{% block title %}Pick Your Team — MatchDay{% endblock %}
+
+{% block extra_style %}
+
 /* =========================================
    BULLETPROOF PITCH RESPONSIVENESS
    ========================================= */
@@ -17,9 +20,6 @@
     .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
 }
 
-{% endblock %}
-
-{% block extra_style %}
 .pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; }
 @media (max-width: 800px) { .pick-wrap { grid-template-columns: 1fr; } }
 .pitch-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; }
@@ -488,7 +488,7 @@ try {
       headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
       body: JSON.stringify({ picks, formation: formation })
     }).then(r => r.json()).then(d => {
-      if (d.ok) window.location.href = '/';
+      if (d.success || d.ok || d.status === 'ok') { alert('✅ Team successfully saved!'); window.location.href = '/'; }
       else alert(d.error || 'Something went wrong.');
     });
   }
