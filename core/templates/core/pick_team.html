@@ -340,7 +340,20 @@ try {
       const container = document.getElementById('transfer-list-rows');
       container.innerHTML = '';
       
+      let currentSection = '';
+      
       slots.forEach((slot, idx) => {
+          const sectionName = slot.is_sub ? 'Substitutes' : 'Starting 11';
+          
+          // Inject a styled header if we cross into a new section
+          if (currentSection !== sectionName) {
+              currentSection = sectionName;
+              const header = document.createElement('div');
+              const marginStyle = idx === 0 ? 'margin: 0 0 10px 0;' : 'margin: 20px 0 10px 0;';
+              header.innerHTML = `<div style="padding: 8px 12px; font-size: 12px; font-weight: 700; color: #e6e6e6; background: #21262d; border-radius: 6px; ${marginStyle} border: 1px solid #30363d; text-transform: uppercase; letter-spacing: 0.5px;">${sectionName}</div>`;
+              container.appendChild(header);
+          }
+          
           const row = document.createElement('div');
           
           if (slot.player) {
@@ -353,9 +366,10 @@ try {
               
               const injHtml = slot.player.injured ? `<span style="color:#d73a49;font-size:10px;margin-left:4px;">(Injured)</span>` : '';
 
+              // The updated row HTML with "Sub: Yes/No" removed
               row.innerHTML = `
                   <div class="t-pos">${slot.pos}</div>
-                  <div class="t-info"><div class="t-name">${slot.player.name} ${injHtml}</div><div class="t-team">${slot.player.team} &middot; Sub: ${slot.is_sub ? 'Yes':'No'}</div></div>
+                  <div class="t-info"><div class="t-name">${slot.player.name} ${injHtml}</div><div class="t-team">${slot.player.team}</div></div>
                   <div class="t-finances"><div class="t-sell-price">£${sellVal.toFixed(1)}m</div>${profitHtml}</div>
                   <div style="width: 60px; text-align: center;"><button class="btn-sell" onclick="sellPlayer(${idx})">Sell</button></div>
               `;
