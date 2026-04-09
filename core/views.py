@@ -315,3 +315,27 @@ def leaderboard(request):
         'top_points': top_points,
     }
     return render(request, 'core/leaderboard.html', context)
+
+
+@login_required
+def user_profile(request):
+    from .models import FantasyTeam, LeagueMember
+    
+    # Fetch user's team history ordered by gameweek
+    teams = FantasyTeam.objects.filter(user=request.user).order_by('gameweek__number')
+    
+    # Calculate lifetime points
+    total_points = sum(t.total_points for t in teams)
+    
+    # Prepare data for the JS Bar Chart
+    history_data = [{'gw': t.gameweek.number, 'pts': t.total_points} for t in teams]
+    
+    # Fetch active leagues
+    user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
+    
+    context = {
+        'total_points': total_points,
+        'history_data': history_data,
+        'user_leagues': user_leagues,
+    }
+    return render(request, 'core/profile.html', context)
