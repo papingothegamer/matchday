@@ -1,59 +1,40 @@
-# MatchDay
+# MatchDay — Premier League Fantasy Simulator
 
-A Premier League fantasy football app built with Django.  
-Pick 11 players each gameweek, score points based on real match stats, compete on the leaderboard.
+MatchDay is a fully-featured, Django-based Fantasy Football application complete with a simulated Match Engine, dynamic player economy, and competitive mini-leagues.
 
-Built for the University of Lodz Application Servers course — also a personal portfolio project.
+## Development Roadmap & Features
 
-## Setup
+### Phase 1: Foundation & Authentication
+- Custom Django Models for Teams, Players, Gameweeks, Matches, and PlayerStats.
+- Robust user registration, login, and Administrator firewall modes.
+- Dark-themed, minimalist UI established across base templates.
 
-```bash
-# Create and activate a virtual environment
-python -m venv venv
-venv\Scripts\activate        # Windows
-source venv/bin/activate     # Mac/Linux
+### Phase 2: Real-World Data Integration
+- Automated `populate_pl.py` script bridging real-world Premier League data (teams, crests, player rosters) into the Django database.
+- Scalable database schema supporting over 1,000 active players.
 
-# Install dependencies
-pip install -r requirements.txt
+### Phase 3: The Match Engine
+- Automated `simulation.py` and scheduling system.
+- Randomized match score simulations utilizing weighted team strength variables.
+- Individual player stat generation (Goals, Assists, Clean Sheets, Yellow/Red Cards) tying directly into standard FPL point calculations.
 
-# Run migrations
-python manage.py makemigrations core
-python manage.py migrate
+### Phase 4: Leaderboards & Mini-Leagues
+- Dynamic Global Leaderboard tracking top points, goals, and assists.
+- Competitive Mini-League system using secure, randomly generated 8-character Share Codes.
+- Automatic aggregation of user team history for season-long standings.
 
-# Create a superuser
-python manage.py createsuperuser
+### Phase 5: Manager Hub & Notifications
+- Manager Profile page featuring an interactive, CSS-animated Gameweek History Bar Chart.
+- AJAX-powered Notification Dropdown system alerting managers of simulation updates and deadlines.
+- Responsive, native-app style mobile navigation and routing.
 
-# Start the server
-python manage.py runserver
-```
+### Phase 6: The Transfer Market & Economy
+- Distinct UI separation between "Squad Management" and "Transfer Market" modes.
+- Enforcement of a strict £100.0m salary cap.
+- **Dynamic Pricing Engine:** Player prices algorithmically rise (+£0.1m) or fall (-£0.1m) based on gameweek performance.
+- **Transfer Ledger:** Tracking of 1 Free Transfer per week, deducting -4 points for excessive transfers, and calculating the classic 50% profit tax upon player sale.
 
-## Access
-
-- Home: http://127.0.0.1:8000/
-- Admin: http://127.0.0.1:8000/admin/
-
-## Models
-
-- `Team` — 20 Premier League clubs
-- `Player` — squad players with position and price
-- `Gameweek` — 38 gameweeks per season
-- `Match` — fixtures with scores
-- `PlayerStat` — per-match stats, auto-calculates fantasy points on save
-- `FantasyTeam` — a user's picked team for a gameweek
-- `FantasyPick` — individual player selections (through model)
-
-## Scoring
-
-| Event | Points |
-|---|---|
-| 90 min played | +2 |
-| Goal (any) | +6 |
-| Assist | +3 |
-| Clean sheet (GK/DEF) | +4 |
-| Clean sheet (MID) | +1 |
-| Yellow card | -1 |
-| Red card | -3 |
-
-## Docs
-
-See `docs/db_schema.html` for the full database schema and project plan.
+## Technical Stack
+* **Backend:** Python / Django
+* **Database:** SQLite (dev)
+* **Frontend:** HTML5 / Vanilla JavaScript / Pure CSS (No external frameworks)
