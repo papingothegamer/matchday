@@ -288,7 +288,7 @@ def save_picks(request):
                 except Exception:
                     pass
                     
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'status': 'ok'})
         except Exception as e:
             return JsonResponse({'error': str(e)})
             
