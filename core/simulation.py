@@ -154,3 +154,21 @@ def simulate_gameweek():
         next_gw.is_active = True
         next_gw.save()
     return True
+
+
+def update_player_prices(gameweek):
+    """Adjusts player prices based on their GW performance."""
+    from .models import PlayerStat
+    stats = PlayerStat.objects.filter(match__gameweek=gameweek)
+    
+    for stat in stats:
+        # Outstanding performance: +£0.1m
+        if stat.fantasy_points >= 10:
+            stat.player.price = round(stat.player.price + 0.1, 1)
+            stat.player.save()
+        # Poor performance while playing: -£0.1m
+        elif stat.fantasy_points <= 1 and stat.minutes_played > 0:
+            # Don't drop below £3.8m minimum threshold
+            if stat.player.price > 3.8:
+                stat.player.price = round(stat.player.price - 0.1, 1)
+                stat.player.save()

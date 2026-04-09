@@ -252,49 +252,6 @@ def join_league(request):
 
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
-@login_required
-def save_picks(request):
-    import json
-    from django.http import JsonResponse
-    from .models import Gameweek, FantasyTeam, Player, FantasyPick
-    
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            picks = data.get('picks', [])
-            formation = data.get('formation', '433')
-            
-            active_gw = Gameweek.objects.filter(is_active=True).first()
-            if not active_gw:
-                return JsonResponse({'error': 'No active gameweek'})
-                
-            ft, created = FantasyTeam.objects.get_or_create(user=request.user, gameweek=active_gw)
-            ft.formation = formation
-            ft.save()
-            
-            # Clear old picks and save the new 15-man roster
-            ft.picks.all().delete()
-            
-            for p in picks:
-                try:
-                    player = Player.objects.get(id=p['player_id'])
-                    FantasyPick.objects.create(
-                        fantasy_team=ft,
-                        player=player,
-                        is_captain=p.get('is_captain', False),
-                        is_sub=p.get('is_sub', False)
-                    )
-                except Exception:
-                    pass
-                    
-            return JsonResponse({'success': True, 'status': 'ok'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-            
-    return JsonResponse({'error': 'POST required'}, status=405)
-
-
 @login_required
 def leaderboard(request):
     from django.db.models import Sum
@@ -339,3 +296,101 @@ def user_profile(request):
         'user_leagues': user_leagues,
     }
     return render(request, 'core/profile.html', context)
+
+
+@csrf_exempt
+@login_required
+def save_picks(request):
+    import json, math
+    from django.http import JsonResponse
+    from .models import Gameweek, FantasyTeam, Player, FantasyPick, Transfer
+    
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            picks_data = data.get('picks', [])
+            formation = data.get('formation', '433')
+            
+            active_gw = Gameweek.objects.filter(is_active=True).first()
+            if not active_gw:
+                return JsonResponse({'error': 'No active gameweek'})
+                
+            ft, created = FantasyTeam.objects.get_or_create(user=request.user, gameweek=active_gw)
+            
+            # Map current players before the change
+            old_picks = {p.player.id: p for p in ft.picks.all()}
+            new_ids = [int(p['player_id']) for p in picks_data]
+            
+            players_out = [p for pid, p in old_picks.items() if pid not in new_ids]
+            players_in_data = [p for p in picks_data if int(p['player_id']) not in old_picks]
+            
+            # If the user already has a team and is making transfers
+            if ft.picks.exists() and players_in_data:
+                revenue = 0
+                cost = 0
+                
+                # Calculate Revenue with 50% Profit Tax
+                for old_pick in players_out:
+                    diff = old_pick.player.price - old_pick.purchase_price
+                    if diff > 0:
+                        sell_price = old_pick.purchase_price + (math.floor(diff * 10) / 20.0)
+                    else:
+                        sell_price = old_pick.player.price
+                    revenue += sell_price
+                    
+                # Calculate Cost
+                for new_pick in players_in_data:
+                    player = Player.objects.get(id=new_pick['player_id'])
+                    cost += player.price
+                    
+                net_cost = cost - revenue
+                if ft.bank - net_cost < 0:
+                    return JsonResponse({'error': f'Insufficient funds. You are short £{abs(ft.bank - net_cost):.1f}m'})
+                    
+                # Deduct Free Transfers & Apply Hits
+                transfers_made = len(players_in_data)
+                if transfers_made > ft.free_transfers:
+                    extra = transfers_made - ft.free_transfers
+                    ft.points_hit += (extra * 4) # -4 points per extra transfer
+                    ft.free_transfers = 0
+                else:
+                    ft.free_transfers -= transfers_made
+                    
+                ft.bank -= net_cost
+                
+                # Log the transactions
+                for out_p, in_p in zip(players_out, players_in_data):
+                    in_player = Player.objects.get(id=in_p['player_id'])
+                    Transfer.objects.create(
+                        user=request.user, gameweek=active_gw,
+                        player_out=out_p.player, player_in=in_player
+                    )
+            
+            # First time drafting (Unlimited free transfers)
+            elif not ft.picks.exists():
+                cost = sum(Player.objects.get(id=p['player_id']).price for p in picks_data)
+                if 100.0 - cost < 0:
+                    return JsonResponse({'error': 'Budget exceeded.'})
+                ft.bank = 100.0 - cost
+
+            ft.formation = formation
+            ft.save()
+            
+            # Rebuild the squad
+            ft.picks.all().delete()
+            for p_data in picks_data:
+                player = Player.objects.get(id=p_data['player_id'])
+                # Retain old purchase price if they already owned the player
+                pur_price = old_picks[player.id].purchase_price if player.id in old_picks else player.price
+                FantasyPick.objects.create(
+                    fantasy_team=ft, player=player,
+                    is_captain=p_data.get('is_captain', False),
+                    is_sub=p_data.get('is_sub', False),
+                    purchase_price=pur_price
+                )
+                    
+            return JsonResponse({'success': True, 'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+            
+    return JsonResponse({'error': 'POST required'}, status=405)
