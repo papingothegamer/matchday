@@ -1,5 +1,12 @@
 ﻿{% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay{% endblock %}
+{% block title %}Pick Your Team — MatchDay
+/* Responsive Failsafes for Selector Panel */
+.selector-panel { overflow: hidden; display: flex; flex-direction: column; }
+.filter-group { display: flex; gap: 8px; margin-bottom: 10px; width: 100%; }
+.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; outline: none; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+select.player-search { padding-right: 25px; /* Room for dropdown arrow */ }
+
+{% endblock %}
 
 {% block extra_style %}
 
@@ -60,8 +67,8 @@
 .pos-filter { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
 .pos-btn { font-size: 11px; padding: 3px 10px; border: 1px solid #30363d; border-radius: 20px; background: transparent; color: #8b949e; cursor: pointer; }
 .pos-btn.active, .pos-btn:hover { background: #1f6feb; color: #fff; border-color: #1f6feb; }
-.filter-group { display: flex; gap: 8px; margin-bottom: 10px; }
-.player-search { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; outline: none; }
+
+
 .player-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
 .player-list::-webkit-scrollbar { width: 8px; }
 .player-list::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
