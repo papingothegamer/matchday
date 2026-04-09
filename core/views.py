@@ -106,6 +106,7 @@ def pick_team(request):
                     'id': pick.player.id,
                     'pos': pick.player.position,
                     'is_sub': pick.is_sub,
+                'purchase_price': pick.purchase_price,
                     'is_captain': pick.is_captain
                 })
     context = {

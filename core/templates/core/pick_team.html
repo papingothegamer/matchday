@@ -15,12 +15,11 @@
 {% block extra_style %}
 /* Layout Grid */
 .pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
-@media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; } }
+@media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; padding-bottom: 100px; } }
 
-/* Pitch Area */
+/* Squad View (Pitch) */
 .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
 .formation-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
-.formation-bar span { font-size: 12px; color: #8b949e; margin-right: 4px; }
 .f-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
 .f-btn.active, .f-btn:hover { background: #238636; color: #fff; border-color: #238636; }
 
@@ -33,58 +32,92 @@
 .goal-area-bottom { position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
 
 .pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; position: relative; z-index: 10; }
-.pitch-row:last-child { margin-bottom: 0; }
 .player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 65px; }
 .player-slot:hover .shirt { transform: scale(1.08); }
 
 .shirt { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; transition: transform 0.15s; position: relative; }
 .shirt.empty { background: rgba(13, 17, 23, 0.6); border: 2px dashed #484f58; color: #8b949e; }
 .shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
-
 .captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
 .slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(13, 17, 23, 0.9); padding: 3px 4px; border-radius: 4px; border: 1px solid #30363d;}
-.slot-price { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-.slot-pos { font-size: 10px; color: #8b949e; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.slot-price { font-size: 10px; color: #3fb950; font-weight: 600; }
+.slot-pos { font-size: 10px; color: #8b949e; font-weight: 600; }
 
 .bench-area { margin-top: 1.5rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem 0.5rem; border-radius: 8px; border: 1px solid #30363d; overflow-x: auto;}
 .bench-title { font-size: 13px; font-weight: 600; color: #8b949e; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Selector Panel - Modern UI */
-.selector-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; width: 100%; }
+/* Transfer View (Analytical List) */
+.t-list-container { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
+.t-header { display: flex; font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; padding: 0 12px 10px 12px; border-bottom: 1px solid #30363d; margin-bottom: 10px; }
+.t-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; transition: background 0.2s; }
+.t-row:hover { background: #21262d; }
+.t-row.empty { border: 2px dashed #484f58; background: rgba(13, 17, 23, 0.4); margin-bottom: 8px; border-radius: 6px; cursor: pointer; justify-content: center; color: #8b949e; font-size: 13px; padding: 16px;}
+.t-row.empty:hover { border-color: #8b949e; color: #e6e6e6; }
+.t-row.empty.active-slot { border-color: #38a169; background: rgba(56, 161, 105, 0.1); color: #38a169; }
+.t-pos { font-size: 11px; font-weight: 600; color: #8b949e; width: 40px; text-align: center; background: #0d1117; padding: 4px; border-radius: 4px;}
+.t-info { flex: 1; margin-left: 15px; }
+.t-name { font-size: 14px; color: #e6e6e6; font-weight: 500; display: flex; align-items: center; gap: 6px;}
+.t-team { font-size: 11px; color: #8b949e; }
+.t-finances { text-align: right; margin-right: 20px; min-width: 60px; }
+.t-sell-price { font-size: 13px; color: #e6e6e6; font-weight: 600; }
+.t-profit { font-size: 11px; }
+.t-profit.positive { color: #3fb950; }
+.t-profit.negative { color: #f85149; }
+.btn-sell { background: transparent; border: 1px solid #f85149; color: #f85149; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-sell:hover { background: #f85149; color: #fff; }
+
+/* Selector Panel */
+.selector-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; width: 100%; height: fit-content;}
 .panel-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
 .pos-filter { display: flex; gap: 8px; margin-bottom: 1.2rem; flex-wrap: wrap; }
 .pos-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
 .pos-btn:hover { background: #21262d; color: #e6e6e6; }
 .pos-btn.active { background: #21262d; color: #fff; border-color: #8b949e; box-shadow: 0 0 0 1px #8b949e; }
-
 .filter-group { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
-.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 9px 12px; outline: none; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 9px 12px; outline: none; transition: border-color 0.2s; }
 .player-search:focus { border-color: #3fb950; box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.15); }
-
 select.player-search { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b949e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; padding-right: 32px; cursor: pointer; }
-select.player-search option { background: #161b22; color: #e6e6e6; padding: 10px; }
-select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(139, 148, 158, 0.15); }
 
-.player-list { max-height: 380px; overflow-y: auto; padding-right: 4px; border-radius: 6px; }
+.player-list { max-height: 450px; overflow-y: auto; padding-right: 4px; border-radius: 6px; }
 .player-list::-webkit-scrollbar { width: 6px; }
 .player-list::-webkit-scrollbar-track { background: transparent; }
 .player-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
 .player-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid transparent; }
 .player-item:hover { background: #21262d; border-color: #30363d; }
 .player-item.selected { background: #1a2f1a; pointer-events: none; opacity: 0.5; }
-.p-shirt { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; flex-shrink: 0; position: relative;}
+.p-shirt { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; flex-shrink: 0; }
 .p-info { flex: 1; min-width: 0; }
 .p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
 .p-meta { font-size: 11px; color: #8b949e; margin-top: 2px;}
 .p-price { font-size: 13px; color: #3fb950; font-weight: 600; flex-shrink: 0; }
 
-.submit-bar { margin-top: 1rem; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #30363d; padding-top: 1.5rem; }
-.budget-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-.btn-submit { width: 100%; padding: 12px; background: #238636; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: background 0.2s;}
-.btn-submit:hover:not(:disabled) { background: #2ea043; }
-.btn-submit:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+/* Sticky Command Ledger */
+.sticky-ledger { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1117; border-top: 1px solid #30363d; z-index: 1000; padding: 15px 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 30px rgba(0,0,0,0.8); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.sticky-ledger.show { transform: translateY(0); }
+.ledger-stats { display: flex; gap: 30px; align-items: center; }
+.l-stat { display: flex; flex-direction: column; }
+.l-label { font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+.l-value { font-size: 20px; color: #fff; font-weight: 700; margin-top: 2px; }
+.l-value.negative { color: #f85149; }
+.l-value.positive { color: #3fb950; }
+.btn-confirm { background: #238636; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-confirm:hover:not(:disabled) { background: #2ea043; }
+.btn-confirm:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+
+/* Ultra-Mobile Pitch Scaling */
+@media screen and (max-width: 500px) {
+    .pitch { min-width: 100% !important; min-height: 400px !important; padding: 10px 0 !important; }
+    .player-slot { width: 45px !important; }
+    .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
+    .slot-name { font-size: 8px !important; padding: 2px !important; }
+    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
+    .ledger-stats { gap: 15px; width: 100%; justify-content: space-between; margin-bottom: 10px; }
+    .l-value { font-size: 16px; }
+    .sticky-ledger { padding: 15px; flex-direction: column; }
+    .btn-confirm { width: 100%; }
+}
 {% endblock %}
 
 {% block content %}
@@ -96,45 +129,60 @@ select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(1
       <button id="tabTransfers" onclick="switchMode('transfers')" style="padding: 8px 16px; font-size: 14px; font-weight: 600; background: #0d1117; color: #8b949e; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; transition: 0.2s;">Transfers</button>
     </div>
   </div>
-  <div style="background: #161b22; padding: 10px 15px; border-radius: 8px; border: 1px solid #30363d; text-align: right; min-width: 150px;">
-    <div style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Free Transfers: <strong style="color: #fff; font-size: 14px;">{{ free_transfers }}</strong></div>
-    <div style="font-size: 12px; color: #8b949e;">Bank: <strong id="bank-val" style="color: #3fb950; font-size: 14px;">£{{ bank|floatformat:1 }}m</strong></div>
-  </div>
 </div>
 
 {% if not players %}
 <div style="background:#d73a49; color:#fff; padding:15px; border-radius:8px; margin-bottom:1.5rem; text-align:center;">
-  <strong>Error: Database Empty!</strong> No active players were found. Please run <code>python populate_pl.py</code> to load the latest roster data.
+  <strong>Error: Database Empty!</strong> Please run <code>python populate_pl.py</code>
 </div>
 {% endif %}
 
 <div class="pick-wrap">
-  <div class="pitch-panel">
-    <div class="formation-bar">
-      <span>Formation:</span>
-      <button class="f-btn active" onclick="setFormation('433',this)">4-3-3</button>
-      <button class="f-btn" onclick="setFormation('442',this)">4-4-2</button>
-      <button class="f-btn" onclick="setFormation('352',this)">3-5-2</button>
-      <button class="f-btn" onclick="setFormation('451',this)">4-5-1</button>
-    </div>
-    
-    <div class="pitch">
-      <div class="penalty-box-top"></div>
-      <div class="goal-area-top"></div>
-      <div class="pitch-lines"></div>
-      <div class="penalty-box-bottom"></div>
-      <div class="goal-area-bottom"></div>
-      <div id="pitch-rows"></div>
-    </div>
+  <div id="squad-view" style="width: 100%;">
+    <div class="pitch-panel">
+      <div class="formation-bar">
+        <span>Formation:</span>
+        <button class="f-btn active" onclick="setFormation('433',this)">4-3-3</button>
+        <button class="f-btn" onclick="setFormation('442',this)">4-4-2</button>
+        <button class="f-btn" onclick="setFormation('352',this)">3-5-2</button>
+        <button class="f-btn" onclick="setFormation('451',this)">4-5-1</button>
+        
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 12px; color: #8b949e;">Captain:</span>
+          <select id="captain-select" class="player-search" style="width: 140px; padding: 6px 10px; margin: 0;" onchange="updateCaptain()">
+            <option value="">Select...</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="pitch">
+        <div class="penalty-box-top"></div><div class="goal-area-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div><div class="goal-area-bottom"></div>
+        <div id="pitch-rows"></div>
+      </div>
 
-    <div class="bench-area">
-      <div class="bench-title">Substitutes</div>
-      <div class="pitch-row" id="bench-rows"></div>
+      <div class="bench-area">
+        <div class="bench-title">Substitutes</div>
+        <div class="pitch-row" id="bench-rows"></div>
+      </div>
+      <button id="squad-save-btn" class="btn-confirm" style="width: 100%; margin-top: 15px;" onclick="submitTeam()">Save Squad Order</button>
     </div>
   </div>
 
-  <div class="selector-panel">
-    <div class="panel-title" id="panel-title">Select a position slot</div>
+  <div id="transfer-view" style="display: none; width: 100%;">
+    <div class="t-list-container">
+      <div style="font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 1.5rem;">Transfer Market</div>
+      <div class="t-header">
+        <div style="width: 40px; text-align: center;">Pos</div>
+        <div style="flex: 1; margin-left: 15px;">Player</div>
+        <div style="width: 80px; text-align: right; margin-right: 15px;">Sell Value</div>
+        <div style="width: 60px; text-align: center;">Action</div>
+      </div>
+      <div id="transfer-list-rows"></div>
+    </div>
+  </div>
+
+  <div class="selector-panel" id="market-selector" style="display: none;">
+    <div class="panel-title" id="panel-title">Search Market</div>
     <div class="pos-filter">
       <button class="pos-btn active" onclick="filterPos('ALL',this)">All</button>
       <button class="pos-btn" onclick="filterPos('GK',this)">GK</button>
@@ -146,37 +194,33 @@ select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(1
     <input class="player-search" style="margin-bottom: 10px; width: 100%;" type="text" placeholder="Search player..." oninput="renderList()" id="search-input">
     
     <div class="filter-group">
-      <select id="filterTeam" class="player-search" onchange="renderList()">
-        <option value="ALL">All Teams</option>
-      </select>
+      <select id="filterTeam" class="player-search" onchange="renderList()"><option value="ALL">All Teams</option></select>
       <select id="sortBy" class="player-search" onchange="renderList()">
         <option value="price_desc">Price: High to Low</option>
         <option value="price_asc">Price: Low to High</option>
-        <option value="name_asc">Name: A to Z</option>
-        <option value="name_desc">Name: Z to A</option>
       </select>
     </div>
 
     <div class="player-list" id="player-list"></div>
-    
-    <div class="submit-bar">
-      <div class="budget-row">
-        <span style="color: #8b949e;">Spent</span>
-        <span id="spent-val" style="color: #38a169; font-weight: 600;">£0.0m</span>
-      </div>
-      <div class="budget-row">
-        <span style="color: #8b949e;">Remaining</span>
-        <span id="remaining-val" style="color: #38a169; font-weight: 600;">£100.0m</span>
-      </div>
-      <div class="budget-row" style="margin-top: 4px;">
-        <span style="color: #8b949e;">Captain</span>
-        <select id="captain-select" class="player-search" style="width:160px; padding:6px 12px;" onchange="updateCaptain()">
-          <option value="">Select captain...</option>
-        </select>
-      </div>
-      <button class="btn-submit" id="submit-btn" disabled onclick="submitTeam()">Save Squad</button>
+  </div>
+</div>
+
+<div class="sticky-ledger" id="sticky-ledger">
+  <div class="ledger-stats">
+    <div class="l-stat">
+      <span class="l-label">Free Transfers</span>
+      <span class="l-value" id="ledger-ft">{{ free_transfers }}</span>
+    </div>
+    <div class="l-stat">
+      <span class="l-label">Cost</span>
+      <span class="l-value" id="ledger-cost">0 pts</span>
+    </div>
+    <div class="l-stat">
+      <span class="l-label">Bank</span>
+      <span class="l-value positive" id="ledger-bank">£{{ bank|floatformat:1 }}m</span>
     </div>
   </div>
+  <button class="btn-confirm" id="ledger-confirm" disabled onclick="submitTeam()">Confirm Transfers</button>
 </div>
 {% endblock %}
 
@@ -189,187 +233,157 @@ const ALL_PLAYERS = [
 ];
 
 const savedPicks = {{ saved_picks_json|safe|default:"[]" }};
-const FORMATIONS = {
-  '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'],['FWD','FWD','FWD']],
-  '442': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID'],['FWD','FWD']],
-  '352': [['GK'],['DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD','FWD']],
-  '451': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD']],
-};
+let initialBank = {{ bank|default:100.0 }};
+let initialFT = {{ free_transfers|default:1 }};
+
+const FORMATIONS = { '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'],['FWD','FWD','FWD']], '442': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID'],['FWD','FWD']], '352': [['GK'],['DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD','FWD']], '451': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD']] };
 
 let formation = '{{ saved_formation|default:"433" }}';
 let slots = [];
+let originalSlotData = []; // To track changes for the ledger
 let activeSlot = null;
 let filterPosition = 'ALL';
-
-let uiMode = 'squad'; // 'squad' or 'transfers'
-
-function switchMode(mode) {
-    uiMode = mode;
-    const tabSquad = document.getElementById('tabSquad');
-    const tabTransfers = document.getElementById('tabTransfers');
-    const panel = document.querySelector('.selector-panel');
-    
-    if (mode === 'squad') {
-        tabSquad.style.background = '#238636'; tabSquad.style.color = '#fff'; tabSquad.style.borderColor = '#2ea043';
-        tabTransfers.style.background = '#0d1117'; tabTransfers.style.color = '#8b949e'; tabTransfers.style.borderColor = '#30363d';
-        panel.style.display = 'none'; // Hide market
-        activeSlot = null;
-    } else {
-        tabTransfers.style.background = '#238636'; tabTransfers.style.color = '#fff'; tabTransfers.style.borderColor = '#2ea043';
-        tabSquad.style.background = '#0d1117'; tabSquad.style.color = '#8b949e'; tabSquad.style.borderColor = '#30363d';
-        panel.style.display = 'flex'; // Show market
-    }
-    renderPitch();
-}
-
-// Initial Call
-setTimeout(() => switchMode('squad'), 100);
-
+let uiMode = 'squad';
 
 try {
+  // Populate Teams Dropdown
   const uniqueTeams = [...new Set(ALL_PLAYERS.map(p => p.team))].sort();
   const teamSelect = document.getElementById('filterTeam');
-  uniqueTeams.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t;
-    opt.textContent = t;
-    teamSelect.appendChild(opt);
-  });
+  uniqueTeams.forEach(t => { const opt = document.createElement('option'); opt.value = t; opt.textContent = t; teamSelect.appendChild(opt); });
+
+  // 50% Profit Tax Math
+  function calcSellPrice(currentPrice, purchasePrice) {
+      if (!purchasePrice) return currentPrice;
+      let diff = currentPrice - purchasePrice;
+      return diff > 0 ? purchasePrice + (Math.floor(diff * 10) / 20.0) : currentPrice;
+  }
 
   function buildSlots(f, loadedPicks = savedPicks) {
     const rows = FORMATIONS[f];
     slots = [];
-    rows.forEach(row => row.forEach(pos => slots.push({ pos, player: null, captain: false, is_sub: false })));
-    ['GK', 'DEF', 'DEF', 'MID', 'FWD'].forEach(pos => slots.push({ pos, player: null, captain: false, is_sub: true }));
+    rows.forEach(row => row.forEach(pos => slots.push({ pos, player: null, captain: false, is_sub: false, pur_price: 0 })));
+    ['GK', 'DEF', 'DEF', 'MID', 'FWD'].forEach(pos => slots.push({ pos, player: null, captain: false, is_sub: true, pur_price: 0 }));
 
-    let unassigned = [];
     loadedPicks.forEach(sp => {
       const p = ALL_PLAYERS.find(pl => pl.id === sp.id);
       if (!p) return;
-      let emptySlot = slots.find(s => s.pos === p.pos && s.player === null && s.is_sub === sp.is_sub);
-      if (!emptySlot) emptySlot = slots.find(s => s.pos === p.pos && s.player === null);
+      let emptySlot = slots.find(s => s.pos === p.pos && s.player === null && s.is_sub === sp.is_sub) || slots.find(s => s.pos === p.pos && s.player === null);
       if (emptySlot) {
         emptySlot.player = p;
         emptySlot.captain = sp.is_captain;
-      } else {
-        unassigned.push(p.full);
+        emptySlot.pur_price = sp.purchase_price || p.price;
       }
     });
-
-    if (unassigned.length > 0) alert("Formation changed. Removed: " + unassigned.join(', '));
+    
+    // Deep copy to track original state
+    originalSlotData = slots.map(s => s.player ? s.player.id : null);
   }
 
-  function setFormation(f, btn) {
-    const currentPicks = slots.filter(s => s.player).map(s => ({ id: s.player.id, pos: s.player.pos, is_sub: s.is_sub, is_captain: s.captain }));
-    formation = f;
-    buildSlots(f, currentPicks);
+  function switchMode(mode) {
+    uiMode = mode;
     activeSlot = null;
-    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderPitch();
-    renderList();
-    updateBudget();
-    updateCaptainDropdown();
+    
+    const ts = document.getElementById('tabSquad');
+    const tt = document.getElementById('tabTransfers');
+    
+    if (mode === 'squad') {
+        ts.style.background = '#238636'; ts.style.color = '#fff'; ts.style.borderColor = '#2ea043';
+        tt.style.background = '#0d1117'; tt.style.color = '#8b949e'; tt.style.borderColor = '#30363d';
+        document.getElementById('squad-view').style.display = 'block';
+        document.getElementById('transfer-view').style.display = 'none';
+        document.getElementById('market-selector').style.display = 'none';
+        document.getElementById('sticky-ledger').classList.remove('show');
+        renderPitch();
+    } else {
+        tt.style.background = '#238636'; tt.style.color = '#fff'; tt.style.borderColor = '#2ea043';
+        ts.style.background = '#0d1117'; ts.style.color = '#8b949e'; ts.style.borderColor = '#30363d';
+        document.getElementById('squad-view').style.display = 'none';
+        document.getElementById('transfer-view').style.display = 'block';
+        document.getElementById('market-selector').style.display = 'flex';
+        document.getElementById('sticky-ledger').classList.add('show');
+        document.getElementById('panel-title').textContent = "Search Market";
+        renderTransferList();
+        renderList();
+    }
   }
 
+  // --- SQUAD PITCH LOGIC ---
   function createSlotEl(idx) {
     const slot = slots[idx];
-    const el = document.createElement('div');
-    el.className = 'player-slot';
-    el.onclick = () => clickSlot(idx);
+    const el = document.createElement('div'); el.className = 'player-slot';
     
-    const shirt = document.createElement('div');
-    shirt.className = slot.player ? 'shirt filled' : 'shirt empty';
-    
+    const shirt = document.createElement('div'); shirt.className = slot.player ? 'shirt filled' : 'shirt empty';
     if (slot.player) {
-      shirt.style.background = slot.player.color;
-      shirt.style.color = slot.player.color2;
-      shirt.style.borderColor = slot.player.color2;
-      shirt.textContent = slot.player.team;
-      if (slot.captain) {
-        const badge = document.createElement('div');
-        badge.className = 'captain-badge';
-        badge.textContent = 'C';
-        shirt.appendChild(badge);
-      }
-      if (slot.player.injured) {
-        const ibadge = document.createElement('div');
-        ibadge.className = 'injury-badge';
-        ibadge.textContent = '✚';
-        shirt.appendChild(ibadge);
-      }
-    } else {
-      shirt.textContent = slot.pos;
-    }
+      shirt.style.background = slot.player.color; shirt.style.color = slot.player.color2; shirt.style.borderColor = slot.player.color2; shirt.textContent = slot.player.team;
+      if (slot.captain) { const badge = document.createElement('div'); badge.className = 'captain-badge'; badge.textContent = 'C'; shirt.appendChild(badge); }
+      if (slot.player.injured) { const ibadge = document.createElement('div'); ibadge.className = 'injury-badge'; ibadge.textContent = '✚'; shirt.appendChild(ibadge); }
+    } else { shirt.textContent = slot.pos; }
     
-    const name = document.createElement('div');
-    name.className = 'slot-name';
-    name.textContent = slot.player ? slot.player.name : '+ Add';
+    const name = document.createElement('div'); name.className = 'slot-name'; name.textContent = slot.player ? slot.player.name : '+ Add';
+    const price = document.createElement('div'); price.className = slot.player ? 'slot-price' : 'slot-pos'; price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
     if (!slot.player) name.style.background = 'transparent';
     
-    const price = document.createElement('div');
-    price.className = slot.player ? 'slot-price' : 'slot-pos';
-    price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
-    
-    el.appendChild(shirt);
-    el.appendChild(name);
-    el.appendChild(price);
-    
-    if (activeSlot === idx) el.style.outline = '2px solid #38a169';
+    el.appendChild(shirt); el.appendChild(name); el.appendChild(price);
     return el;
   }
 
   function renderPitch() {
-    const pitchContainer = document.getElementById('pitch-rows');
-    const benchContainer = document.getElementById('bench-rows');
-    pitchContainer.innerHTML = '';
-    benchContainer.innerHTML = '';
-    
+    const pc = document.getElementById('pitch-rows'); const bc = document.getElementById('bench-rows');
+    pc.innerHTML = ''; bc.innerHTML = '';
     let idx = 0;
-    FORMATIONS[formation].forEach(row => {
-      const div = document.createElement('div');
-      div.className = 'pitch-row';
-      row.forEach(() => { div.appendChild(createSlotEl(idx)); idx++; });
-      pitchContainer.appendChild(div);
-    });
-    
-    ['GK', 'DEF', 'DEF', 'MID', 'FWD'].forEach(() => {
-      benchContainer.appendChild(createSlotEl(idx));
-      idx++;
-    });
+    FORMATIONS[formation].forEach(row => { const div = document.createElement('div'); div.className = 'pitch-row'; row.forEach(() => { div.appendChild(createSlotEl(idx)); idx++; }); pc.appendChild(div); });
+    ['GK', 'DEF', 'DEF', 'MID', 'FWD'].forEach(() => { bc.appendChild(createSlotEl(idx)); idx++; });
   }
 
-  function clickSlot(idx) {
-    const slot = slots[idx];
-    if (slot.player) {
-      let msg = uiMode === 'transfers' 
-        ? `Are you sure you want to sell ${slot.player.name} for £${slot.player.price.toFixed(1)}m?` 
-        : `Remove ${slot.player.name} from this position?`;
-        
-      if (!confirm(msg)) return;
+  // --- TRANSFER LIST LOGIC (INLINE SUBSTITUTION) ---
+  function renderTransferList() {
+      const container = document.getElementById('transfer-list-rows');
+      container.innerHTML = '';
       
-      slot.player = null;
-      slot.captain = false;
-      renderPitch();
-      renderList();
-      updateBudget();
-      updateCaptainDropdown();
-      return;
-    }
-    
-    activeSlot = idx;
-    filterPosition = slot.pos;
-    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.pos-btn[onclick*="'${slot.pos}'"]`)?.classList.add('active');
-    document.getElementById('panel-title').textContent = `Pick a ${slot.is_sub ? 'Sub' : 'Starting'} ${slot.pos}`;
-    renderPitch();
-    renderList();
+      slots.forEach((slot, idx) => {
+          const row = document.createElement('div');
+          
+          if (slot.player) {
+              row.className = 't-row';
+              const sellVal = calcSellPrice(slot.player.price, slot.pur_price);
+              const profit = slot.pur_price > 0 ? slot.player.price - slot.pur_price : 0;
+              let profitHtml = '';
+              if (profit > 0) profitHtml = `<span class="t-profit positive">(+£${profit.toFixed(1)}m)</span>`;
+              else if (profit < 0) profitHtml = `<span class="t-profit negative">(-£${Math.abs(profit).toFixed(1)}m)</span>`;
+              
+              const injHtml = slot.player.injured ? `<span style="color:#d73a49;font-size:10px;margin-left:4px;">(Injured)</span>` : '';
+
+              row.innerHTML = `
+                  <div class="t-pos">${slot.pos}</div>
+                  <div class="t-info"><div class="t-name">${slot.player.name} ${injHtml}</div><div class="t-team">${slot.player.team} &middot; Sub: ${slot.is_sub ? 'Yes':'No'}</div></div>
+                  <div class="t-finances"><div class="t-sell-price">£${sellVal.toFixed(1)}m</div>${profitHtml}</div>
+                  <div style="width: 60px; text-align: center;"><button class="btn-sell" onclick="sellPlayer(${idx})">Sell</button></div>
+              `;
+          } else {
+              row.className = 't-row empty';
+              if (activeSlot === idx) row.classList.add('active-slot');
+              row.innerHTML = `<span>+ Select Replacement ${slot.pos}</span>`;
+              row.onclick = () => { activeSlot = idx; filterPos(slot.pos, document.querySelector(`.pos-btn[onclick*="'${slot.pos}'"]`)); renderTransferList(); };
+          }
+          container.appendChild(row);
+      });
+      updateLedger();
   }
 
+  function sellPlayer(idx) {
+      if (!confirm(`Sell ${slots[idx].player.name}?`)) return;
+      slots[idx].player = null;
+      slots[idx].captain = false;
+      activeSlot = idx;
+      filterPos(slots[idx].pos, document.querySelector(`.pos-btn[onclick*="'${slots[idx].pos}'"]`));
+      renderTransferList();
+  }
+
+  // --- MARKET SELECTOR ---
   function filterPos(pos, btn) {
     filterPosition = pos;
     document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if(btn) btn.classList.add('active');
     renderList();
   }
 
@@ -387,122 +401,120 @@ try {
     });
     
     list.sort((a,b) => {
-      if (sortVal === 'price_desc') { if (b.price === a.price) return a.full.localeCompare(b.full); return b.price - a.price; }
-      if (sortVal === 'price_asc') { if (a.price === b.price) return a.full.localeCompare(b.full); return a.price - b.price; }
-      if (sortVal === 'name_asc') return a.full.localeCompare(b.full);
-      if (sortVal === 'name_desc') return b.full.localeCompare(a.full);
+      if (sortVal === 'price_desc') return b.price - a.price;
+      if (sortVal === 'price_asc') return a.price - b.price;
       return 0;
     });
     
     const container = document.getElementById('player-list');
     container.innerHTML = '';
-    list.slice(0, 100).forEach(p => {
+    list.slice(0, 50).forEach(p => {
       const isPicked = pickedIds.includes(p.id);
       const div = document.createElement('div');
       div.className = 'player-item' + (isPicked ? ' selected' : '');
       div.onclick = () => selectPlayer(p);
-      
-      const injuryIcon = p.injured ? `<div class="injury-badge" style="width:12px;height:12px;font-size:7px;bottom:-2px;right:-2px;">✚</div>` : '';
-      
-      div.innerHTML = `
-        <div class="p-shirt" style="background:${p.color}; color:${p.color2}; border: 1px solid ${p.color2};">
-          ${p.team}
-          ${injuryIcon}
-        </div>
-        <div class="p-info">
-          <div class="p-name">${p.full}</div>
-          <div class="p-meta">${p.pos} &middot; ${p.team}</div>
-        </div>
-        <div class="p-price">£${p.price.toFixed(1)}m</div>
-      `;
+      div.innerHTML = `<div class="p-shirt" style="background:${p.color}; color:${p.color2};">${p.team}</div><div class="p-info"><div class="p-name">${p.full}</div><div class="p-meta">${p.pos}</div></div><div class="p-price">£${p.price.toFixed(1)}m</div>`;
       container.appendChild(div);
     });
   }
 
   function selectPlayer(p) {
-    if (activeSlot === null) return;
+    if (activeSlot === null) { alert("Click an empty dashed slot on the left to substitute a player."); return; }
     const slot = slots[activeSlot];
-    if (slot.pos !== p.pos) { alert(`Wrong position. This slot needs a ${slot.pos}.`); return; }
-    if (slots.find(s => s.player && s.player.id === p.id)) { alert(`${p.full} is already in your team.`); return; }
+    if (slot.pos !== p.pos) { alert(`This slot requires a ${slot.pos}.`); return; }
     
     let teamCount = 0;
     slots.forEach(s => { if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++; });
-    if (slot.is_sub && teamCount >= 2) { alert(`You cannot select more than 2 substitutes from ${p.team}.`); return; }
-    if (!slot.is_sub && teamCount >= 3) { alert(`You cannot select more than 3 starting players from ${p.team}.`); return; }
+    if (slot.is_sub && teamCount >= 2) { alert(`Max 2 substitutes from ${p.team}.`); return; }
+    if (!slot.is_sub && teamCount >= 3) { alert(`Max 3 starters from ${p.team}.`); return; }
 
     slot.player = p;
+    slot.pur_price = p.price; // New purchase price
     activeSlot = null;
-    renderPitch();
-    renderList();
-    updateBudget();
-    updateCaptainDropdown();
+    renderTransferList();
   }
 
+  // --- LEDGER MATH & CAPTAIN ---
   function updateCaptainDropdown() {
     const select = document.getElementById('captain-select');
     const currentVal = select.value;
-    select.innerHTML = '<option value="">Select captain...</option>';
-    
-    let hasValidCaptain = false;
+    select.innerHTML = '<option value="">Select...</option>';
     slots.forEach(s => {
       if (s.player && !s.is_sub) {
         const opt = document.createElement('option');
-        opt.value = s.player.id;
-        opt.textContent = s.player.name + ' (' + s.player.pos + ')';
-        if (s.player.id.toString() === currentVal) {
-          opt.selected = true;
-          hasValidCaptain = true;
-          s.captain = true;
-        } else { s.captain = false; }
+        opt.value = s.player.id; opt.textContent = s.player.name;
+        if (s.player.id.toString() === currentVal || s.captain) { opt.selected = true; s.captain = true; } 
+        else { s.captain = false; }
         select.appendChild(opt);
-      } else { s.captain = false; }
+      }
     });
-
-    if (!hasValidCaptain) slots.forEach(s => s.captain = false);
-    validateSubmit();
-    renderPitch();
   }
 
   function updateCaptain() {
     const capId = document.getElementById('captain-select').value;
     slots.forEach(s => s.captain = (s.player && s.player.id.toString() === capId));
-    validateSubmit();
-    renderPitch();
   }
 
-  function updateBudget() {
-    const spent = slots.reduce((sum, s) => sum + (s.player ? s.player.price : 0), 0);
-    const rem = 100 - spent;
-    document.getElementById('spent-val').textContent = '£' + spent.toFixed(1) + 'm';
-    document.getElementById('remaining-val').textContent = '£' + rem.toFixed(1) + 'm';
-    document.getElementById('remaining-val').style.color = rem < 0 ? '#f85149' : '#38a169';
-    validateSubmit();
-  }
+  function updateLedger() {
+      // 1. Calculate Bank
+      let currentBank = initialBank;
+      
+      // Add revenue from sold players
+      originalSlotData.forEach((origId, idx) => {
+          if (origId && (!slots[idx].player || slots[idx].player.id !== origId)) {
+              // Player was sold. We need their original data to calc sell price.
+              const origPick = savedPicks.find(p => p.id === origId);
+              const currentData = ALL_PLAYERS.find(p => p.id === origId);
+              if (origPick && currentData) {
+                  currentBank += calcSellPrice(currentData.price, origPick.purchase_price);
+              }
+          }
+      });
+      
+      // Deduct cost of new players
+      slots.forEach((slot, idx) => {
+          if (slot.player && slot.player.id !== originalSlotData[idx]) {
+              currentBank -= slot.player.price;
+          }
+      });
 
-  function validateSubmit() {
-    const filled = slots.filter(s => s.player).length;
-    const spent = slots.reduce((sum, s) => sum + (s.player ? s.player.price : 0), 0);
-    const hasCaptain = slots.some(s => s.captain);
-    document.getElementById('submit-btn').disabled = (filled < 16 || (100 - spent) < 0 || !hasCaptain);
-  }
-
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
+      // 2. Calculate Transfers & Hits
+      let transfersMade = 0;
+      slots.forEach((slot, idx) => {
+          if (slot.player && slot.player.id !== originalSlotData[idx]) transfersMade++;
+      });
+      
+      let remainingFT = initialFT - transfersMade;
+      let pointsHit = 0;
+      if (remainingFT < 0) {
+          pointsHit = Math.abs(remainingFT) * 4;
+          remainingFT = 0;
       }
-    }
-    return cookieValue;
+
+      // Update UI
+      const bEl = document.getElementById('ledger-bank');
+      bEl.textContent = '£' + currentBank.toFixed(1) + 'm';
+      bEl.className = currentBank < 0 ? 'l-value negative' : 'l-value positive';
+      
+      document.getElementById('ledger-ft').textContent = remainingFT;
+      
+      const cEl = document.getElementById('ledger-cost');
+      cEl.textContent = pointsHit > 0 ? '-' + pointsHit + ' pts' : '0 pts';
+      cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
+
+      const filled = slots.filter(s => s.player).length;
+      document.getElementById('ledger-confirm').disabled = (filled < 16 || currentBank < 0);
+      document.getElementById('squad-save-btn').disabled = (filled < 16 || currentBank < 0);
   }
 
   function submitTeam() {
-    if (!slots.some(s => s.captain)) { alert('Please select a captain.'); return; }
+    if (uiMode === 'squad' && !slots.some(s => s.captain)) { alert('Please select a captain.'); return; }
+    
+    const pointsHitText = document.getElementById('ledger-cost').textContent;
+    if (pointsHitText !== '0 pts') {
+        if (!confirm(`WARNING: These transfers will cost you ${pointsHitText}. Are you sure you want to proceed?`)) return;
+    }
+
     const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain, is_sub: s.is_sub }));
     
     fetch('/pick/save/', {
@@ -511,24 +523,41 @@ try {
       body: JSON.stringify({ picks, formation: formation })
     }).then(r => r.json()).then(d => {
       if (d.success || d.ok || d.status === 'ok') {
-        alert('✅ Team successfully saved!');
+        alert('✅ Squad & Transfers successfully saved!');
         window.location.href = '/';
-      } else {
-        alert(d.error || 'Something went wrong.');
-      }
+      } else { alert(d.error || 'Something went wrong.'); }
     });
   }
 
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; }
+      }
+    }
+    return cookieValue;
+  }
+
+  function setFormation(f, btn) {
+    const currentPicks = slots.filter(s => s.player).map(s => ({ id: s.player.id, pos: s.player.pos, is_sub: s.is_sub, is_captain: s.captain, purchase_price: s.pur_price }));
+    formation = f;
+    buildSlots(f, currentPicks);
+    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPitch();
+    updateCaptainDropdown();
+  }
+
   buildSlots(formation);
-  renderPitch();
-  renderList();
-  updateBudget();
+  switchMode('squad');
   updateCaptainDropdown();
-  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.f-btn[onclick*="'${formation}'"]`)?.classList.add('active');
+  updateLedger();
+
 } catch (e) {
   console.error(e);
-  document.getElementById('player-list').innerHTML = `<div style="color:#f85149; padding:15px; border:1px solid #d73a49; border-radius:8px; background:#2d1114;"><b>UI Render Error:</b><br>${e.message}</div>`;
+  document.getElementById('squad-view').innerHTML = `<div style="color:#f85149; padding:15px; border:1px solid #d73a49; border-radius:8px; background:#2d1114;"><b>UI Error:</b><br>${e.message}</div>`;
 }
 </script>
-{% endblock %}
