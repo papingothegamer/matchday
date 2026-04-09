@@ -331,6 +331,12 @@ try {
   function clickSlot(idx) {
     const slot = slots[idx];
     if (slot.player) {
+      let msg = uiMode === 'transfers' 
+        ? `Are you sure you want to sell ${slot.player.name} for £${slot.player.price.toFixed(1)}m?` 
+        : `Remove ${slot.player.name} from this position?`;
+        
+      if (!confirm(msg)) return;
+      
       slot.player = null;
       slot.captain = false;
       renderPitch();
