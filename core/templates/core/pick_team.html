@@ -1,58 +1,19 @@
-﻿{% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay
-
-
-
-
-
-
-
-/* MODERN SELECTOR UI */
-.selector-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; overflow: hidden; }
-.pos-filter { display: flex; gap: 8px; margin-bottom: 1.2rem; flex-wrap: wrap; }
-.pos-btn { font-size: 13px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
-.pos-btn:hover { background: #21262d; color: #e6e6e6; }
-.pos-btn.active { background: #21262d; color: #fff; border-color: #8b949e; box-shadow: 0 0 0 1px #8b949e; }
-
-.filter-group { display: flex; gap: 10px; margin-bottom: 12px; width: 100%; }
-.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 9px 12px; outline: none; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
-.player-search:focus { border-color: #3fb950; box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.15); }
-
-/* Custom Dropdown Styling */
-select.player-search { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b949e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; padding-right: 32px; cursor: pointer; }
-select.player-search option { background: #161b22; color: #e6e6e6; padding: 10px; }
-select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(139, 148, 158, 0.15); }
-
-{% endblock %}
+{% extends 'core/base.html' %}
+{% block title %}Pick Your Team — MatchDay{% endblock %}
 
 {% block extra_style %}
+/* Layout Grid */
+.pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
+@media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; } }
 
-/* =========================================
-   BULLETPROOF PITCH RESPONSIVENESS
-   ========================================= */
-@media screen and (max-width: 900px) {
-    .pick-wrap { display: flex !important; flex-direction: column !important; gap: 20px !important; }
-    .pitch-container { width: 100% !important; overflow-x: auto !important; padding-bottom: 15px !important; }
-    .selector-panel { width: 100% !important; height: auto !important; min-height: 400px !important; margin-top: 10px !important; }
-}
-
-@media screen and (max-width: 500px) {
-    .pitch { min-width: 100% !important; min-height: 400px !important; padding: 10px 0 !important; }
-    .player-slot { width: 45px !important; }
-    .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
-    .slot-name { width: 55px !important; font-size: 8px !important; padding: 2px !important; }
-    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
-}
-
-.pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; }
-@media (max-width: 800px) { .pick-wrap { grid-template-columns: 1fr; } }
-.pitch-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; }
+/* Pitch Area */
+.pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
 .formation-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
 .formation-bar span { font-size: 12px; color: #8b949e; margin-right: 4px; }
-.f-btn { font-size: 12px; padding: 4px 12px; border: 1px solid #30363d; border-radius: 6px; background: transparent; color: #8b949e; cursor: pointer; }
+.f-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
 .f-btn.active, .f-btn:hover { background: #238636; color: #fff; border-color: #238636; }
 
-.pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; }
+.pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; min-width: 350px; }
 .pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); }
 .pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; }
 .penalty-box-top { position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
@@ -60,55 +21,65 @@ select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(1
 .goal-area-top { position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
 .goal-area-bottom { position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
 
-.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; position: relative; z-index: 10; }
+.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; position: relative; z-index: 10; }
 .pitch-row:last-child { margin-bottom: 0; }
-.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 70px; }
+.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 65px; }
 .player-slot:hover .shirt { transform: scale(1.08); }
 
-.shirt { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; transition: transform 0.15s; position: relative; }
+.shirt { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; transition: transform 0.15s; position: relative; }
 .shirt.empty { background: rgba(13, 17, 23, 0.6); border: 2px dashed #484f58; color: #8b949e; }
 .shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
 
 .captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 75px; background: rgba(13, 17, 23, 0.7); padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(13, 17, 23, 0.9); padding: 3px 4px; border-radius: 4px; border: 1px solid #30363d;}
 .slot-price { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-.slot-pos { font-size: 9px; color: #8b949e; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.slot-pos { font-size: 10px; color: #8b949e; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-.bench-area { margin-top: 1rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem; border-radius: 8px; border: 1px solid #30363d; }
-.bench-title { font-size: 14px; font-weight: 600; color: #fff; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+.bench-area { margin-top: 1.5rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem 0.5rem; border-radius: 8px; border: 1px solid #30363d; overflow-x: auto;}
+.bench-title { font-size: 13px; font-weight: 600; color: #8b949e; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
 
+/* Selector Panel - Modern UI */
+.selector-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; width: 100%; }
+.panel-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
+.pos-filter { display: flex; gap: 8px; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.pos-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
+.pos-btn:hover { background: #21262d; color: #e6e6e6; }
+.pos-btn.active { background: #21262d; color: #fff; border-color: #8b949e; box-shadow: 0 0 0 1px #8b949e; }
 
-.panel-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
+.filter-group { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
+.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 9px 12px; outline: none; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+.player-search:focus { border-color: #3fb950; box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.15); }
 
+select.player-search { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b949e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; padding-right: 32px; cursor: pointer; }
+select.player-search option { background: #161b22; color: #e6e6e6; padding: 10px; }
+select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(139, 148, 158, 0.15); }
 
-
-
-
-.player-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
-.player-list::-webkit-scrollbar { width: 8px; }
-.player-list::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
+.player-list { max-height: 380px; overflow-y: auto; padding-right: 4px; border-radius: 6px; }
+.player-list::-webkit-scrollbar { width: 6px; }
+.player-list::-webkit-scrollbar-track { background: transparent; }
 .player-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-.player-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
-.player-item:hover { background: #21262d; }
+.player-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid transparent; }
+.player-item:hover { background: #21262d; border-color: #30363d; }
 .player-item.selected { background: #1a2f1a; pointer-events: none; opacity: 0.5; }
 .p-shirt { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; flex-shrink: 0; position: relative;}
 .p-info { flex: 1; min-width: 0; }
-.p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.p-meta { font-size: 11px; color: #8b949e; }
-.p-price { font-size: 12px; color: #38a169; font-weight: 500; flex-shrink: 0; }
-.submit-bar { margin-top: auto; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #30363d; padding-top: 1rem; }
+.p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
+.p-meta { font-size: 11px; color: #8b949e; margin-top: 2px;}
+.p-price { font-size: 13px; color: #3fb950; font-weight: 600; flex-shrink: 0; }
+
+.submit-bar { margin-top: 1rem; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #30363d; padding-top: 1.5rem; }
 .budget-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-.btn-submit { width: 100%; padding: 10px; background: #238636; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; }
+.btn-submit { width: 100%; padding: 12px; background: #238636; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: background 0.2s;}
 .btn-submit:hover:not(:disabled) { background: #2ea043; }
 .btn-submit:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
 {% endblock %}
 
 {% block content %}
-<div style="margin-bottom:1rem;">
-  <h2 style="font-size:20px;font-weight:600;color:#fff;">Pick your team</h2>
-  <p style="font-size:13px;color:#8b949e;margin-top:4px;">Pick 11 Starters and 5 Subs &mdash; Budget: £100.0m</p>
+<div style="margin-bottom:1.5rem;">
+  <h2 style="font-size:24px;font-weight:700;color:#fff;">Squad Selection</h2>
+  <p style="font-size:14px;color:#8b949e;margin-top:4px;">Pick 11 Starters and 5 Subs &mdash; Budget: £100.0m</p>
 </div>
 
 {% if not players %}
@@ -179,11 +150,11 @@ select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(1
       </div>
       <div class="budget-row" style="margin-top: 4px;">
         <span style="color: #8b949e;">Captain</span>
-        <select id="captain-select" class="player-search" style="margin-bottom:0; width:140px; padding:4px 8px;" onchange="updateCaptain()">
+        <select id="captain-select" class="player-search" style="width:160px; padding:6px 12px;" onchange="updateCaptain()">
           <option value="">Select captain...</option>
         </select>
       </div>
-      <button class="btn-submit" id="submit-btn" disabled onclick="submitTeam()">Save team</button>
+      <button class="btn-submit" id="submit-btn" disabled onclick="submitTeam()">Save Squad</button>
     </div>
   </div>
 </div>
@@ -193,22 +164,11 @@ select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(1
 <script>
 const ALL_PLAYERS = [
   {% for p in players %}
-  { 
-    id: {{ p.id|default:"0" }}, 
-    name: "{{ p.display_name|escapejs }}", 
-    full: "{{ p.full_name|escapejs }}", 
-    pos: "{{ p.position|escapejs }}", 
-    team: "{{ p.team.short_name|escapejs }}", 
-    price: parseFloat("{{ p.price|stringformat:'f'|default:'0' }}") || 0, 
-    color: "{{ p.team.primary_color|escapejs }}", 
-    color2: "{{ p.team.secondary_color|escapejs }}", 
-    injured: {% if p.is_injured %}true{% else %}false{% endif %} 
-  },
+  { id: {{ p.id|default:"0" }}, name: "{{ p.display_name|escapejs }}", full: "{{ p.full_name|escapejs }}", pos: "{{ p.position|escapejs }}", team: "{{ p.team.short_name|escapejs }}", price: parseFloat("{{ p.price|stringformat:'f'|default:'0' }}") || 0, color: "{{ p.team.primary_color|escapejs }}", color2: "{{ p.team.secondary_color|escapejs }}", injured: {% if p.is_injured %}true{% else %}false{% endif %} },
   {% endfor %}
 ];
 
 const savedPicks = {{ saved_picks_json|safe|default:"[]" }};
-
 const FORMATIONS = {
   '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'],['FWD','FWD','FWD']],
   '442': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID'],['FWD','FWD']],
@@ -251,15 +211,11 @@ try {
       }
     });
 
-    if (unassigned.length > 0) {
-      alert("Formation changed. The following players were removed to fit the new structure:\n" + unassigned.join(', '));
-    }
+    if (unassigned.length > 0) alert("Formation changed. Removed: " + unassigned.join(', '));
   }
 
   function setFormation(f, btn) {
-    const currentPicks = slots.filter(s => s.player).map(s => ({
-      id: s.player.id, pos: s.player.pos, is_sub: s.is_sub, is_captain: s.captain
-    }));
+    const currentPicks = slots.filter(s => s.player).map(s => ({ id: s.player.id, pos: s.player.pos, is_sub: s.is_sub, is_captain: s.captain }));
     formation = f;
     buildSlots(f, currentPicks);
     activeSlot = null;
@@ -419,12 +375,9 @@ try {
     if (slots.find(s => s.player && s.player.id === p.id)) { alert(`${p.full} is already in your team.`); return; }
     
     let teamCount = 0;
-    slots.forEach(s => {
-      if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++;
-    });
-    
-    if (slot.is_sub && teamCount >= 2) { alert(`Rule Violation: You cannot select more than 2 substitutes from ${p.team}.`); return; }
-    if (!slot.is_sub && teamCount >= 3) { alert(`Rule Violation: You cannot select more than 3 starting players from ${p.team}.`); return; }
+    slots.forEach(s => { if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++; });
+    if (slot.is_sub && teamCount >= 2) { alert(`You cannot select more than 2 substitutes from ${p.team}.`); return; }
+    if (!slot.is_sub && teamCount >= 3) { alert(`You cannot select more than 3 starting players from ${p.team}.`); return; }
 
     slot.player = p;
     activeSlot = null;
@@ -449,13 +402,9 @@ try {
           opt.selected = true;
           hasValidCaptain = true;
           s.captain = true;
-        } else {
-          s.captain = false;
-        }
+        } else { s.captain = false; }
         select.appendChild(opt);
-      } else {
-        s.captain = false;
-      }
+      } else { s.captain = false; }
     });
 
     if (!hasValidCaptain) slots.forEach(s => s.captain = false);
@@ -482,10 +431,8 @@ try {
   function validateSubmit() {
     const filled = slots.filter(s => s.player).length;
     const spent = slots.reduce((sum, s) => sum + (s.player ? s.player.price : 0), 0);
-    const rem = 100 - spent;
     const hasCaptain = slots.some(s => s.captain);
-    
-    document.getElementById('submit-btn').disabled = (filled < 16 || rem < 0 || !hasCaptain);
+    document.getElementById('submit-btn').disabled = (filled < 16 || (100 - spent) < 0 || !hasCaptain);
   }
 
   function getCookie(name) {
@@ -504,7 +451,7 @@ try {
   }
 
   function submitTeam() {
-    if (!slots.some(s => s.captain)) { alert('Please select a captain from the dropdown.'); return; }
+    if (!slots.some(s => s.captain)) { alert('Please select a captain.'); return; }
     const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain, is_sub: s.is_sub }));
     
     fetch('/pick/save/', {
@@ -512,8 +459,12 @@ try {
       headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
       body: JSON.stringify({ picks, formation: formation })
     }).then(r => r.json()).then(d => {
-      if (d.success || d.ok || d.status === 'ok') { alert('✅ Team successfully saved!'); window.location.href = '/'; }
-      else alert(d.error || 'Something went wrong.');
+      if (d.success || d.ok || d.status === 'ok') {
+        alert('✅ Team successfully saved!');
+        window.location.href = '/';
+      } else {
+        alert(d.error || 'Something went wrong.');
+      }
     });
   }
 
@@ -526,7 +477,7 @@ try {
   document.querySelector(`.f-btn[onclick*="'${formation}'"]`)?.classList.add('active');
 } catch (e) {
   console.error(e);
-  document.getElementById('player-list').innerHTML = `<div style="color:#f85149; padding:15px; border:1px solid #d73a49; border-radius:8px; background:#2d1114;"><b>UI Render Error:</b><br>${e.message}<br><br>Please check console or clear your browser cache.</div>`;
+  document.getElementById('player-list').innerHTML = `<div style="color:#f85149; padding:15px; border:1px solid #d73a49; border-radius:8px; background:#2d1114;"><b>UI Render Error:</b><br>${e.message}</div>`;
 }
 </script>
 {% endblock %}
