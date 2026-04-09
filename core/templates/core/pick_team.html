@@ -1,10 +1,27 @@
 ﻿{% extends 'core/base.html' %}
 {% block title %}Pick Your Team — MatchDay
-/* Responsive Failsafes for Selector Panel */
-.selector-panel { overflow: hidden; display: flex; flex-direction: column; }
-.filter-group { display: flex; gap: 8px; margin-bottom: 10px; width: 100%; }
-.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 7px 10px; outline: none; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-select.player-search { padding-right: 25px; /* Room for dropdown arrow */ }
+
+
+
+
+
+
+
+/* MODERN SELECTOR UI */
+.selector-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; overflow: hidden; }
+.pos-filter { display: flex; gap: 8px; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.pos-btn { font-size: 13px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
+.pos-btn:hover { background: #21262d; color: #e6e6e6; }
+.pos-btn.active { background: #21262d; color: #fff; border-color: #8b949e; box-shadow: 0 0 0 1px #8b949e; }
+
+.filter-group { display: flex; gap: 10px; margin-bottom: 12px; width: 100%; }
+.player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 9px 12px; outline: none; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+.player-search:focus { border-color: #3fb950; box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.15); }
+
+/* Custom Dropdown Styling */
+select.player-search { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b949e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; padding-right: 32px; cursor: pointer; }
+select.player-search option { background: #161b22; color: #e6e6e6; padding: 10px; }
+select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(139, 148, 158, 0.15); }
 
 {% endblock %}
 
@@ -62,11 +79,11 @@ select.player-search { padding-right: 25px; /* Room for dropdown arrow */ }
 .bench-area { margin-top: 1rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem; border-radius: 8px; border: 1px solid #30363d; }
 .bench-title { font-size: 14px; font-weight: 600; color: #fff; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
 
-.selector-panel { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; }
+
 .panel-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
-.pos-filter { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
-.pos-btn { font-size: 11px; padding: 3px 10px; border: 1px solid #30363d; border-radius: 20px; background: transparent; color: #8b949e; cursor: pointer; }
-.pos-btn.active, .pos-btn:hover { background: #1f6feb; color: #fff; border-color: #1f6feb; }
+
+
+
 
 
 .player-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
