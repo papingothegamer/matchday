@@ -77,9 +77,18 @@ select.player-search:focus { border-color: #8b949e; box-shadow: 0 0 0 3px rgba(1
 {% endblock %}
 
 {% block content %}
-<div style="margin-bottom:1.5rem;">
-  <h2 style="font-size:24px;font-weight:700;color:#fff;">Squad Selection</h2>
-  <p style="font-size:14px;color:#8b949e;margin-top:4px;">Pick 11 Starters and 5 Subs &mdash; Budget: £100.0m</p>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px;">
+  <div>
+    <h2 style="font-size:24px;font-weight:700;color:#fff;">Squad & Transfers</h2>
+    <div style="display: flex; gap: 8px; margin-top: 15px;">
+      <button id="tabSquad" onclick="switchMode('squad')" style="padding: 8px 16px; font-size: 14px; font-weight: 600; background: #238636; color: #fff; border: 1px solid #2ea043; border-radius: 6px; cursor: pointer; transition: 0.2s;">My Squad</button>
+      <button id="tabTransfers" onclick="switchMode('transfers')" style="padding: 8px 16px; font-size: 14px; font-weight: 600; background: #0d1117; color: #8b949e; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; transition: 0.2s;">Transfers</button>
+    </div>
+  </div>
+  <div style="background: #161b22; padding: 10px 15px; border-radius: 8px; border: 1px solid #30363d; text-align: right; min-width: 150px;">
+    <div style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Free Transfers: <strong style="color: #fff; font-size: 14px;">{{ free_transfers }}</strong></div>
+    <div style="font-size: 12px; color: #8b949e;">Bank: <strong id="bank-val" style="color: #3fb950; font-size: 14px;">£{{ bank|floatformat:1 }}m</strong></div>
+  </div>
 </div>
 
 {% if not players %}
@@ -180,6 +189,31 @@ let formation = '{{ saved_formation|default:"433" }}';
 let slots = [];
 let activeSlot = null;
 let filterPosition = 'ALL';
+
+let uiMode = 'squad'; // 'squad' or 'transfers'
+
+function switchMode(mode) {
+    uiMode = mode;
+    const tabSquad = document.getElementById('tabSquad');
+    const tabTransfers = document.getElementById('tabTransfers');
+    const panel = document.querySelector('.selector-panel');
+    
+    if (mode === 'squad') {
+        tabSquad.style.background = '#238636'; tabSquad.style.color = '#fff'; tabSquad.style.borderColor = '#2ea043';
+        tabTransfers.style.background = '#0d1117'; tabTransfers.style.color = '#8b949e'; tabTransfers.style.borderColor = '#30363d';
+        panel.style.display = 'none'; // Hide market
+        activeSlot = null;
+    } else {
+        tabTransfers.style.background = '#238636'; tabTransfers.style.color = '#fff'; tabTransfers.style.borderColor = '#2ea043';
+        tabSquad.style.background = '#0d1117'; tabSquad.style.color = '#8b949e'; tabSquad.style.borderColor = '#30363d';
+        panel.style.display = 'flex'; // Show market
+    }
+    renderPitch();
+}
+
+// Initial Call
+setTimeout(() => switchMode('squad'), 100);
+
 
 try {
   const uniqueTeams = [...new Set(ALL_PLAYERS.map(p => p.team))].sort();
