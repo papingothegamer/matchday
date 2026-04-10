@@ -308,16 +308,16 @@ try {
     
     // NORMAL TAB LOGIC
     if (mode === 'squad') {
-        ts.style.background = '#238636'; ts.style.color = '#fff'; ts.style.borderColor = '#2ea043';
-        tt.style.background = '#0d1117'; tt.style.color = '#8b949e'; tt.style.borderColor = '#30363d';
+        if(ts) { ts.style.background = '#238636'; ts.style.color = '#fff'; ts.style.borderColor = '#2ea043'; }
+        if(tt) { tt.style.background = '#0d1117'; tt.style.color = '#8b949e'; tt.style.borderColor = '#30363d'; }
         document.getElementById('squad-view').style.display = 'block';
         document.getElementById('transfer-view').style.display = 'none';
         document.getElementById('market-selector').style.display = 'none';
         document.getElementById('sticky-ledger').classList.remove('show');
         renderPitch();
     } else {
-        tt.style.background = '#238636'; tt.style.color = '#fff'; tt.style.borderColor = '#2ea043';
-        ts.style.background = '#0d1117'; ts.style.color = '#8b949e'; ts.style.borderColor = '#30363d';
+        if(tt) { tt.style.background = '#238636'; tt.style.color = '#fff'; tt.style.borderColor = '#2ea043'; }
+        if(ts) { ts.style.background = '#0d1117'; ts.style.color = '#8b949e'; ts.style.borderColor = '#30363d'; }
         document.getElementById('squad-view').style.display = 'none';
         document.getElementById('transfer-view').style.display = 'block';
         document.getElementById('market-selector').style.display = 'flex';
@@ -597,7 +597,7 @@ try {
     formation = f;
     buildSlots(f, currentPicks);
     document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if(btn) btn.classList.add('active');
     
     if (isFirstDraft) {
         renderPitch();
@@ -610,193 +610,6 @@ try {
 
   buildSlots(formation);
   switchMode(isFirstDraft ? 'draft' : 'squad');
-  updateCaptainDropdown();
-  updateLedger();
-  }
-
-  function sellPlayer(idx) {
-      if (!confirm(`Sell ${slots[idx].player.name}?`)) return;
-      slots[idx].player = null;
-      slots[idx].captain = false;
-      activeSlot = idx;
-      filterPos(slots[idx].pos, document.querySelector(`.pos-btn[onclick*="'${slots[idx].pos}'"]`));
-      renderTransferList();
-  }
-
-  // --- MARKET SELECTOR ---
-  function filterPos(pos, btn) {
-    filterPosition = pos;
-    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    renderList();
-  }
-
-  function renderList() {
-    const q = document.getElementById('search-input').value.toLowerCase();
-    const teamFilter = document.getElementById('filterTeam').value;
-    const sortVal = document.getElementById('sortBy').value;
-    const pickedIds = slots.filter(s => s.player).map(s => s.player.id);
-    
-    let list = ALL_PLAYERS.filter(p => {
-      if (filterPosition !== 'ALL' && p.pos !== filterPosition) return false;
-      if (teamFilter !== 'ALL' && p.team !== teamFilter) return false;
-      if (q && !p.full.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) return false;
-      return true;
-    });
-    
-    list.sort((a,b) => {
-      if (sortVal === 'price_desc') return b.price - a.price;
-      if (sortVal === 'price_asc') return a.price - b.price;
-      return 0;
-    });
-    
-    const container = document.getElementById('player-list');
-    container.innerHTML = '';
-    list.slice(0, 50).forEach(p => {
-      const isPicked = pickedIds.includes(p.id);
-      const div = document.createElement('div');
-      div.className = 'player-item' + (isPicked ? ' selected' : '');
-      div.onclick = () => selectPlayer(p);
-      div.innerHTML = `<div class="p-shirt" style="background:${p.color}; color:${p.color2};">${p.team}</div><div class="p-info"><div class="p-name">${p.full}</div><div class="p-meta">${p.pos}</div></div><div class="p-price">£${p.price.toFixed(1)}m</div>`;
-      container.appendChild(div);
-    });
-  }
-
-  function selectPlayer(p) {
-    if (activeSlot === null) { alert("Click an empty dashed slot on the left to substitute a player."); return; }
-    const slot = slots[activeSlot];
-    if (slot.pos !== p.pos) { alert(`This slot requires a ${slot.pos}.`); return; }
-    
-    let teamCount = 0;
-    slots.forEach(s => { if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++; });
-    if (slot.is_sub && teamCount >= 2) { alert(`Max 2 substitutes from ${p.team}.`); return; }
-    if (!slot.is_sub && teamCount >= 3) { alert(`Max 3 starters from ${p.team}.`); return; }
-
-    slot.player = p;
-    slot.pur_price = p.price; // New purchase price
-    activeSlot = null;
-    renderTransferList();
-  }
-
-  // --- LEDGER MATH & CAPTAIN ---
-  function updateCaptainDropdown() {
-    const select = document.getElementById('captain-select');
-    const currentVal = select.value;
-    select.innerHTML = '<option value="">Select...</option>';
-    slots.forEach(s => {
-      if (s.player && !s.is_sub) {
-        const opt = document.createElement('option');
-        opt.value = s.player.id; opt.textContent = s.player.name;
-        if (s.player.id.toString() === currentVal || s.captain) { opt.selected = true; s.captain = true; } 
-        else { s.captain = false; }
-        select.appendChild(opt);
-      }
-    });
-  }
-
-  function updateCaptain() {
-    const capId = document.getElementById('captain-select').value;
-    slots.forEach(s => s.captain = (s.player && s.player.id.toString() === capId));
-  }
-
-  function updateLedger() {
-      // 1. Calculate Bank
-      let currentBank = initialBank;
-      
-      // Add revenue from sold players
-      originalSlotData.forEach((origId, idx) => {
-          if (origId && (!slots[idx].player || slots[idx].player.id !== origId)) {
-              // Player was sold. We need their original data to calc sell price.
-              const origPick = savedPicks.find(p => p.id === origId);
-              const currentData = ALL_PLAYERS.find(p => p.id === origId);
-              if (origPick && currentData) {
-                  currentBank += calcSellPrice(currentData.price, origPick.purchase_price);
-              }
-          }
-      });
-      
-      // Deduct cost of new players
-      slots.forEach((slot, idx) => {
-          if (slot.player && slot.player.id !== originalSlotData[idx]) {
-              currentBank -= slot.player.price;
-          }
-      });
-
-      // 2. Calculate Transfers & Hits
-      let transfersMade = 0;
-      slots.forEach((slot, idx) => {
-          if (slot.player && slot.player.id !== originalSlotData[idx]) transfersMade++;
-      });
-      
-      let remainingFT = initialFT - transfersMade;
-      let pointsHit = 0;
-      if (remainingFT < 0) {
-          pointsHit = Math.abs(remainingFT) * 4;
-          remainingFT = 0;
-      }
-
-      // Update UI
-      const bEl = document.getElementById('ledger-bank');
-      bEl.textContent = '£' + currentBank.toFixed(1) + 'm';
-      bEl.className = currentBank < 0 ? 'l-value negative' : 'l-value positive';
-      
-      document.getElementById('ledger-ft').textContent = remainingFT;
-      
-      const cEl = document.getElementById('ledger-cost');
-      cEl.textContent = pointsHit > 0 ? '-' + pointsHit + ' pts' : '0 pts';
-      cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
-
-      const filled = slots.filter(s => s.player).length;
-      document.getElementById('ledger-confirm').disabled = (filled < 16 || currentBank < 0);
-      document.getElementById('squad-save-btn').disabled = (filled < 16 || currentBank < 0);
-  }
-
-  function submitTeam() {
-    if (uiMode === 'squad' && !slots.some(s => s.captain)) { alert('Please select a captain.'); return; }
-    
-    const pointsHitText = document.getElementById('ledger-cost').textContent;
-    if (pointsHitText !== '0 pts') {
-        if (!confirm(`WARNING: These transfers will cost you ${pointsHitText}. Are you sure you want to proceed?`)) return;
-    }
-
-    const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain, is_sub: s.is_sub }));
-    
-    fetch('/pick/save/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-      body: JSON.stringify({ picks, formation: formation })
-    }).then(r => r.json()).then(d => {
-      if (d.success || d.ok || d.status === 'ok') {
-        alert('✅ Squad & Transfers successfully saved!');
-        window.location.href = '/';
-      } else { alert(d.error || 'Something went wrong.'); }
-    });
-  }
-
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; }
-      }
-    }
-    return cookieValue;
-  }
-
-  function setFormation(f, btn) {
-    const currentPicks = slots.filter(s => s.player).map(s => ({ id: s.player.id, pos: s.player.pos, is_sub: s.is_sub, is_captain: s.captain, purchase_price: s.pur_price }));
-    formation = f;
-    buildSlots(f, currentPicks);
-    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderPitch();
-    updateCaptainDropdown();
-  }
-
-  buildSlots(formation);
-  switchMode('squad');
   updateCaptainDropdown();
   updateLedger();
 
