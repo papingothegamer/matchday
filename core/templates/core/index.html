@@ -104,6 +104,36 @@
   </div>
   {% endif %}
 
+<style>
+  .ticker-wrap { width: 100%; background: #0d1117; border-bottom: 1px solid #30363d; height: 36px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 1.5rem; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5);}
+  .ticker-wrap:hover .ticker-arrow { color: #fff; background: #2ea043; }
+  .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 2px 0 10px rgba(0,0,0,0.5);}
+  .ticker-arrow { background: #161b22; color: #3fb950; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; right: 0; z-index: 2; border-left: 1px solid #30363d; transition: 0.2s; box-shadow: -2px 0 10px rgba(0,0,0,0.5);}
+  .ticker-track { display: flex; white-space: nowrap; animation: ticker 25s linear infinite; padding-left: 120px; }
+  .ticker-item { font-size: 12px; color: #c9d1d9; margin-right: 30px; font-weight: 500; }
+  .ticker-item span { color: #3fb950; font-weight: 700; margin-left: 5px; }
+  @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
+</style>
+<div class="ticker-wrap" onclick="window.location.href='/leaderboard/?tab=totw'">
+    <div class="ticker-label">DREAM TEAM</div>
+    <div class="ticker-track" id="totw-ticker"><div class="ticker-item">Loading latest results...</div></div>
+    <div class="ticker-arrow">View &rarr;</div>
+</div>
+
+<script>
+fetch('/api/totw/')
+  .then(r => r.json())
+  .then(d => {
+     if(d.error) return;
+     let html = '';
+     d.players.forEach(p => {
+         html += `<div class="ticker-item">${p.name} (${p.team}) <span>${p.pts} pts</span></div>`;
+     });
+     document.getElementById('totw-ticker').innerHTML = html;
+     document.querySelector('.ticker-label').textContent = `GW${d.gameweek} TOTW`;
+  }).catch(e => console.log(e));
+</script>
+
   {% if request.user.is_authenticated and picks %}
   <div class="bento-grid">
     <div class="bento-card bento-pitch">
