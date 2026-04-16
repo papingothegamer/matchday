@@ -6,45 +6,35 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
 import json
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember
+import math
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification
 
 player_only = user_passes_test(lambda u: not u.is_staff, login_url='/admin/')
 
 def auth_login(request):
-    if request.user.is_authenticated:
-        return redirect('index')
+    if request.user.is_authenticated: return redirect('index')
     error = None
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
         if user:
-            if user.is_staff:
-                error = 'Administrators must log in via the /admin/ portal.'
+            if user.is_staff: error = 'Administrators must log in via /admin/.'
             else:
                 login(request, user)
                 return redirect(request.GET.get('next', '/'))
-        error = 'Invalid username or password.'
+        else: error = 'Invalid credentials.'
     return render(request, 'core/auth/login.html', {'error': error})
 
 def auth_register(request):
-    if request.user.is_authenticated:
-        return redirect('index')
+    if request.user.is_authenticated: return redirect('index')
     error = None
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '')
-        confirm = request.POST.get('confirm', '')
-        if not username or not password:
-            error = 'All fields are required.'
-        elif password != confirm:
-            error = 'Passwords do not match.'
-        elif User.objects.filter(username=username).exists():
-            error = 'Username already taken.'
-        elif len(password) < 8:
-            error = 'Password must be at least 8 characters.'
+        u, p, c = request.POST.get('username', '').strip(), request.POST.get('password', ''), request.POST.get('confirm', '')
+        if not u or not p: error = 'All fields required.'
+        elif p != c: error = 'Passwords do not match.'
+        elif User.objects.filter(username=u).exists(): error = 'Username taken.'
+        elif len(p) < 8: error = 'Password must be 8+ characters.'
         else:
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(username=u, password=p)
             login(request, user)
             return redirect('index')
     return render(request, 'core/auth/register.html', {'error': error})
@@ -69,8 +59,7 @@ def index(request):
         prev_gw = Gameweek.objects.filter(number=active_gw.number - 1).first()
         if prev_gw:
             prev_team = FantasyTeam.objects.filter(user=request.user, gameweek=prev_gw).first()
-            if prev_team:
-                prev_points = prev_team.total_points
+            if prev_team: prev_points = prev_team.total_points
 
     context = {
         'num_teams': Team.objects.count(),
@@ -95,8 +84,7 @@ def pick_team(request):
     
     if active_gw:
         ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
-        if not ft:
-            ft = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
+        if not ft: ft = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
         if ft:
             saved_formation = ft.formation
             bank = ft.bank
@@ -111,15 +99,10 @@ def pick_team(request):
                     'is_vice_captain': getattr(pick, 'is_vice_captain', False)
                 })
                 
-    context = {
-        'players': players,
-        'active_gameweek': active_gw,
-        'saved_picks_json': json.dumps(existing_picks),
-        'saved_formation': saved_formation,
-        'bank': bank,
-        'free_transfers': free_transfers,
-    }
-    return render(request, 'core/pick_team.html', context)
+    return render(request, 'core/pick_team.html', {
+        'players': players, 'active_gameweek': active_gw, 'saved_picks_json': json.dumps(existing_picks),
+        'saved_formation': saved_formation, 'bank': bank, 'free_transfers': free_transfers,
+    })
 
 @csrf_exempt
 @login_required
@@ -133,26 +116,13 @@ def league_detail(request, code):
         gw_scores = list(teams.order_by('gameweek__number').values_list('total_points', flat=True))
         rankings.append({'user': member.user, 'total': total, 'gw_scores': gw_scores[-5:]})
     rankings.sort(key=lambda x: x['total'], reverse=True)
-    for i, r in enumerate(rankings):
-        r['rank'] = i + 1
-    context = {
-        'league': league, 'rankings': rankings,
-        'is_member': request.user.is_authenticated and members.filter(user=request.user).exists(),
-    }
-    return render(request, 'core/league_detail.html', context)
-
-from .models import Notification
+    for i, r in enumerate(rankings): r['rank'] = i + 1
+    return render(request, 'core/league_detail.html', {'league': league, 'rankings': rankings, 'is_member': request.user.is_authenticated and members.filter(user=request.user).exists()})
 
 @login_required
 def get_notifications(request):
     notifs = Notification.objects.filter(user=request.user).order_by('-created_at')[:15]
-    data = [{
-        'id': n.id,
-        'message': n.message,
-        'is_read': n.is_read,
-        'date': n.created_at.strftime("%b %d, %H:%M")
-    } for n in notifs]
-    return JsonResponse({'notifications': data})
+    return JsonResponse({'notifications': [{'id': n.id, 'message': n.message, 'is_read': n.is_read, 'date': n.created_at.strftime("%b %d, %H:%M")} for n in notifs]})
 
 @csrf_exempt
 @login_required
@@ -164,12 +134,8 @@ def mark_notifications_read(request):
 
 @login_required
 def get_team_of_the_week(request):
-    from .models import Match, PlayerStat
-    
-    # Strictly find the latest Gameweek where matches were ACTUALLY played
     latest_match = Match.objects.filter(is_played=True).order_by('-gameweek__number').first()
-    if not latest_match:
-        return JsonResponse({'error': 'No matches played yet'})
+    if not latest_match: return JsonResponse({'error': 'No matches played yet'})
     
     gw = latest_match.gameweek
     totw_players = []
@@ -178,6 +144,7 @@ def get_team_of_the_week(request):
         stats = PlayerStat.objects.filter(match__gameweek=gw, player__position=pos).order_by('-fantasy_points')[:count]
         for s in stats:
             totw_players.append({
+                'id': s.player.id,  # RESTORED ID: Fixes the bug where clicking TOTW throws a 404 or loads wrong player
                 'name': s.player.display_name,
                 'team': s.player.team.short_name,
                 'pos': s.player.position,
@@ -200,7 +167,6 @@ def get_team_of_the_week(request):
 
 @login_required
 def create_league(request):
-    from .models import League, LeagueMember
     if request.method == 'POST':
         name = request.POST.get('name')
         if name:
@@ -211,7 +177,6 @@ def create_league(request):
 
 @login_required
 def join_league(request):
-    from .models import League, LeagueMember
     if request.method == 'POST':
         code = request.POST.get('code')
         if code:
@@ -222,48 +187,46 @@ def join_league(request):
 
 @login_required
 def leaderboard(request):
-    from .models import FantasyTeam, LeagueMember, Player
-    
     user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
-    
     top_scorers = Player.objects.annotate(total_goals=Sum('stats__goals')).filter(total_goals__gt=0).order_by('-total_goals')[:5]
     top_assists = Player.objects.annotate(total_assists=Sum('stats__assists')).filter(total_assists__gt=0).order_by('-total_assists')[:5]
     top_points = Player.objects.annotate(total_pts=Sum('stats__fantasy_points')).filter(total_pts__gt=0).order_by('-total_pts')[:5]
 
-    context = {
-        'user_leagues': user_leagues,
-        'top_scorers': top_scorers,
-        'top_assists': top_assists,
-        'top_points': top_points,
-    }
-    return render(request, 'core/leaderboard.html', context)
-
+    return render(request, 'core/leaderboard.html', {
+        'user_leagues': user_leagues, 'top_scorers': top_scorers, 'top_assists': top_assists, 'top_points': top_points,
+    })
 
 @login_required
 def user_profile(request):
-    from .models import FantasyTeam, LeagueMember
-    
     teams = FantasyTeam.objects.filter(user=request.user).order_by('gameweek__number')
     total_points = sum(t.total_points for t in teams)
     history_data = [{'gw': t.gameweek.number, 'pts': t.total_points} for t in teams]
     user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
-    
-    context = {
-        'total_points': total_points,
-        'history_data': history_data,
-        'user_leagues': user_leagues,
-    }
-    return render(request, 'core/profile.html', context)
+    return render(request, 'core/profile.html', {'total_points': total_points, 'history_data': history_data, 'user_leagues': user_leagues})
 
+@login_required
+def fixtures(request):
+    gameweeks = Gameweek.objects.prefetch_related('matches__home_team', 'matches__away_team').order_by('number')
+    return render(request, 'core/fixtures.html', {'gameweeks': gameweeks})
+
+@login_required
+def get_player_detail(request, player_id):
+    player = get_object_or_404(Player, id=player_id)
+    stats = PlayerStat.objects.filter(player=player).select_related('match__gameweek', 'match__home_team', 'match__away_team').order_by('match__gameweek__number')
+    
+    history = []
+    total_pts = 0
+    for s in stats:
+        opp = s.match.away_team.short_name if s.match.home_team == player.team else s.match.home_team.short_name
+        history.append({'gw': s.match.gameweek.number, 'opp': opp, 'mins': s.minutes_played, 'pts': s.fantasy_points, 'goals': s.goals, 'assists': s.assists})
+        total_pts += s.fantasy_points
+        
+    data = {'id': player.id, 'name': player.full_name, 'team': player.team.name, 'pos': player.position, 'price': float(player.price), 'total_pts': total_pts, 'history': history}
+    return JsonResponse(data)
 
 @csrf_exempt
 @login_required
 def save_picks(request):
-    import math
-    import json
-    from django.http import JsonResponse
-    from .models import Gameweek, FantasyTeam, Player, FantasyPick
-    
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -271,8 +234,7 @@ def save_picks(request):
             formation = data.get('formation', '433')
             
             active_gw = Gameweek.objects.filter(is_active=True).first()
-            if not active_gw:
-                return JsonResponse({'error': 'No active gameweek'})
+            if not active_gw: return JsonResponse({'error': 'No active gameweek'})
                 
             ft, created = FantasyTeam.objects.get_or_create(user=request.user, gameweek=active_gw)
             
@@ -283,17 +245,11 @@ def save_picks(request):
             players_in_data = [p for p in picks_data if int(p['player_id']) not in old_picks]
             
             if ft.picks.exists() and players_in_data:
-                revenue = 0
-                cost = 0
-                
+                revenue = 0; cost = 0
                 for old_pick in players_out:
-                    # FIX: Explicit fallback to current price if purchase_price is missing
                     pur_price = old_pick.purchase_price or old_pick.player.price
                     diff = float(old_pick.player.price) - float(pur_price)
-                    if diff > 0:
-                        sell_price = float(pur_price) + (math.floor(diff * 10) / 20.0)
-                    else:
-                        sell_price = float(old_pick.player.price)
+                    sell_price = float(pur_price) + (math.floor(diff * 10) / 20.0) if diff > 0 else float(old_pick.player.price)
                     revenue += sell_price
                     
                 for new_pick in players_in_data:
@@ -301,44 +257,28 @@ def save_picks(request):
                     cost += float(player.price)
                     
                 net_cost = cost - revenue
-                # FIX: Add a tiny tolerance (-0.01) to prevent floating-point rounding errors
-                if float(ft.bank) - net_cost < -0.01: 
-                    return JsonResponse({'error': f'Insufficient funds. You are short £{abs(float(ft.bank) - net_cost):.1f}m'})
+                if float(ft.bank) - net_cost < -0.01: return JsonResponse({'error': f'Insufficient funds. You are short £{abs(float(ft.bank) - net_cost):.1f}m'})
                     
                 transfers_made = len(players_in_data)
                 if transfers_made > ft.free_transfers:
-                    extra = transfers_made - ft.free_transfers
-                    ft.points_hit += (extra * 4)
+                    ft.points_hit += ((transfers_made - ft.free_transfers) * 4)
                     ft.free_transfers = 0
-                else:
-                    ft.free_transfers -= transfers_made
+                else: ft.free_transfers -= transfers_made
                     
                 ft.bank = float(ft.bank) - net_cost
             
             elif not ft.picks.exists():
                 cost = sum(float(Player.objects.get(id=p['player_id']).price) for p in picks_data)
-                if 100.0 - cost < -0.01:
-                    return JsonResponse({'error': 'Budget exceeded.'})
+                if 100.0 - cost < -0.01: return JsonResponse({'error': 'Budget exceeded.'})
                 ft.bank = 100.0 - cost
 
-            ft.formation = formation
-            ft.save()
-            
+            ft.formation = formation; ft.save()
             ft.picks.all().delete()
             for p_data in picks_data:
                 player = Player.objects.get(id=p_data['player_id'])
                 old_pur = old_picks[player.id].purchase_price if player.id in old_picks else None
-                pur_price = old_pur or player.price
-                FantasyPick.objects.create(
-                    fantasy_team=ft, player=player,
-                    is_captain=p_data.get('is_captain', False),
-                    is_vice_captain=p_data.get('is_vice_captain', False),
-                    is_sub=p_data.get('is_sub', False),
-                    purchase_price=pur_price
-                )
+                FantasyPick.objects.create(fantasy_team=ft, player=player, is_captain=p_data.get('is_captain', False), is_vice_captain=p_data.get('is_vice_captain', False), is_sub=p_data.get('is_sub', False), purchase_price=old_pur or player.price)
                     
             return JsonResponse({'success': True, 'status': 'ok'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-            
+        except Exception as e: return JsonResponse({'error': str(e)})
     return JsonResponse({'error': 'POST required'}, status=405)
