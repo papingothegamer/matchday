@@ -1,109 +1,153 @@
 {% extends 'core/base.html' %}
-{% block title %}{{ request.user.username }}'s Profile — MatchDay{% endblock %}
+{% block title %}Profile — MatchDay{% endblock %}
 
 {% block extra_style %}
-.profile-container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
-.profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 2rem; }
-.avatar { width: 80px; height: 80px; background: linear-gradient(135deg, #1f6feb 0%, #238636 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-.manager-info h1 { font-size: 28px; font-weight: 600; color: #fff; margin: 0 0 5px 0; }
-.manager-info p { font-size: 14px; color: #8b949e; margin: 0; }
+<style>
+  .profile-header { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 2rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 20px;}
+  .user-info { display: flex; align-items: center; gap: 20px; }
+  .avatar { width: 80px; height: 80px; background: #238636; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 700; text-transform: uppercase; border: 3px solid #3fb950; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+  .username { font-size: 26px; font-weight: 700; color: #fff; margin: 0; }
+  .joined-date { font-size: 14px; color: #8b949e; margin-top: 4px; font-weight: 500;}
+  .total-pts-box { text-align: right; }
+  .total-pts-label { font-size: 12px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+  .total-pts-value { font-size: 3.5rem; font-weight: 800; color: #3fb950; line-height: 1; margin-top: 5px; text-shadow: 0 2px 10px rgba(63, 185, 80, 0.2);}
 
-.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
-@media (max-width: 768px) { .bento-grid { display: flex; flex-direction: column; } }
-.bento-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
-.card-title { font-size: 14px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; }
+  .profile-grid { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; align-items: start; }
+  @media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
 
-/* Bar Chart Styles */
-.chart-container { height: 250px; display: flex; align-items: flex-end; gap: 10px; padding-bottom: 30px; position: relative; border-bottom: 1px solid #30363d; margin-top: 20px; overflow-x: auto; }
-.chart-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; min-width: 40px; }
-.chart-bar { width: 100%; background: #238636; border-radius: 4px 4px 0 0; transition: height 1s ease-out, background 0.3s; position: relative; }
-.chart-bar:hover { background: #2ea043; cursor: pointer; }
-.chart-bar:hover::after { content: attr(data-pts) ' pts'; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: #0d1117; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; border: 1px solid #30363d; z-index: 10; }
-.chart-label { font-size: 11px; color: #8b949e; position: absolute; bottom: 5px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
+  .card-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #21262d; padding-bottom: 10px;}
 
-/* League List Styles */
-.league-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #21262d; }
-.league-item:last-child { border-bottom: none; }
-.league-name { font-size: 15px; font-weight: 500; color: #e6e6e6; }
-.league-code { font-family: monospace; font-size: 12px; color: #8b949e; background: #0d1117; padding: 2px 6px; border-radius: 4px; }
+  .league-card { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 12px; transition: transform 0.2s, border-color 0.2s; display: block; text-decoration: none; position: relative; overflow: hidden;}
+  .league-card:hover { transform: translateY(-2px); border-color: #8b949e; }
+  .league-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #238636; }
+  .league-name { font-size: 16px; font-weight: 600; color: #e6e6e6; margin-bottom: 4px;}
+  .league-meta { font-size: 12px; color: #8b949e; display: flex; justify-content: space-between; align-items: center;}
+  .btn-join { display: inline-block; background: #21262d; color: #e6e6e6; border: 1px solid #30363d; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; width: 100%; text-align: center; box-sizing: border-box; margin-top: 10px; }
+  .btn-join:hover { background: #30363d; color: #fff; }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="profile-container">
-  <div class="profile-header">
-    <div class="avatar">{{ request.user.username|make_list|first|upper }}</div>
-    <div class="manager-info">
-      <h1>{{ request.user.username }}</h1>
-      <p>MatchDay Manager</p>
-    </div>
-  </div>
-
-  <div class="bento-grid">
-    <div class="bento-card" style="grid-column: span 4; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
-      <div class="card-title" style="margin-bottom: 10px;">Lifetime Points</div>
-      <div style="font-size: 48px; font-weight: bold; color: #3fb950; text-shadow: 0 2px 10px rgba(63, 185, 80, 0.2);">{{ total_points }}</div>
-    </div>
-
-    <div class="bento-card" style="grid-column: span 8;">
-      <div class="card-title">My Leagues</div>
-      {% for lm in user_leagues %}
-      <div class="league-item">
-        <div class="league-name">{{ lm.league.name }}</div>
-        <div>
-          <span class="league-code">{{ lm.league.code }}</span>
-          <a href="/leagues/{{ lm.league.code }/" style="color: #1f6feb; font-size: 13px; text-decoration: none; margin-left: 10px;">View &rarr;</a>
+<div style="max-width: 1100px; margin: 0 auto;">
+    
+    <div class="profile-header">
+        <div class="user-info">
+            <div class="avatar">{{ request.user.username|make_list|first|upper }}</div>
+            <div>
+                <h2 class="username">{{ request.user.username }}</h2>
+                <div class="joined-date">MatchDay Manager</div>
+            </div>
         </div>
-      </div>
-      {% empty %}
-      <div style="color: #8b949e; font-size: 13px; text-align: center; padding: 1rem 0;">You haven't joined any leagues yet.</div>
-      {% endfor %}
+        <div class="total-pts-box">
+            <div class="total-pts-label">Total Season Points</div>
+            <div class="total-pts-value">{{ total_points }}</div>
+        </div>
     </div>
 
-    <div class="bento-card" style="grid-column: span 12;">
-      <div class="card-title">Gameweek History</div>
-      <div class="chart-container" id="gwChart">
+    <div class="profile-grid">
+        <div class="card">
+            <div class="card-title">Performance History</div>
+            {% if history_data %}
+            <div style="position: relative; height: 350px; width: 100%;">
+                <canvas id="ptsChart"></canvas>
+            </div>
+            {% else %}
+            <div style="text-align: center; color: #8b949e; padding: 4rem 0; font-size: 14px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d;">
+                No match history available yet.<br>Your points will graph here after your first Gameweek!
+            </div>
+            {% endif %}
         </div>
-      {% if not history_data %}
-      <div style="color: #8b949e; font-size: 13px; text-align: center; margin-top: -120px;">No gameweek data available yet.</div>
-      {% endif %}
+
+        <div class="card">
+            <div class="card-title">
+                Mini-Leagues
+                <span style="background: #238636; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700;">{{ user_leagues|length }}</span>
+            </div>
+            
+            {% for l in user_leagues %}
+            <a href="/league/{{ l.league.code }}/" class="league-card">
+                <div class="league-name">{{ l.league.name }}</div>
+                <div class="league-meta">
+                    <span>Code: <code style="background: #161b22; padding: 2px 6px; border-radius: 4px; color: #c9d1d9;">{{ l.league.code }}</code></span>
+                    <span style="color: #3fb950; font-weight: bold;">View &rarr;</span>
+                </div>
+            </a>
+            {% empty %}
+            <div style="text-align: center; color: #8b949e; padding: 2rem 0; font-size: 13px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d; margin-bottom: 15px;">You haven't joined any leagues.</div>
+            {% endfor %}
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <a href="/join-league/" class="btn-join">Join</a>
+                <a href="/create-league/" class="btn-join" style="background: #238636; color: #fff; border-color: #2ea043;">Create</a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}
 
 {% block extra_script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const historyData = {{ history_data|safe }};
-  const chartContainer = document.getElementById('gwChart');
-  
-  if (historyData && historyData.length > 0) {
-    // Find the max points to scale the chart proportionally
-    const maxPts = Math.max(...historyData.map(d => d.pts), 1); // Avoid division by zero
-    
-    historyData.forEach(data => {
-      const barHeight = (data.pts / maxPts) * 100; // Percentage of container height
-      
-      const wrap = document.createElement('div');
-      wrap.className = 'chart-bar-wrap';
-      
-      const bar = document.createElement('div');
-      bar.className = 'chart-bar';
-      bar.style.height = '0%'; // Start at 0 for animation
-      bar.setAttribute('data-pts', data.pts);
-      
-      // Animate growth after a tiny delay
-      setTimeout(() => {
-        bar.style.height = `${barHeight}%`;
-      }, 100);
-      
-      const label = document.createElement('div');
-      label.className = 'chart-label';
-      label.textContent = `GW${data.gw}`;
-      
-      wrap.appendChild(bar);
-      wrap.appendChild(label);
-      chartContainer.appendChild(wrap);
-    });
-  }
+document.addEventListener('DOMContentLoaded', function() {
+    const rawData = {{ history_data|safe|default:"[]" }};
+    if (rawData.length > 0) {
+        const labels = rawData.map(d => 'GW ' + d.gw);
+        const data = rawData.map(d => d.pts);
+
+        const ctx = document.getElementById('ptsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Gameweek Points',
+                    data: data,
+                    borderColor: '#3fb950',
+                    backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#0d1117',
+                    pointBorderColor: '#3fb950',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#161b22',
+                        titleColor: '#8b949e',
+                        bodyColor: '#fff',
+                        borderColor: '#30363d',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 15, weight: 'bold' },
+                        callbacks: { label: function(context) { return context.parsed.y + ' pts'; } }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#21262d', drawBorder: false },
+                        ticks: { color: '#8b949e', font: { size: 11 }, padding: 10 }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { color: '#8b949e', font: { size: 11 }, padding: 10 }
+                    }
+                },
+                interaction: { intersect: false, mode: 'index', }
+            }
+        });
+    }
+});
 </script>
 {% endblock %}
