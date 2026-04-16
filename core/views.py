@@ -206,8 +206,43 @@ def user_profile(request):
 
 @login_required
 def fixtures(request):
+    from .models import Gameweek, Team, Match
     gameweeks = Gameweek.objects.prefetch_related('matches__home_team', 'matches__away_team').order_by('number')
-    return render(request, 'core/fixtures.html', {'gameweeks': gameweeks})
+    
+    # Dynamically calculate the simulated Premier League Table
+    teams_data = {t.id: {'name': t.name, 'short': t.short_name, 'played': 0, 'w': 0, 'd': 0, 'l': 0, 'gf': 0, 'ga': 0, 'gd': 0, 'pts': 0} for t in Team.objects.all()}
+    
+    played_matches = Match.objects.filter(is_played=True)
+    for m in played_matches:
+        h, a = m.home_team.id, m.away_team.id
+        teams_data[h]['played'] += 1
+        teams_data[a]['played'] += 1
+        teams_data[h]['gf'] += m.home_score
+        teams_data[h]['ga'] += m.away_score
+        teams_data[a]['gf'] += m.away_score
+        teams_data[a]['ga'] += m.home_score
+        
+        if m.home_score > m.away_score:
+            teams_data[h]['w'] += 1
+            teams_data[h]['pts'] += 3
+            teams_data[a]['l'] += 1
+        elif m.home_score < m.away_score:
+            teams_data[a]['w'] += 1
+            teams_data[a]['pts'] += 3
+            teams_data[h]['l'] += 1
+        else:
+            teams_data[h]['d'] += 1
+            teams_data[a]['d'] += 1
+            teams_data[h]['pts'] += 1
+            teams_data[a]['pts'] += 1
+            
+    for t in teams_data.values():
+        t['gd'] = t['gf'] - t['ga']
+        
+    # Sort by Points, then Goal Difference, then Goals Scored
+    standings = sorted(teams_data.values(), key=lambda x: (x['pts'], x['gd'], x['gf']), reverse=True)
+    
+    return render(request, 'core/fixtures.html', {'gameweeks': gameweeks, 'standings': standings})
 
 @login_required
 def get_player_detail(request, player_id):

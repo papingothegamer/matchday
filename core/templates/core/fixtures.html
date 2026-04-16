@@ -1,8 +1,12 @@
 {% extends 'core/base.html' %}
-{% block title %}Fixtures — MatchDay{% endblock %}
+{% block title %}Fixtures & Standings — MatchDay{% endblock %}
 {% block content %}
 <style>
-  .fx-gw-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 2rem; padding: 1.5rem; display: none; }
+  .league-hub { display: grid; grid-template-columns: 1fr 450px; gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: start; }
+  @media (max-width: 950px) { .league-hub { grid-template-columns: 1fr; } }
+
+  /* Fixtures Side */
+  .fx-gw-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: none; }
   .fx-gw-card.active { display: block; }
   .fx-match { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; }
   .fx-match:last-child { border-bottom: none; }
@@ -17,34 +21,85 @@
   .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
   .gw-title-main { font-size: 20px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 10px; }
   .active-badge { font-size: 11px; background: #238636; color: #fff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Standings Side */
+  .table-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; }
+  .table-header { background: #21262d; padding: 15px 20px; font-size: 16px; font-weight: 700; color: #fff; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+  .standings-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; color: #e6e6e6; }
+  .standings-table th { padding: 10px 5px; color: #8b949e; font-weight: 600; border-bottom: 1px solid #30363d; background: #0d1117; }
+  .standings-table td { padding: 10px 5px; border-bottom: 1px solid #21262d; }
+  .standings-table tr:hover td { background: #21262d; }
+  .standings-table tr:last-child td { border-bottom: none; }
+  .t-rank { width: 30px; font-weight: 700; color: #8b949e; }
+  .t-club { text-align: left; font-weight: 600; font-size: 14px; }
+  .t-pts { font-weight: 700; color: #3fb950; font-size: 14px; }
+  
+  /* Champions League & Relegation Highlighting */
+  .standings-table tr:nth-child(-n+4) .t-rank { color: #58a6ff; }
+  .standings-table tr:nth-last-child(-n+3) .t-rank { color: #f85149; }
 </style>
 
-<div style="max-width: 800px; margin: 0 auto;">
-  <h2 style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 1.5rem; text-align: center;">Season Fixtures</h2>
-  
-  <div class="gw-nav">
-    <button id="btn-prev" class="btn-nav" onclick="changeGw(-1)">&larr; Previous</button>
-    <div id="gw-display" class="gw-title-main">Gameweek --</div>
-    <button id="btn-next" class="btn-nav" onclick="changeGw(1)">Next &rarr;</button>
+<div class="league-hub">
+  <div>
+      <div class="gw-nav">
+        <button id="btn-prev" class="btn-nav" onclick="changeGw(-1)">&larr; Previous</button>
+        <div id="gw-display" class="gw-title-main">Gameweek --</div>
+        <button id="btn-next" class="btn-nav" onclick="changeGw(1)">Next &rarr;</button>
+      </div>
+
+      {% for gw in gameweeks %}
+      <div class="fx-gw-card" id="gw-card-{{ forloop.counter0 }}" data-gw="Gameweek {{ gw.number }}" data-is-active="{{ gw.is_active|yesno:'true,false' }}">
+        {% for match in gw.matches.all %}
+        <div class="fx-match">
+            <div class="fx-team">{{ match.home_team.name }}</div>
+            {% if match.is_played %}
+            <div class="fx-score">{{ match.home_score }} - {{ match.away_score }}</div>
+            {% else %}
+            <div class="fx-vs">VS</div>
+            {% endif %}
+            <div class="fx-team away">{{ match.away_team.name }}</div>
+        </div>
+        {% empty %}
+        <div style="color: #8b949e; font-size: 14px; text-align: center; padding: 1rem;">No matches scheduled.</div>
+        {% endfor %}
+      </div>
+      {% endfor %}
   </div>
 
-  {% for gw in gameweeks %}
-  <div class="fx-gw-card" id="gw-card-{{ forloop.counter0 }}" data-gw="Gameweek {{ gw.number }}" data-is-active="{{ gw.is_active|yesno:'true,false' }}">
-    {% for match in gw.matches.all %}
-    <div class="fx-match">
-        <div class="fx-team">{{ match.home_team.name }}</div>
-        {% if match.is_played %}
-        <div class="fx-score">{{ match.home_score }} - {{ match.away_score }}</div>
-        {% else %}
-        <div class="fx-vs">VS</div>
-        {% endif %}
-        <div class="fx-team away">{{ match.away_team.name }}</div>
-    </div>
-    {% empty %}
-    <div style="color: #8b949e; font-size: 14px; text-align: center; padding: 1rem;">No matches scheduled.</div>
-    {% endfor %}
+  <div class="table-panel">
+      <div class="table-header">
+          <span>Premier League</span>
+          <span style="font-size: 11px; color: #8b949e; font-weight: 500; text-transform: uppercase;">Simulated</span>
+      </div>
+      <table class="standings-table">
+          <thead>
+              <tr>
+                  <th class="t-rank">#</th>
+                  <th class="t-club">Club</th>
+                  <th title="Played">P</th>
+                  <th title="Won">W</th>
+                  <th title="Drawn">D</th>
+                  <th title="Lost">L</th>
+                  <th title="Goal Difference">GD</th>
+                  <th class="t-pts" title="Points">Pts</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for team in standings %}
+              <tr>
+                  <td class="t-rank">{{ forloop.counter }}</td>
+                  <td class="t-club">{{ team.short }}</td>
+                  <td>{{ team.played }}</td>
+                  <td>{{ team.w }}</td>
+                  <td>{{ team.d }}</td>
+                  <td>{{ team.l }}</td>
+                  <td>{% if team.gd > 0 %}+{% endif %}{{ team.gd }}</td>
+                  <td class="t-pts">{{ team.pts }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
   </div>
-  {% endfor %}
 </div>
 
 <script>
