@@ -1,110 +1,20 @@
 {% extends 'core/base.html' %}
-{% block title %}MatchDay — PL Fantasy{% endblock %}
+{% block title %}Dashboard — MatchDay{% endblock %}
 
 {% block extra_style %}
-/* Base Typography & Hero */
-.hero { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
-.hero h1 { font-size: 28px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-.hero p { font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 1.5rem; }
-.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn-primary { font-size: 13px; padding: 8px 18px; background: #238636; color: #fff; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 600; }
-.btn-primary:hover { background: #2ea043; }
-.btn-secondary { font-size: 13px; padding: 8px 18px; background: transparent; color: #e6e6e6; border: 1px solid #30363d; border-radius: 6px; text-decoration: none; display: inline-block; font-weight: 600; }
-.btn-secondary:hover { border-color: #8b949e; }
-
-/* Bento Grid System */
-.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-@media (max-width: 992px) { .bento-grid { display: flex; flex-direction: column; } }
-
-.bento-card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 1.5rem; overflow: hidden; position: relative; display: flex; flex-direction: column; }
-.bento-pitch { grid-column: span 8; }
-.bento-side { grid-column: span 4; display: flex; flex-direction: column; gap: 1.5rem; }
-
-/* Header inside Bento */
-.team-preview-header { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #30363d; padding-bottom: 1rem; }
-.team-preview-title { font-size: 16px; font-weight: 600; color: #fff; }
-
-/* Constrained Pitch Container (Matches Editor Size) */
-.pitch-wrapper { width: 100%; max-width: 380px; margin: 0 auto; }
-.pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; }
-.pitch-lines { pointer-events: none; position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); }
-.pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; }
-.penalty-box-top { pointer-events: none; position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
-.penalty-box-bottom { pointer-events: none; position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
-.goal-area-top { pointer-events: none; position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
-.goal-area-bottom { pointer-events: none; position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
-
-.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; position: relative; z-index: 10; }
-.pitch-row:last-child { margin-bottom: 0; }
-.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 70px; }
-
-.shirt { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; position: relative; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
-.captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-.injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-
-.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 75px; background: rgba(13, 17, 23, 0.7); padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-.slot-pts { font-size: 10px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-
-.bench-area { margin-top: 1rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem; border-radius: 8px; border: 1px solid #30363d; }
-.bench-title { font-size: 12px; font-weight: 600; color: #8b949e; text-align: center; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-
-/* Dynamic Stats Widget */
-.dyn-stat-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #238636 0%, #1f6feb 100%); border-radius: 12px; padding: 2.5rem 1rem; color: #fff; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); }
-.dyn-stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 10px; font-weight: 600; }
-.dyn-stat-val { font-size: 36px; font-weight: 700; text-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: opacity 0.4s ease; min-height: 40px; }
-.dyn-stat-sub { font-size: 13px; margin-top: 10px; opacity: 0.9; transition: opacity 0.4s ease; }
-
-/* Global Stats & Match Row */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 2rem; }
-.stat-card { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 1rem; }
-.stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-.stat-value { font-size: 26px; font-weight: 600; color: #fff; }
-.section-title { font-size: 12px; font-weight: 500; color: #8b949e; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 1rem; }
-.match-list { border: 1px solid #21262d; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; }
-.match-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #161b22; border-bottom: 1px solid #21262d; gap: 1rem; }
-.match-row:last-child { border-bottom: none; }
-.match-teams { font-size: 14px; color: #e6e6e6; flex: 1; }
-.match-score { font-size: 14px; font-weight: 600; color: #fff; background: #21262d; padding: 3px 10px; border-radius: 6px; }
-.match-gw { font-size: 11px; color: #8b949e; }
-.empty { font-size: 14px; color: #8b949e; padding: 2rem; text-align: center; }
-.gw-banner { background: #1a2f1a; border: 1px solid #238636; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-.gw-banner.urgent { background: #2f1a1a; border-color: #f85149; }
-.gw-label { font-size: 13px; color: #38a169; font-weight: 500; }
-.gw-banner.urgent .gw-label { color: #f85149; }
-.gw-countdown { font-size: 13px; font-weight: 600; color: #f6c90e; }
-{% endblock %}
-
-{% block content %}
-
-{% if request.user.is_staff %}
-<div class="hero" style="border-color: #d73a49; background: #2d1114;">
-  <h1 style="color: #f85149;">Administrator Mode</h1>
-  <p style="color: #e6e6e6;">You are currently logged in as a system administrator. Staff accounts cannot participate in the fantasy game.</p>
-  <div class="hero-actions">
-    <a href="/admin/" class="btn-primary" style="background: #d73a49; border: none;">Go to Admin Dashboard</a>
-    <a href="/auth/logout/" class="btn-secondary" style="border-color: #d73a49; color: #f85149;">Log Out</a>
-  </div>
-</div>
-{% else %}
-
-  {% if active_gameweek %}
-  <div class="gw-banner {% if active_gameweek.deadline %}urgent{% endif %}" id="gw-banner">
-    <div>
-      <div class="gw-label" id="banner-label">
-        {% if user_team %}Gameweek {{ active_gameweek.number }} — team submitted{% else %}Gameweek {{ active_gameweek.number }} — pick your team!{% endif %}
-      </div>
-      <div style="font-size: 12px; color: #8b949e;">Deadline: {{ active_gameweek.deadline|date:"D d M Y, H:i" }} UTC</div>
-    </div>
-    <div class="gw-countdown" id="countdown"></div>
-    {% if not user_team %}
-    <a href="/pick/" class="btn-primary">Pick your team</a>
-    {% else %}
-    <a href="/pick/" class="btn-secondary">Edit team</a>
-    {% endif %}
-  </div>
-  {% endif %}
-
 <style>
+  .hero { background: linear-gradient(180deg, rgba(35, 134, 54, 0.1) 0%, transparent 100%); padding: 3rem 0; text-align: center; border-bottom: 1px solid #30363d; margin-bottom: 2rem; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; text-align: center; }
+  .stat-value { font-size: 2.5rem; font-weight: 700; color: #fff; margin: 10px 0; }
+  .section-title { font-size: 1.2rem; font-weight: 600; color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+  .match-list { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
+  .match-row { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #30363d; align-items: center; }
+  .match-row:last-child { border-bottom: none; }
+  .match-teams { font-weight: 600; color: #e6e6e6; }
+  .match-score { background: #0d1117; padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 1.1rem; color: #3fb950; font-weight: bold; border: 1px solid #30363d;}
+  .empty { padding: 2rem; text-align: center; color: #8b949e; }
+  
   .ticker-wrap { width: 100%; background: #0d1117; border-bottom: 1px solid #30363d; height: 36px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 1.5rem; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5);}
   .ticker-wrap:hover .ticker-arrow { color: #fff; background: #2ea043; }
   .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 2px 0 10px rgba(0,0,0,0.5);}
@@ -114,248 +24,120 @@
   .ticker-item span { color: #3fb950; font-weight: 700; margin-left: 5px; }
   @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
 </style>
-<div class="ticker-wrap" onclick="window.location.href='/leaderboard/?tab=totw'">
+{% endblock %}
+
+{% block content %}
+{% if not request.user.is_authenticated %}
+  <div class="hero">
+    <h1 style="font-size: 3rem; color: #fff; margin-bottom: 1rem;">Welcome to MatchDay</h1>
+    <p style="font-size: 1.2rem; color: #8b949e; max-width: 600px; margin: 0 auto 2rem auto;">Build your ultimate fantasy squad, compete in mini-leagues, and conquer the global leaderboard.</p>
+    <a href="/auth/register/" class="btn-primary" style="font-size: 1.2rem; padding: 12px 32px;">Start Playing Now</a>
+  </div>
+{% else %}
+  
+  {% if active_gameweek %}
+  <div style="background: #238636; color: #fff; padding: 1rem 2rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+    <h2 style="font-size:24px;font-weight:700;color:#fff;">GW{{ active_gameweek.number }} Deadline</h2>
+    <div style="font-size: 1.2rem; font-weight: 600; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
+  </div>
+  
+  <div class="ticker-wrap" onclick="window.location.href='/leaderboard/?tab=totw'">
     <div class="ticker-label">DREAM TEAM</div>
     <div class="ticker-track" id="totw-ticker"><div class="ticker-item">Loading latest results...</div></div>
     <div class="ticker-arrow">View &rarr;</div>
-</div>
-
-<script>
-fetch('/api/totw/')
-  .then(r => r.json())
-  .then(d => {
-     if(d.error) return;
-     let html = '';
-     d.players.forEach(p => {
-         html += `<div class="ticker-item">${p.name} (${p.team}) <span>${p.pts} pts</span></div>`;
-     });
-     document.getElementById('totw-ticker').innerHTML = html;
-     document.querySelector('.ticker-label').textContent = `GW${d.gameweek} TOTW`;
-  }).catch(e => console.log(e));
-</script>
-
-  {% if request.user.is_authenticated and picks %}
-  <div class="bento-grid">
-    <div class="bento-card bento-pitch">
-      <div class="team-preview-header">
-        <div class="team-preview-title">{{ request.user.username }}'s Squad</div>
-        <a href="/pick/" class="btn-secondary" style="padding: 4px 12px; font-size: 12px;">⚙️ Edit Formation</a>
-      </div>
-      
-      <div class="pitch-wrapper">
-        <div class="pitch">
-          <div class="penalty-box-top"></div>
-          <div class="goal-area-top"></div>
-          <div class="pitch-lines"></div>
-          <div class="penalty-box-bottom"></div>
-          <div class="goal-area-bottom"></div>
-          <div id="pitch-rows"></div>
-        </div>
-        <div class="bench-area">
-          <div class="bench-title">Substitutes</div>
-          <div class="pitch-row" id="bench-rows"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bento-side">
-      <div class="bento-card" style="padding: 0; border: none; background: transparent; flex: 1; display: flex;">
-        <div class="dyn-stat-box" id="stat-rotator">
-          <div class="dyn-stat-label" id="stat-label">Gameweek Score</div>
-          <div class="dyn-stat-val" id="stat-value">--</div>
-          <div class="dyn-stat-sub" id="stat-sub">Calculating...</div>
-        </div>
-      </div>
-
-      <div class="bento-card" style="flex: unset;">
-         <div class="section-title" style="margin-bottom: 12px; color: #fff;">Status</div>
-         <div style="font-size: 13px; color: #e6e6e6; margin-bottom: 8px; display: flex; justify-content: space-between;">
-            <span>Gameweek {{ active_gameweek.number }}</span>
-            <span style="color: #38a169; font-weight: 600;">Active</span>
-         </div>
-         <div style="font-size: 13px; color: #e6e6e6; margin-bottom: 8px; display: flex; justify-content: space-between;">
-            <span>Formation</span>
-            <span style="font-weight: 600; color: #1f6feb;">{{ user_team.formation|default:"433" }}</span>
-         </div>
-         {% if prev_points is not None %}
-         <div style="font-size: 13px; color: #e6e6e6; display: flex; justify-content: space-between;">
-            <span>Previous GW</span>
-            <span style="font-weight: 600;">{{ prev_points }} pts</span>
-         </div>
-         {% endif %}
-      </div>
-    </div>
-  </div>
-
-  {% elif request.user.is_authenticated %}
-  <div class="bento-card" style="text-align:center; padding:3rem 1rem; margin-bottom: 2rem;">
-    <p style="color:#8b949e; font-size:15px; margin-bottom:1.5rem;">You haven't picked your team for Gameweek {{ active_gameweek.number }} yet.</p>
-    <a href="/pick/" class="btn-primary">Pick your 15-man squad</a>
   </div>
   {% endif %}
 
-{% endif %} {% if not request.user.is_authenticated %}
-<div class="hero">
-  <h1>Premier League Fantasy</h1>
-  <p>Pick 15 players each gameweek. Score points based on simulated match performance. Climb the leaderboard.</p>
-  <div class="hero-actions">
-    <a href="/auth/register/" class="btn-primary">Get started</a>
-    <a href="/leaderboard/" class="btn-secondary">Leaderboard</a>
+  {% if picks %}
+  <div class="pitch" style="max-width: 800px; margin: 0 auto;">
+    <div class="penalty-box-top"></div><div class="goal-area-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div><div class="goal-area-bottom"></div>
+    <div class="pitch-row">
+      {% for pick in picks %}{% if pick.player.position == 'GK' and not pick.is_sub %}
+      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
+        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+          {{ pick.player.team.short_name }}
+          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+        </div>
+        <div class="slot-name">{{ pick.player.display_name }}</div>
+        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+      </div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="pitch-row">
+      {% for pick in picks %}{% if pick.player.position == 'DEF' and not pick.is_sub %}
+      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
+        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+          {{ pick.player.team.short_name }}
+          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+        </div>
+        <div class="slot-name">{{ pick.player.display_name }}</div>
+        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+      </div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="pitch-row">
+      {% for pick in picks %}{% if pick.player.position == 'MID' and not pick.is_sub %}
+      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
+        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+          {{ pick.player.team.short_name }}
+          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+        </div>
+        <div class="slot-name">{{ pick.player.display_name }}</div>
+        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+      </div>
+      {% endif %}{% endfor %}
+    </div>
+    <div class="pitch-row">
+      {% for pick in picks %}{% if pick.player.position == 'FWD' and not pick.is_sub %}
+      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
+        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+          {{ pick.player.team.short_name }}
+          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+        </div>
+        <div class="slot-name">{{ pick.player.display_name }}</div>
+        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+      </div>
+      {% endif %}{% endfor %}
+    </div>
+    <div style="background: rgba(13, 17, 23, 0.8); border: 1px solid #30363d; padding: 10px; border-radius: 8px; margin-top: 20px;">
+      <div class="pitch-row" style="margin-bottom:0;">
+        {% for pick in picks %}{% if pick.is_sub %}
+        <div class="player-slot" style="opacity: 0.6; cursor:pointer;" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
+          <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+            {{ pick.player.team.short_name }}
+            {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+          </div>
+          <div class="slot-name">{{ pick.player.display_name }}</div>
+          <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+        </div>
+        {% endif %}{% endfor %}
+      </div>
+    </div>
   </div>
-</div>
+  {% endif %}
+
+  <div class="stats-grid" style="margin-top: 2rem;">
+    <div class="stat-card"><div style="color: #8b949e;">Current Gameweek Points</div><div class="stat-value">{% if user_team %}{{ user_team.total_points }}{% else %}0{% endif %}</div></div>
+    <div class="stat-card"><div style="color: #8b949e;">Previous Gameweek</div><div class="stat-value">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div></div>
+    <div class="stat-card"><div style="color: #8b949e;">Global Rank</div><div class="stat-value">1</div></div>
+  </div>
 {% endif %}
 
-<div class="stats-grid">
-  <div class="stat-card"><div class="stat-label">Teams</div><div class="stat-value">{{ num_teams }}</div></div>
-  <div class="stat-card"><div class="stat-label">Players</div><div class="stat-value">{{ num_players }}</div></div>
-  <div class="stat-card"><div class="stat-label">Gameweek</div><div class="stat-value">{% if active_gameweek %}{{ active_gameweek.number }}{% else %}—{% endif %}</div></div>
-</div>
-
-<div class="section-title">Recent results</div>
-<div class="match-list">
-  {% for match in recent_matches %}
-  <div class="match-row">
-    <div class="match-teams">{{ match.home_team }} vs {{ match.away_team }}</div>
-    <div class="match-score">{{ match.home_score }} – {{ match.away_score }}</div>
-    <div class="match-gw">GW{{ match.gameweek.number }}</div>
-  </div>
-  {% empty %}
-  <div class="empty">No results yet.</div>
-  {% endfor %}
-</div>
+{% include 'core/components/player_modal.html' %}
 {% endblock %}
 
 {% block extra_script %}
 <script>
-// Countdown
-{% if active_gameweek %}
-const deadline = new Date('{{ active_gameweek.deadline|date:"c" }}');
-function updateCountdown() {
-  const now = new Date();
-  const diff = deadline - now;
-  if (diff <= 0) { document.getElementById('countdown').textContent = 'Deadline passed'; return; }
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  document.getElementById('countdown').textContent = days > 0 ? `${days}d ${hours}h remaining` : `${hours}h ${mins}m remaining`;
-  if (diff < 86400000) document.getElementById('gw-banner').classList.add('urgent');
-}
-updateCountdown();
-setInterval(updateCountdown, 60000);
-{% endif %}
-
-// Pitch Logic
-const savedFormation = '{{ user_team.formation|default:"433" }}';
-const FORMATIONS = {
-  '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'],['FWD','FWD','FWD']],
-  '442': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID'],['FWD','FWD']],
-  '352': [['GK'],['DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD','FWD']],
-  '451': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID','MID','MID'],['FWD']],
-};
-
-const picks = [
-  {% for pick in picks %}
-  { 
-    name:"{{ pick.player.display_name|escapejs }}", 
-    team:"{{ pick.player.team.short_name|escapejs }}", 
-    color:"{{ pick.player.team.primary_color|escapejs }}", 
-    color2:"{{ pick.player.team.secondary_color|escapejs }}", 
-    pos:"{{ pick.player.position|escapejs }}", 
-    pts:"{{ pick.points_scored|default_if_none:'-' }}", 
-    captain:{{ pick.is_captain|yesno:"true,false" }}, 
-    is_sub:{% if pick.is_sub %}true{% else %}false{% endif %},
-    injured:{% if pick.player.is_injured %}true{% else %}false{% endif %}
-  },
-  {% endfor %}
-];
-
-if (picks.length > 0) {
-  const starters = picks.filter(p => !p.is_sub);
-  const subs = picks.filter(p => p.is_sub);
-
-  const sRows = { GK:[], DEF:[], MID:[], FWD:[] };
-  starters.forEach(p => sRows[p.pos] && sRows[p.pos].push(p));
-
-  const pitchContainer = document.getElementById('pitch-rows');
-  const benchContainer = document.getElementById('bench-rows');
-
-  if (pitchContainer) {
-    const layout = FORMATIONS[savedFormation] || FORMATIONS['433'];
-    layout.forEach(rowPositions => {
-      const rowEl = document.createElement('div');
-      rowEl.className = 'pitch-row';
-      rowPositions.forEach(pos => {
-        const p = sRows[pos].shift(); 
-        if (p) {
-          rowEl.innerHTML += `
-            <div class="player-slot" style="cursor:pointer;">
-              <div class="shirt filled" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
-                ${p.team}
-                ${p.captain ? '<div class="captain-badge">C</div>' : ''}
-                ${p.injured ? '<div class="injury-badge">✚</div>' : ''}
-              </div>
-              <div class="slot-name">${p.name}</div>
-              <div class="slot-pts">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
-            </div>`;
-        }
-      });
-      pitchContainer.appendChild(rowEl);
-    });
-  }
-
-  if (benchContainer && subs.length > 0) {
-    subs.forEach(p => {
-        benchContainer.innerHTML += `
-          <div class="player-slot" style="opacity: 0.6; cursor:pointer;">
-            <div class="shirt filled" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
-              ${p.team}
-              ${p.injured ? '<div class="injury-badge">✚</div>' : ''}
-            </div>
-            <div class="slot-name">${p.name}</div>
-            <div class="slot-pts">${p.pts !== '-' ? p.pts + ' pts' : '-'}</div>
-          </div>`;
-    });
-  }
-
-  // Rotating Stats Logic (Frontend calculated)
-  const validStarters = starters.filter(p => p.pts !== '-');
-  const gwTotal = validStarters.reduce((sum, p) => sum + parseInt(p.pts), 0);
-  
-  let bestPick = {name: 'N/A', pts: -1};
-  validStarters.forEach(p => { if (parseInt(p.pts) > parseInt(bestPick.pts)) bestPick = p; });
-
-  const captain = starters.find(p => p.captain);
-  const capPts = captain && captain.pts !== '-' ? parseInt(captain.pts) : 0;
-
-  const dynamicStats = [
-      { label: "GW Points", value: `${gwTotal}`, sub: `Total starting XI points` },
-      { label: "Star Player", value: bestPick.pts > -1 ? bestPick.name : 'N/A', sub: `${bestPick.pts > -1 ? bestPick.pts : 0} points earned` },
-      { label: "Captain", value: captain ? captain.name : "None", sub: `${capPts} points (Doubled)` }
-  ];
-
-  let statIdx = 0;
-  function rotateStats() {
-      const valEl = document.getElementById('stat-value');
-      const lblEl = document.getElementById('stat-label');
-      const subEl = document.getElementById('stat-sub');
-      if (!valEl) return;
-
-      valEl.style.opacity = 0;
-      subEl.style.opacity = 0;
-      
-      setTimeout(() => {
-          lblEl.textContent = dynamicStats[statIdx].label;
-          valEl.textContent = dynamicStats[statIdx].value;
-          subEl.textContent = dynamicStats[statIdx].sub;
-          
-          valEl.style.opacity = 1;
-          subEl.style.opacity = 1;
-          statIdx = (statIdx + 1) % dynamicStats.length;
-      }, 400);
-  }
-  
-  rotateStats();
-  setInterval(rotateStats, 4500);
-}
+fetch('/api/totw/').then(r => r.json()).then(d => {
+    if(d.error) return;
+    let html = '';
+    d.players.forEach(p => { html += `<div class="ticker-item">${p.name} (${p.team}) <span>${p.pts} pts</span></div>`; });
+    document.getElementById('totw-ticker').innerHTML = html;
+    document.querySelector('.ticker-label').textContent = `GW${d.gameweek} TOTW`;
+}).catch(e => console.log(e));
 </script>
 {% endblock %}

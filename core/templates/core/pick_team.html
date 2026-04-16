@@ -2,19 +2,13 @@
 {% block title %}Pick Your Team — MatchDay{% endblock %}
 
 {% block extra_style %}
-/* Layout Grid */
+<style>
 .pick-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; padding-bottom: 120px; align-items: start; }
 @media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; } }
-
-/* Squad View (Pitch) */
 .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
 .formation-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
 .f-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
 .f-btn.active, .f-btn:hover { background: #238636; color: #fff; border-color: #238636; }
-
-.captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 150;}
-.injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 150;}
-
 .bench-area { margin-top: 1.5rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem 0.5rem; border-radius: 8px; border: 1px solid #30363d; overflow-x: auto;}
 .bench-title { font-size: 13px; font-weight: 600; color: #8b949e; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
 
@@ -38,7 +32,6 @@
 .btn-sell { background: transparent; border: 1px solid #f85149; color: #f85149; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .btn-sell:hover { background: #f85149; color: #fff; }
 
-/* Selector Panel */
 .selector-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; width: 100%; height: fit-content;}
 .panel-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 1rem; }
 .pos-filter { display: flex; gap: 8px; margin-bottom: 1.2rem; flex-wrap: wrap; }
@@ -48,8 +41,6 @@
 .filter-group { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
 .player-search { flex: 1; min-width: 0; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6e6e6; font-size: 13px; padding: 9px 12px; outline: none; transition: border-color 0.2s; }
 .player-search:focus { border-color: #3fb950; box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.15); }
-select.player-search { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b949e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; padding-right: 32px; cursor: pointer; }
-
 .player-list { max-height: 450px; overflow-y: auto; padding-right: 4px; border-radius: 6px; }
 .player-list::-webkit-scrollbar { width: 6px; }
 .player-list::-webkit-scrollbar-track { background: transparent; }
@@ -62,10 +53,10 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
 .p-name { font-size: 13px; color: #e6e6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;}
 .p-meta { font-size: 11px; color: #8b949e; margin-top: 2px;}
 .p-price { font-size: 13px; color: #3fb950; font-weight: 600; flex-shrink: 0; }
-
 .btn-confirm { background: #238636; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .btn-confirm:hover:not(:disabled) { background: #2ea043; }
 .btn-confirm:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -159,7 +150,6 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
         <option value="price_asc">Price: Low to High</option>
       </select>
     </div>
-
     <div class="player-list" id="player-list"></div>
   </div>
 </div>
@@ -209,30 +199,21 @@ function buildSlots(f, loadedPicks = savedPicks) {
     if (!p) return;
     let emptySlot = slots.find(s => s.pos === p.pos && s.player === null && s.is_sub === sp.is_sub) || slots.find(s => s.pos === p.pos && s.player === null);
     if (emptySlot) {
-      emptySlot.player = p;
-      emptySlot.captain = sp.is_captain;
-      emptySlot.vice_captain = sp.is_vice_captain;
-      emptySlot.pur_price = sp.purchase_price || p.price;
+      emptySlot.player = p; emptySlot.captain = sp.is_captain; emptySlot.vice_captain = sp.is_vice_captain; emptySlot.pur_price = sp.purchase_price || p.price;
     }
   });
   originalSlotData = slots.map(s => s.player ? s.player.id : null);
 }
 
 function switchMode(mode) {
-  uiMode = mode;
-  activeSlot = null;
-  const ts = document.getElementById('tabSquad');
-  const tt = document.getElementById('tabTransfers');
-  const tf = document.getElementById('top-financials');
+  uiMode = mode; activeSlot = null;
+  const ts = document.getElementById('tabSquad'); const tt = document.getElementById('tabTransfers'); const tf = document.getElementById('top-financials');
   
   if (isFirstDraft) {
       if (ts) ts.parentElement.style.display = 'none'; 
-      document.getElementById('squad-view').style.display = 'block';
-      document.getElementById('transfer-view').style.display = 'none';
-      document.getElementById('market-selector').style.display = 'flex';
+      document.getElementById('squad-view').style.display = 'block'; document.getElementById('transfer-view').style.display = 'none'; document.getElementById('market-selector').style.display = 'flex';
       if(tf) tf.style.display = 'flex';
-      document.querySelector('h2').textContent = "Draft Your Initial Squad";
-      document.getElementById('top-confirm').textContent = "Save Initial Squad";
+      document.querySelector('h2').textContent = "Draft Your Initial Squad"; document.getElementById('top-confirm').textContent = "Save Initial Squad";
       renderPitch(); renderList(); updateLedger();
       return;
   }
@@ -240,17 +221,13 @@ function switchMode(mode) {
   if (mode === 'squad') {
       if(ts) { ts.style.background = '#238636'; ts.style.color = '#fff'; ts.style.borderColor = '#2ea043'; }
       if(tt) { tt.style.background = '#0d1117'; tt.style.color = '#8b949e'; tt.style.borderColor = '#30363d'; }
-      document.getElementById('squad-view').style.display = 'block';
-      document.getElementById('transfer-view').style.display = 'none';
-      document.getElementById('market-selector').style.display = 'none';
+      document.getElementById('squad-view').style.display = 'block'; document.getElementById('transfer-view').style.display = 'none'; document.getElementById('market-selector').style.display = 'none';
       if(tf) tf.style.display = 'none';
       renderPitch();
   } else {
       if(tt) { tt.style.background = '#238636'; tt.style.color = '#fff'; tt.style.borderColor = '#2ea043'; }
       if(ts) { ts.style.background = '#0d1117'; ts.style.color = '#8b949e'; ts.style.borderColor = '#30363d'; }
-      document.getElementById('squad-view').style.display = 'none';
-      document.getElementById('transfer-view').style.display = 'block';
-      document.getElementById('market-selector').style.display = 'flex';
+      document.getElementById('squad-view').style.display = 'none'; document.getElementById('transfer-view').style.display = 'block'; document.getElementById('market-selector').style.display = 'flex';
       if(tf) tf.style.display = 'flex';
       document.getElementById('panel-title').textContent = "Search Market";
       renderTransferList(); renderList();
@@ -259,14 +236,8 @@ function switchMode(mode) {
 
 function clickSlot(idx) {
     if (isFirstDraft) {
-        if (slots[idx].player) {
-            slots[idx].player = null; slots[idx].captain = false; slots[idx].vice_captain = false;
-            renderPitch(); updateLedger();
-        } else {
-            activeSlot = idx;
-            filterPos(slots[idx].pos, document.querySelector(`.pos-btn[onclick*="'${slots[idx].pos}'"]`));
-            renderPitch();
-        }
+        if (slots[idx].player) { slots[idx].player = null; slots[idx].captain = false; slots[idx].vice_captain = false; renderPitch(); updateLedger(); } 
+        else { activeSlot = idx; filterPos(slots[idx].pos, document.querySelector(`.pos-btn[onclick*="'${slots[idx].pos}'"]`)); renderPitch(); }
     } else {
         if (uiMode === 'squad') alert("Use the Transfers tab to buy and sell players.");
     }
@@ -274,13 +245,9 @@ function clickSlot(idx) {
 
 function createSlotEl(idx) {
   const slot = slots[idx];
-  const el = document.createElement('div'); el.className = 'player-slot';
-  el.onclick = () => clickSlot(idx);
+  const el = document.createElement('div'); el.className = 'player-slot'; el.onclick = () => clickSlot(idx);
   
-  if (activeSlot === idx) {
-      el.style.outline = '2px dashed #3fb950'; el.style.outlineOffset = '4px';
-      el.style.borderRadius = '8px'; el.style.background = 'rgba(63, 185, 80, 0.1)';
-  }
+  if (activeSlot === idx) { el.style.outline = '2px dashed #3fb950'; el.style.outlineOffset = '4px'; el.style.borderRadius = '8px'; el.style.background = 'rgba(63, 185, 80, 0.1)'; }
   
   const shirt = document.createElement('div'); shirt.className = slot.player ? 'shirt filled' : 'shirt empty';
   if (slot.player) {
@@ -293,10 +260,7 @@ function createSlotEl(idx) {
   const name = document.createElement('div'); name.className = 'slot-name'; 
   if (slot.player) {
       name.innerHTML = `${slot.player.name} <span onclick="event.stopPropagation(); window.openPlayerModal(${slot.player.id})" style="color:#3fb950; margin-left:2px; font-weight:bold; font-size:12px;" title="View Stats">ℹ</span>`;
-  } else {
-      name.textContent = '+ Add';
-      name.style.background = 'transparent';
-  }
+  } else { name.textContent = '+ Add'; name.style.background = 'transparent'; }
   const price = document.createElement('div'); price.className = slot.player ? 'slot-price' : 'slot-pos'; price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
   
   el.appendChild(shirt); el.appendChild(name); el.appendChild(price);
@@ -315,17 +279,13 @@ function renderTransferList() {
     slots.forEach((slot, idx) => {
         const sectionName = slot.is_sub ? 'Substitutes' : 'Starting 11';
         if (currentSection !== sectionName) {
-            currentSection = sectionName;
-            const header = document.createElement('div');
-            const marginStyle = idx === 0 ? 'margin: 0 0 10px 0;' : 'margin: 20px 0 10px 0;';
+            currentSection = sectionName; const header = document.createElement('div'); const marginStyle = idx === 0 ? 'margin: 0 0 10px 0;' : 'margin: 20px 0 10px 0;';
             header.innerHTML = `<div style="padding: 8px 12px; font-size: 12px; font-weight: 700; color: #e6e6e6; background: #21262d; border-radius: 6px; ${marginStyle} border: 1px solid #30363d; text-transform: uppercase;">${sectionName}</div>`;
             container.appendChild(header);
         }
         const row = document.createElement('div');
         if (slot.player) {
-            row.className = 't-row';
-            const sellVal = calcSellPrice(slot.player.price, slot.pur_price);
-            const profit = slot.pur_price > 0 ? slot.player.price - slot.pur_price : 0;
+            row.className = 't-row'; const sellVal = calcSellPrice(slot.player.price, slot.pur_price); const profit = slot.pur_price > 0 ? slot.player.price - slot.pur_price : 0;
             let profitHtml = profit > 0 ? `<span class="t-profit positive">(+£${profit.toFixed(1)}m)</span>` : (profit < 0 ? `<span class="t-profit negative">(-£${Math.abs(profit).toFixed(1)}m)</span>` : '');
             row.innerHTML = `<div class="t-pos">${slot.pos}</div><div class="t-info"><div class="t-name">${slot.player.name}</div><div class="t-team">${slot.player.team}</div></div><div class="t-finances"><div class="t-sell-price">£${sellVal.toFixed(1)}m</div>${profitHtml}</div><div style="width: 60px; text-align: center;"><button class="btn-sell" onclick="sellPlayer(${idx})">Sell</button></div>`;
         } else {
@@ -348,20 +308,14 @@ function sellPlayer(idx) {
 function filterPos(pos, btn) { filterPosition = pos; document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); renderList(); }
 
 function renderList() {
-  const q = document.getElementById('search-input').value.toLowerCase();
-  const teamFilter = document.getElementById('filterTeam').value;
-  const sortVal = document.getElementById('sortBy').value;
+  const q = document.getElementById('search-input').value.toLowerCase(); const teamFilter = document.getElementById('filterTeam').value; const sortVal = document.getElementById('sortBy').value;
   const pickedIds = slots.filter(s => s.player).map(s => s.player.id);
-  
   let list = ALL_PLAYERS.filter(p => {
     if (filterPosition !== 'ALL' && p.pos !== filterPosition) return false;
     if (teamFilter !== 'ALL' && p.team !== teamFilter) return false;
-    if (q && !p.full.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) return false;
-    return true;
+    if (q && !p.full.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) return false; return true;
   });
-  
   list.sort((a,b) => sortVal === 'price_desc' ? b.price - a.price : a.price - b.price);
-  
   const container = document.getElementById('player-list'); container.innerHTML = '';
   list.slice(0, 50).forEach(p => {
     const div = document.createElement('div'); div.className = 'player-item' + (pickedIds.includes(p.id) ? ' selected' : ''); div.onclick = () => selectPlayer(p);
@@ -372,16 +326,11 @@ function renderList() {
 
 function selectPlayer(p) {
   if (activeSlot === null) { alert("Click an empty dashed slot to select a position."); return; }
-  const slot = slots[activeSlot];
-  if (slot.pos !== p.pos) { alert(`This slot requires a ${slot.pos}.`); return; }
-  
-  let teamCount = 0;
-  slots.forEach(s => { if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++; });
+  const slot = slots[activeSlot]; if (slot.pos !== p.pos) { alert(`This slot requires a ${slot.pos}.`); return; }
+  let teamCount = 0; slots.forEach(s => { if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++; });
   if (slot.is_sub && teamCount >= 2) { alert(`Max 2 substitutes from ${p.team}.`); return; }
   if (!slot.is_sub && teamCount >= 3) { alert(`Max 3 starters from ${p.team}.`); return; }
-
-  slot.player = p; slot.pur_price = p.price; activeSlot = null;
-  isFirstDraft ? (renderPitch(), updateLedger()) : renderTransferList();
+  slot.player = p; slot.pur_price = p.price; activeSlot = null; isFirstDraft ? (renderPitch(), updateLedger()) : renderTransferList();
 }
 
 function updateCaptainDropdown() {
@@ -443,13 +392,11 @@ function submitTeam() {
     if (d.success || d.ok || d.status === 'ok') { alert(isFirstDraft ? '✅ Draft Complete!' : '✅ Squad & Transfers saved!'); window.location.href = '/'; } else { alert(d.error || 'Something went wrong.'); }
   });
 }
-
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') { const cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i++) { const cookie = cookies[i].trim(); if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; } } }
   return cookieValue;
 }
-
 function setFormation(f, btn) {
   const currentPicks = slots.filter(s => s.player).map(s => ({ id: s.player.id, pos: s.player.pos, is_sub: s.is_sub, is_captain: s.captain, is_vice_captain: s.vice_captain, purchase_price: s.pur_price }));
   formation = f; buildSlots(f, currentPicks);

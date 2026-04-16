@@ -1,4 +1,101 @@
-
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MatchDay{% endblock %}</title>
+    <style>
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #0d1117; color: #c9d1d9; }
+        .navbar { background-color: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 1.5rem; font-weight: 700; color: #fff; text-decoration: none; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { color: #c9d1d9; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .nav-link:hover { color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .btn-primary { background-color: #238636; color: #fff; border: 1px solid #2ea043; padding: 5px 16px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        .btn-primary:hover { background-color: #2ea043; border-color: #3fb950; }
+        
+        /* Universal Pitch Engine CSS */
+        .pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; min-width: 350px; }
+        .pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); pointer-events: none; }
+        .pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; pointer-events: none;}
+        .penalty-box-top { position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; pointer-events: none;}
+        .penalty-box-bottom { position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; pointer-events: none;}
+        .goal-area-top { position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; pointer-events: none;}
+        .goal-area-bottom { position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; pointer-events: none;}
+        .pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; position: relative; z-index: 10; pointer-events: auto;}
+        .player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 65px; position: relative; z-index: 100; pointer-events: auto; }
+        .shirt { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; transition: transform 0.15s; position: relative; cursor: pointer; }
+        .player-slot:hover .shirt { transform: scale(1.08); }
+        .shirt.empty { background: rgba(13, 17, 23, 0.6); border: 2px dashed #484f58; color: #8b949e; }
+        .shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
+        .slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(13, 17, 23, 0.9); padding: 3px 4px; border-radius: 4px; border: 1px solid #30363d;}
+        .slot-price { font-size: 10px; color: #3fb950; font-weight: 600; }
+        .captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 150;}
+        .injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 150;}
+    </style>
+    {% block extra_style %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="nav-brand">MatchDay</a>
+        <div class="nav-links">
+            {% if request.user.is_authenticated %}
+                <a href="/pick/" class="nav-link">Pick Team</a>
+                <a href="/leaderboard/" class="nav-link">Leaderboard</a>
+                <a href="/fixtures/" class="nav-link">Fixtures</a>
+                <div style="position: relative; display: inline-block;">
+                    <button id="notif-btn" style="background:none;border:none;color:#c9d1d9;cursor:pointer;font-size:18px;position:relative;" onclick="toggleNotifs()">
+                        🔔<span id="notif-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#f85149;color:#fff;font-size:10px;border-radius:50%;padding:2px 5px;font-weight:bold;">0</span>
+                    </button>
+                    <div id="notif-dropdown" style="display:none;position:absolute;right:0;top:30px;width:300px;background:#161b22;border:1px solid #30363d;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:1000;max-height:400px;overflow-y:auto;">
+                        <div style="padding:10px 15px;border-bottom:1px solid #30363d;font-weight:bold;color:#fff;display:flex;justify-content:space-between;">
+                            Notifications <button onclick="markRead()" style="background:none;border:none;color:#58a6ff;cursor:pointer;font-size:12px;">Mark all read</button>
+                        </div>
+                        <div id="notif-list"></div>
+                    </div>
+                </div>
+                <a href="/profile/" class="nav-link">{{ request.user.username }}</a>
+                <a href="/auth/logout/" class="nav-link">Logout</a>
+            {% else %}
+                <a href="/auth/login/" class="nav-link">Login</a>
+                <a href="/auth/register/" class="btn-primary">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    
+    {% if request.user.is_authenticated %}
+    <script>
+        function loadNotifs() {
+            fetch('/api/notifications/')
+            .then(r => r.json())
+            .then(data => {
+                const list = document.getElementById('notif-list');
+                const badge = document.getElementById('notif-badge');
+                list.innerHTML = '';
+                let unread = 0;
+                data.notifications.forEach(n => {
+                    if(!n.is_read) unread++;
+                    list.innerHTML += `<div style="padding:10px 15px; border-bottom:1px solid #30363d; ${n.is_read ? 'opacity:0.6;' : 'background:#0d1117;'}">
+                        <div style="font-size:13px; color:#c9d1d9;">${n.message}</div>
+                        <div style="font-size:10px; color:#8b949e; margin-top:5px;">${n.date}</div>
+                    </div>`;
+                });
+                if(data.notifications.length === 0) { list.innerHTML = '<div style="padding:15px;text-align:center;color:#8b949e;font-size:13px;">No notifications.</div>'; }
+                if(unread > 0) { badge.style.display = 'block'; badge.textContent = unread; } else { badge.style.display = 'none'; }
+            });
+        }
+        function toggleNotifs() { const d = document.getElementById('notif-dropdown'); d.style.display = d.style.display === 'none' ? 'block' : 'none'; if(d.style.display === 'block') loadNotifs(); }
+        function markRead() { fetch('/api/notifications/read/', {method:'POST', headers:{'X-CSRFToken': getCookie('csrftoken')}}).then(()=>loadNotifs()); }
+        function getCookie(name) { let cookieValue = null; if (document.cookie && document.cookie !== '') { const cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i++) { const cookie = cookies[i].trim(); if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; } } } return cookieValue; }
+        setInterval(loadNotifs, 60000);
+        loadNotifs();
+    </script>
+    {% endif %}
+    {% block extra_script %}{% endblock %}
 </body>
-
 </html>
