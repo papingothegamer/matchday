@@ -50,17 +50,17 @@
 
 /* Transfer View (Analytical List) */
 .t-list-container { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
-.t-header { display: flex; font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; padding: 0 12px 10px 12px; border-bottom: 1px solid #30363d; margin-bottom: 10px; }
-.t-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; transition: background 0.2s; }
+.t-header { display: grid; grid-template-columns: 40px 1fr 80px 70px; gap: 15px; align-items: center; font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; padding: 0 12px 10px 12px; border-bottom: 1px solid #30363d; margin-bottom: 10px; }
+.t-row { display: grid; grid-template-columns: 40px 1fr 80px 70px; gap: 15px; align-items: center; padding: 12px; border-bottom: 1px solid #21262d; transition: background 0.2s; }
 .t-row:hover { background: #21262d; }
 .t-row.empty { display: flex; align-items: center; border: 2px dashed #484f58; background: rgba(13, 17, 23, 0.4); margin-bottom: 8px; border-radius: 6px; cursor: pointer; color: #8b949e; padding: 12px; transition: 0.2s; }
 .t-row.empty:hover { border-color: #8b949e; color: #e6e6e6; }
 .t-row.empty.active-slot { border-color: #38a169; background: rgba(56, 161, 105, 0.1); color: #38a169; }
 .t-pos { font-size: 11px; font-weight: 600; color: #8b949e; width: 40px; text-align: center; background: #0d1117; padding: 4px; border-radius: 4px;}
-.t-info { flex: 1; margin-left: 15px; }
+.t-info { min-width: 0; }
 .t-name { font-size: 14px; color: #e6e6e6; font-weight: 500; display: flex; align-items: center; gap: 6px;}
 .t-team { font-size: 11px; color: #8b949e; }
-.t-finances { text-align: right; margin-right: 20px; min-width: 60px; }
+.t-finances { text-align: right; }
 .t-sell-price { font-size: 13px; color: #e6e6e6; font-weight: 600; }
 .t-profit { font-size: 11px; }
 .t-profit.positive { color: #3fb950; }
@@ -130,9 +130,12 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
     </div>
   </div>
   
-  <div id="top-financials" style="background: #161b22; padding: 10px 15px; border-radius: 8px; border: 1px solid #30363d; text-align: right; min-width: 150px; display: none;">
-    <div style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Free Transfers: <strong id="top-ft" style="color: #fff; font-size: 14px;">{{ free_transfers }}</strong></div>
-    <div style="font-size: 12px; color: #8b949e;">Bank: <strong id="top-bank" style="color: #3fb950; font-size: 14px;">£{{ bank|floatformat:1 }}m</strong></div>
+    <div id="top-financials" style="background: #161b22; padding: 10px 15px; border-radius: 8px; border: 1px solid #30363d; display: none; align-items: center; gap: 15px;">
+    <div style="text-align: right;">
+      <div style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Free Transfers: <strong id="top-ft" style="color: #fff; font-size: 14px;">{{ free_transfers }}</strong> <span style="margin: 0 5px;">|</span> Cost: <strong id="top-cost" style="color: #fff; font-size: 14px;">0 pts</strong></div>
+      <div style="font-size: 12px; color: #8b949e;">Bank: <strong id="top-bank" style="color: #3fb950; font-size: 14px;">£{{ bank|floatformat:1 }}m</strong></div>
+    </div>
+    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Confirm Transfers</button>
   </div>
 </div>
 </div>
@@ -211,23 +214,7 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
   </div>
 </div>
 
-<div class="sticky-ledger" id="sticky-ledger">
-  <div class="ledger-stats">
-    <div class="l-stat">
-      <span class="l-label">Free Transfers</span>
-      <span class="l-value" id="ledger-ft">{{ free_transfers }}</span>
-    </div>
-    <div class="l-stat">
-      <span class="l-label">Cost</span>
-      <span class="l-value" id="ledger-cost">0 pts</span>
-    </div>
-    <div class="l-stat">
-      <span class="l-label">Bank</span>
-      <span class="l-value positive" id="ledger-bank">£{{ bank|floatformat:1 }}m</span>
-    </div>
-  </div>
-  <button class="btn-confirm" id="ledger-confirm" disabled onclick="submitTeam()">Confirm Transfers</button>
-</div>
+
 {% endblock %}
 
 {% block extra_script %}
@@ -301,12 +288,12 @@ try {
         document.getElementById('squad-view').style.display = 'block';
         document.getElementById('transfer-view').style.display = 'none';
         document.getElementById('market-selector').style.display = 'flex';
-        document.getElementById('sticky-ledger').classList.add('show');
+        if(document.getElementById('top-financials')) document.getElementById('top-financials').style.display = 'flex';
         
         const pageTitle = document.querySelector('h2');
         if (pageTitle) pageTitle.textContent = "Draft Your Initial Squad";
         
-        document.getElementById('ledger-confirm').textContent = "Save Initial Squad";
+        document.getElementById('top-confirm').textContent = "Save Initial Squad";
         renderPitch();
         renderList();
         updateLedger();
@@ -320,7 +307,7 @@ try {
         document.getElementById('squad-view').style.display = 'block';
         document.getElementById('transfer-view').style.display = 'none';
         document.getElementById('market-selector').style.display = 'none';
-        document.getElementById('sticky-ledger').classList.remove('show');
+        if(document.getElementById('top-financials')) document.getElementById('top-financials').style.display = 'none';
         renderPitch();
     } else {
         if(tt) { tt.style.background = '#238636'; tt.style.color = '#fff'; tt.style.borderColor = '#2ea043'; }
@@ -328,7 +315,7 @@ try {
         document.getElementById('squad-view').style.display = 'none';
         document.getElementById('transfer-view').style.display = 'block';
         document.getElementById('market-selector').style.display = 'flex';
-        document.getElementById('sticky-ledger').classList.add('show');
+        if(document.getElementById('top-financials')) document.getElementById('top-financials').style.display = 'flex';
         document.getElementById('panel-title').textContent = "Search Market";
         renderTransferList();
         renderList();
@@ -529,13 +516,13 @@ try {
           let currentBank = 100.0;
           slots.forEach(s => { if (s.player) currentBank -= s.player.price; });
           
-          const bEl = document.getElementById('ledger-bank');
+          const bEl = document.getElementById('top-bank');
           bEl.textContent = '£' + currentBank.toFixed(1) + 'm';
           bEl.className = currentBank < 0 ? 'l-value negative' : 'l-value positive';
           
-          document.getElementById('ledger-ft').textContent = 'Unlimited';
-          document.getElementById('ledger-cost').textContent = '0 pts';
-          document.getElementById('ledger-confirm').disabled = (filled < 16 || currentBank < 0 || !hasCaptain);
+          document.getElementById('top-ft').textContent = 'Unlimited';
+          document.getElementById('top-cost').textContent = '0 pts';
+          document.getElementById('top-confirm').disabled = (filled < 16 || currentBank < 0 || !hasCaptain);
           return;
       }
 
@@ -558,10 +545,10 @@ try {
       let pointsHit = 0;
       if (remainingFT < 0) { pointsHit = Math.abs(remainingFT) * 4; remainingFT = 0; }
 
-      const bEl = document.getElementById('ledger-bank');
+      const bEl = document.getElementById('top-bank');
       bEl.textContent = '£' + currentBank.toFixed(1) + 'm';
             bEl.className = currentBank < 0 ? 'l-value negative' : 'l-value positive';
-      document.getElementById('ledger-ft').textContent = remainingFT;
+      document.getElementById('top-ft').textContent = remainingFT;
       
       // Update the top UI badge
       const tBank = document.getElementById('top-bank');
@@ -571,11 +558,11 @@ try {
           document.getElementById('top-ft').textContent = remainingFT;
       }
       
-      const cEl = document.getElementById('ledger-cost');
+      const cEl = document.getElementById('top-cost');
       cEl.textContent = pointsHit > 0 ? '-' + pointsHit + ' pts' : '0 pts';
       cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
 
-      document.getElementById('ledger-confirm').disabled = (filled < 16 || currentBank < 0);
+      document.getElementById('top-confirm').disabled = (filled < 16 || currentBank < 0);
       document.getElementById('squad-save-btn').disabled = (filled < 16 || currentBank < 0);
   }
 
@@ -583,7 +570,7 @@ try {
     if ((uiMode === 'squad' || isFirstDraft) && !slots.some(s => s.captain)) { alert('Please select a captain.'); return; }
     
     if (!isFirstDraft) {
-        const pointsHitText = document.getElementById('ledger-cost').textContent;
+        const pointsHitText = document.getElementById('top-cost').textContent;
         if (pointsHitText !== '0 pts') {
             if (!confirm(`WARNING: These transfers will cost you ${pointsHitText}. Proceed?`)) return;
         }

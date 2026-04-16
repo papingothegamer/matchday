@@ -151,50 +151,6 @@ def get_notifications(request):
         'is_read': n.is_read,
         'date': n.created_at.strftime("%b %d, %H:%M")
     } for n in notifs]
-    return JsonResponse({'notifications': data})
-
-@csrf_exempt
-@login_required
-def mark_notifications_read(request):
-    if request.method == 'POST':
-        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
-        return JsonResponse({'ok': True})
-    return JsonResponse({'error': 'POST required'}, status=405)
-
-@login_required
-def get_team_of_the_week(request):
-    from .models import Match, PlayerStat
-    
-    # Strictly find the latest Gameweek where matches were ACTUALLY played
-    latest_match = Match.objects.filter(is_played=True).order_by('-gameweek__number').first()
-    if not latest_match:
-        return JsonResponse({'error': 'No matches played yet'})
-    
-    gw = latest_match.gameweek
-    totw_players = []
-    
-    def get_top_players(pos, count):
-        stats = PlayerStat.objects.filter(match__gameweek=gw, player__position=pos).order_by('-fantasy_points')[:count]
-        for s in stats:
-            totw_players.append({
-                'name': s.player.display_name,
-                'team': s.player.team.short_name,
-                'pos': s.player.position,
-                'color': s.player.team.primary_color,
-                'color2': s.player.team.secondary_color,
-                'pts': s.fantasy_points,
-                'is_captain': False
-            })
-
-    get_top_players('GK', 1)
-    get_top_players('DEF', 3)
-    get_top_players('MID', 4)
-    get_top_players('FWD', 3)
-
-    if totw_players:
-        top_scorer = max(totw_players, key=lambda p: p['pts'])
-        top_scorer['is_captain'] = True
-
     return JsonResponse({'gameweek': gw.number, 'players': totw_players})
     gw = latest_match.gameweek
 

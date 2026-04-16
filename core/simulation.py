@@ -118,8 +118,8 @@ def _distribute_stats(players, match, goals_scored, clean_sheet):
                 a_stat.assists += 1
                 a_stat.save()
 
-def simulate_gameweek():
-    active_gw = Gameweek.objects.filter(is_active=True).first()
+def simulate_gameweek(gw=None):
+    active_gw = gw or Gameweek.objects.filter(is_active=True).first()
     if not active_gw: return False
         
     matches = Match.objects.filter(gameweek=active_gw, is_played=False)
