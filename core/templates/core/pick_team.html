@@ -121,7 +121,7 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px;">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 0 auto 1.5rem auto; flex-wrap: wrap; gap: 15px; max-width: 1200px;">
     <div>
     <h2 style="font-size:24px;font-weight:700;color:#fff;">Squad & Transfers</h2>
     <div style="display: flex; gap: 8px; margin-top: 15px;">
@@ -135,9 +135,9 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
       <div style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Free Transfers: <strong id="top-ft" style="color: #fff; font-size: 14px;">{{ free_transfers }}</strong> <span style="margin: 0 5px;">|</span> Cost: <strong id="top-cost" style="color: #fff; font-size: 14px;">0 pts</strong></div>
       <div style="font-size: 12px; color: #8b949e;">Bank: <strong id="top-bank" style="color: #3fb950; font-size: 14px;">£{{ bank|floatformat:1 }}m</strong></div>
     </div>
-    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Confirm Transfers</button>
+    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Save Team</button>
   </div>
-    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Confirm Transfers</button>
+    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Save Team</button>
   </div>
 </div>
 </div>
@@ -175,7 +175,7 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
         <div class="bench-title">Substitutes</div>
         <div class="pitch-row" id="bench-rows"></div>
       </div>
-      <button id="squad-save-btn" class="btn-confirm" style="width: 100%; margin-top: 15px;" onclick="submitTeam()">Save Squad Order</button>
+      
     </div>
   </div>
 
@@ -565,7 +565,7 @@ try {
       cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
 
       document.getElementById('top-confirm').disabled = (filled < 16 || currentBank < 0);
-      document.getElementById('squad-save-btn').disabled = (filled < 16 || currentBank < 0);
+      
   }
 
   function submitTeam() {
