@@ -1,21 +1,10 @@
 {% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay
-/* Ultra-Mobile Pitch Scaling */
-@media screen and (max-width: 500px) {
-    .pitch { min-width: 100% !important; min-height: 400px !important; padding: 10px 0 !important; }
-    .player-slot { width: 45px !important; }
-    .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
-    .slot-name { font-size: 8px !important; padding: 2px !important; }
-    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
-    .bench-area { padding: 1rem 0.2rem !important; }
-}
-
-{% endblock %}
+{% block title %}Pick Your Team — MatchDay{% endblock %}
 
 {% block extra_style %}
 /* Layout Grid */
 .pick-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; padding-bottom: 120px; align-items: start; }
-@media (max-width: 950px) { .pick-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; padding-bottom: 120px; align-items: start; } }
+@media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; } }
 
 /* Squad View (Pitch) */
 .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
@@ -93,15 +82,6 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
 .p-meta { font-size: 11px; color: #8b949e; margin-top: 2px;}
 .p-price { font-size: 13px; color: #3fb950; font-weight: 600; flex-shrink: 0; }
 
-/* Sticky Command Ledger */
-.sticky-ledger { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1117; border-top: 1px solid #30363d; z-index: 1000; padding: 15px 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 30px rgba(0,0,0,0.8); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.sticky-ledger.show { transform: translateY(0); }
-.ledger-stats { display: flex; gap: 30px; align-items: center; }
-.l-stat { display: flex; flex-direction: column; }
-.l-label { font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-.l-value { font-size: 20px; color: #fff; font-weight: 700; margin-top: 2px; }
-.l-value.negative { color: #f85149; }
-.l-value.positive { color: #3fb950; }
 .btn-confirm { background: #238636; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .btn-confirm:hover:not(:disabled) { background: #2ea043; }
 .btn-confirm:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
@@ -113,16 +93,13 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
     .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
     .slot-name { font-size: 8px !important; padding: 2px !important; }
     .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
-    .ledger-stats { gap: 15px; width: 100%; justify-content: space-between; margin-bottom: 10px; }
-    .l-value { font-size: 16px; }
-    .sticky-ledger { padding: 15px; flex-direction: column; }
     .btn-confirm { width: 100%; }
 }
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 0 auto 1.5rem auto; flex-wrap: wrap; gap: 15px; max-width: 1200px;">
-    <div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 0 auto 1.5rem auto; flex-wrap: wrap; gap: 15px; max-width: 1000px;">
+  <div>
     <h2 style="font-size:24px;font-weight:700;color:#fff;">Squad & Transfers</h2>
     <div style="display: flex; gap: 8px; margin-top: 15px;">
       <button id="tabSquad" onclick="switchMode('squad')" style="padding: 8px 16px; font-size: 14px; font-weight: 600; background: #238636; color: #fff; border: 1px solid #2ea043; border-radius: 6px; cursor: pointer; transition: 0.2s;">My Squad</button>
@@ -130,30 +107,27 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
     </div>
   </div>
   
-      <div id="top-financials" style="background: #161b22; padding: 12px 20px; border-radius: 8px; border: 1px solid #30363d; display: none; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
-  <div style="display: flex; gap: 24px; align-items: center;">
-    <div>
-      <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Free Transfers</div>
-      <div style="font-size: 15px; color: #fff; font-weight: 700; margin-top: 2px;" id="top-ft">{{ free_transfers }}</div>
+  <div id="top-financials" style="background: #161b22; padding: 12px 20px; border-radius: 8px; border: 1px solid #30363d; display: none; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <div>
+        <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Free Transfers</div>
+        <div style="font-size: 15px; color: #fff; font-weight: 700; margin-top: 2px;" id="top-ft">{{ free_transfers }}</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Hit Cost</div>
+        <div style="font-size: 15px; color: #fff; font-weight: 700; margin-top: 2px;" id="top-cost">0 pts</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Bank</div>
+        <div style="font-size: 15px; color: #3fb950; font-weight: 700; margin-top: 2px;" id="top-bank">£{{ bank|floatformat:1 }}m</div>
+      </div>
     </div>
-    <div>
-      <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Hit Cost</div>
-      <div style="font-size: 15px; color: #fff; font-weight: 700; margin-top: 2px;" id="top-cost">0 pts</div>
-    </div>
-    <div>
-      <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Bank</div>
-      <div style="font-size: 15px; color: #3fb950; font-weight: 700; margin-top: 2px;" id="top-bank">£{{ bank|floatformat:1 }}m</div>
-    </div>
+    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 24px; font-size: 14px; white-space: nowrap; margin: 0;">Save Team</button>
   </div>
-  <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 24px; font-size: 14px; white-space: nowrap; margin: 0;">Save Team</button>
-</div>
-    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Save Team</button>
-  </div>
-</div>
 </div>
 
 {% if not players %}
-<div style="background:#d73a49; color:#fff; padding:15px; border-radius:8px; margin-bottom:1.5rem; text-align:center;">
+<div style="background:#d73a49; color:#fff; padding:15px; border-radius:8px; margin-bottom:1.5rem; text-align:center; max-width: 1000px; margin: 0 auto 1.5rem auto;">
   <strong>Error: Database Empty!</strong> Please run <code>python populate_pl.py</code>
 </div>
 {% endif %}
@@ -185,7 +159,6 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
         <div class="bench-title">Substitutes</div>
         <div class="pitch-row" id="bench-rows"></div>
       </div>
-      
     </div>
   </div>
 
@@ -225,8 +198,6 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
     <div class="player-list" id="player-list"></div>
   </div>
 </div>
-
-
 {% endblock %}
 
 {% block extra_script %}
@@ -245,18 +216,16 @@ const FORMATIONS = { '433': [['GK'],['DEF','DEF','DEF','DEF'],['MID','MID','MID'
 
 let formation = '{{ saved_formation|default:"433" }}';
 let slots = [];
-let originalSlotData = []; // To track changes for the ledger
+let originalSlotData = []; 
 let activeSlot = null;
 let filterPosition = 'ALL';
 let uiMode = 'squad';
 
 try {
-  // Populate Teams Dropdown
   const uniqueTeams = [...new Set(ALL_PLAYERS.map(p => p.team))].sort();
   const teamSelect = document.getElementById('filterTeam');
   uniqueTeams.forEach(t => { const opt = document.createElement('option'); opt.value = t; opt.textContent = t; teamSelect.appendChild(opt); });
 
-  // 50% Profit Tax Math
   function calcSellPrice(currentPrice, purchasePrice) {
       if (!purchasePrice) return currentPrice;
       let diff = currentPrice - purchasePrice;
@@ -280,7 +249,6 @@ try {
       }
     });
     
-    // Deep copy to track original state
     originalSlotData = slots.map(s => s.player ? s.player.id : null);
   }
 
@@ -293,10 +261,8 @@ try {
     const ts = document.getElementById('tabSquad');
     const tt = document.getElementById('tabTransfers');
     
-    // THE NEW "FIRST DRAFT" ONBOARDING UI
-    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
-      if (isFirstDraft) {
-        if (ts) ts.parentElement.style.display = 'none'; // Hide the tabs
+    if (isFirstDraft) {
+        if (ts) ts.parentElement.style.display = 'none'; 
         document.getElementById('squad-view').style.display = 'block';
         document.getElementById('transfer-view').style.display = 'none';
         document.getElementById('market-selector').style.display = 'flex';
@@ -312,14 +278,13 @@ try {
         return;
     }
     
-    // NORMAL TAB LOGIC
     if (mode === 'squad') {
         if(ts) { ts.style.background = '#238636'; ts.style.color = '#fff'; ts.style.borderColor = '#2ea043'; }
         if(tt) { tt.style.background = '#0d1117'; tt.style.color = '#8b949e'; tt.style.borderColor = '#30363d'; }
         document.getElementById('squad-view').style.display = 'block';
         document.getElementById('transfer-view').style.display = 'none';
         document.getElementById('market-selector').style.display = 'none';
-        if(document.getElementById('top-financials')) document.getElementById('top-financials').style.display = 'none';
+        if(document.getElementById('top-financials')) document.getElementById('top-financials').style.display = 'flex';
         renderPitch();
     } else {
         if(tt) { tt.style.background = '#238636'; tt.style.color = '#fff'; tt.style.borderColor = '#2ea043'; }
@@ -335,7 +300,6 @@ try {
   }
 
   function clickSlot(idx) {
-      if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
           if (slots[idx].player) {
               slots[idx].player = null;
@@ -357,7 +321,6 @@ try {
     const el = document.createElement('div'); el.className = 'player-slot';
     el.onclick = () => clickSlot(idx);
     
-    // Highlight the active slot user is currently shopping for
     if (activeSlot === idx) {
         el.style.outline = '2px dashed #3fb950';
         el.style.outlineOffset = '4px';
@@ -421,12 +384,7 @@ try {
           } else {
               row.className = 't-row empty';
               if (activeSlot === idx) row.classList.add('active-slot');
-              row.innerHTML = `
-                  <div class="t-pos">${slot.pos}</div>
-                  <div class="t-info"><div class="t-name" style="color: #8b949e; font-weight: 500;">+ Select Replacement</div></div>
-                  <div class="t-finances" style="flex: 1;"></div>
-                  <div style="width: 60px;"></div>
-              `;
+              row.innerHTML = `<span>+ Select Replacement ${slot.pos}</span>`;
               row.onclick = () => { activeSlot = idx; filterPos(slot.pos, document.querySelector(`.pos-btn[onclick*="'${slot.pos}'"]`)); renderTransferList(); };
           }
           container.appendChild(row);
@@ -488,8 +446,7 @@ try {
     slot.pur_price = p.price;
     activeSlot = null;
     
-    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
-      if (isFirstDraft) {
+    if (isFirstDraft) {
         renderPitch();
         updateLedger();
     } else {
@@ -515,30 +472,30 @@ try {
   function updateCaptain() {
     const capId = document.getElementById('captain-select').value;
     slots.forEach(s => s.captain = (s.player && s.player.id.toString() === capId));
-    if (isFirstDraft) updateLedger(); // Force confirmation button check
+    if (isFirstDraft) updateLedger(); 
   }
 
   function updateLedger() {
       const filled = slots.filter(s => s.player).length;
       const hasCaptain = slots.some(s => s.captain);
 
-      // FIRST DRAFT MATH (No taxes, no hits)
-      if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
           let currentBank = 100.0;
           slots.forEach(s => { if (s.player) currentBank -= s.player.price; });
           
-          const bEl = document.getElementById('top-bank');
-          bEl.textContent = '£' + currentBank.toFixed(1) + 'm';
-          bEl.className = currentBank < 0 ? 'l-value negative' : 'l-value positive';
+          const tBank = document.getElementById('top-bank');
+          if(tBank) {
+              tBank.textContent = '£' + currentBank.toFixed(1) + 'm';
+              tBank.style.color = currentBank < 0 ? '#f85149' : '#3fb950';
+              document.getElementById('top-ft').textContent = 'Unlimited';
+              document.getElementById('top-cost').textContent = '0 pts';
+          }
           
-          document.getElementById('top-ft').textContent = 'Unlimited';
-          document.getElementById('top-cost').textContent = '0 pts';
-          document.getElementById('top-confirm').disabled = (filled < 16 || currentBank < 0 || !hasCaptain);
+          const confirmBtn = document.getElementById('top-confirm');
+          if (confirmBtn) confirmBtn.disabled = (filled < 16 || currentBank < 0 || !hasCaptain);
           return;
       }
 
-      // STANDARD MARKET MATH
       let currentBank = initialBank;
       originalSlotData.forEach((origId, idx) => {
           if (origId && (!slots[idx].player || slots[idx].player.id !== origId)) {
@@ -557,32 +514,26 @@ try {
       let pointsHit = 0;
       if (remainingFT < 0) { pointsHit = Math.abs(remainingFT) * 4; remainingFT = 0; }
 
-      const bEl = document.getElementById('top-bank');
-      bEl.textContent = '£' + currentBank.toFixed(1) + 'm';
-            bEl.className = currentBank < 0 ? 'l-value negative' : 'l-value positive';
-      document.getElementById('top-ft').textContent = remainingFT;
-      
-      // Update the top UI badge
       const tBank = document.getElementById('top-bank');
       if(tBank) {
           tBank.textContent = '£' + currentBank.toFixed(1) + 'm';
           tBank.style.color = currentBank < 0 ? '#f85149' : '#3fb950';
           document.getElementById('top-ft').textContent = remainingFT;
+          
+          const cEl = document.getElementById('top-cost');
+          cEl.textContent = pointsHit > 0 ? '-' + pointsHit + ' pts' : '0 pts';
+          cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
       }
-      
-      const cEl = document.getElementById('top-cost');
-      cEl.textContent = pointsHit > 0 ? '-' + pointsHit + ' pts' : '0 pts';
-      cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
 
-      document.getElementById('top-confirm').disabled = (filled < 16 || currentBank < 0);
-      
+      const confirmBtn = document.getElementById('top-confirm');
+      if (confirmBtn) confirmBtn.disabled = (filled < 16 || currentBank < 0);
   }
 
   function submitTeam() {
     if ((uiMode === 'squad' || isFirstDraft) && !slots.some(s => s.captain)) { alert('Please select a captain.'); return; }
     
     if (!isFirstDraft) {
-        const pointsHitText = document.getElementById('top-cost').textContent;
+        const pointsHitText = document.getElementById('top-cost') ? document.getElementById('top-cost').textContent : '0 pts';
         if (pointsHitText !== '0 pts') {
             if (!confirm(`WARNING: These transfers will cost you ${pointsHitText}. Proceed?`)) return;
         }
@@ -621,8 +572,7 @@ try {
     document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
     
-    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
-      if (isFirstDraft) {
+    if (isFirstDraft) {
         renderPitch();
         updateLedger();
     } else {
