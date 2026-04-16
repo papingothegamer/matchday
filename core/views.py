@@ -327,3 +327,26 @@ def save_picks(request):
             return JsonResponse({'error': str(e)})
             
     return JsonResponse({'error': 'POST required'}, status=405)
+
+@login_required
+def fixtures(request):
+    from .models import Gameweek
+    gameweeks = Gameweek.objects.prefetch_related('matches__home_team', 'matches__away_team').order_by('number')
+    return render(request, 'core/fixtures.html', {'gameweeks': gameweeks})
+
+@login_required
+def get_player_detail(request, player_id):
+    from .models import Player, PlayerStat
+    from django.shortcuts import get_object_or_404
+    player = get_object_or_404(Player, id=player_id)
+    stats = PlayerStat.objects.filter(player=player).select_related('match__gameweek', 'match__home_team', 'match__away_team').order_by('match__gameweek__number')
+    
+    history = []
+    total_pts = 0
+    for s in stats:
+        opp = s.match.away_team.short_name if s.match.home_team == player.team else s.match.home_team.short_name
+        history.append({'gw': s.match.gameweek.number, 'opp': opp, 'mins': s.minutes_played, 'pts': s.fantasy_points, 'goals': s.goals, 'assists': s.assists})
+        total_pts += s.fantasy_points
+        
+    data = {'id': player.id, 'name': player.full_name, 'team': player.team.name, 'pos': player.position, 'price': player.price, 'total_pts': total_pts, 'history': history}
+    return JsonResponse(data)

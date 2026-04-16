@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+{% block title %}Fixtures — MatchDay{% endblock %}
+{% block content %}
+<style>
+  .fx-gw-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 2rem; padding: 1.5rem; }
+  .fx-gw-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 10px; display: flex; align-items: center; }
+  .fx-match { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; }
+  .fx-match:last-child { border-bottom: none; }
+  .fx-team { flex: 1; font-size: 15px; font-weight: 500; color: #e6e6e6; }
+  .fx-team.away { text-align: right; }
+  .fx-score { font-size: 16px; font-weight: 700; background: #0d1117; color: #3fb950; padding: 6px 16px; border-radius: 6px; border: 1px solid #30363d; min-width: 60px; text-align: center; }
+  .fx-vs { font-size: 13px; color: #8b949e; background: #21262d; padding: 4px 10px; border-radius: 4px; font-weight: 600; }
+</style>
+<div style="max-width: 800px; margin: 0 auto;">
+  <h2 style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Season Fixtures</h2>
+  {% for gw in gameweeks %}
+  <div class="fx-gw-card">
+    <div class="fx-gw-title">Gameweek {{ gw.number }} {% if gw.is_active %}<span style="font-size:11px; background:#238636; color:#fff; padding:3px 8px; border-radius:12px; margin-left:12px; text-transform:uppercase; letter-spacing:0.5px;">Active</span>{% endif %}</div>
+    {% for match in gw.matches.all %}
+    <div class="fx-match">
+        <div class="fx-team">{{ match.home_team.name }}</div>
+        {% if match.is_played %}
+        <div class="fx-score">{{ match.home_score }} - {{ match.away_score }}</div>
+        {% else %}
+        <div class="fx-vs">VS</div>
+        {% endif %}
+        <div class="fx-team away">{{ match.away_team.name }}</div>
+    </div>
+    {% empty %}
+    <div style="color: #8b949e; font-size: 14px; text-align: center; padding: 1rem;">No matches scheduled.</div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
