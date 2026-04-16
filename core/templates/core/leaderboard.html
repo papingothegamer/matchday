@@ -45,7 +45,7 @@
       <div class="stat-card">
         <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Points</h3>
         {% for p in top_points %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="openPlayerModal({{ p.id }})">
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
           <div style="color:#3fb950; font-weight:700;">{{ p.total_pts }}</div>
         </div>
@@ -54,7 +54,7 @@
       <div class="stat-card">
         <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Goalscorers</h3>
         {% for p in top_scorers %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="openPlayerModal({{ p.id }})">
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
           <div style="color:#fff; font-weight:700;">{{ p.total_goals }}</div>
         </div>
@@ -63,7 +63,7 @@
       <div class="stat-card">
         <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Assists</h3>
         {% for p in top_assists %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="openPlayerModal({{ p.id }})">
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
           <div style="color:#fff; font-weight:700;">{{ p.total_assists }}</div>
         </div>
@@ -117,7 +117,7 @@ function loadTOTW() {
                  html += `<div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">`;
                  players.forEach(p => {
                      html += `
-                     <div onclick="openPlayerModal(${p.id || 0})" style="display: flex; flex-direction: column; align-items: center; width: 75px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                     <div onclick="window.openPlayerModal(${p.id || 0})" style="display: flex; flex-direction: column; align-items: center; width: 75px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                         <div style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: ${p.color2}; background: ${p.color}; border: 3px solid #fff; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.6);">
                             ${p.team}
                             ${p.is_captain ? '<div style="position:absolute; top:-5px; right:-5px; background:#f6c90e; color:#000; width:18px; height:18px; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">★</div>' : ''}

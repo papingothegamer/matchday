@@ -94,6 +94,14 @@
     }
     {% block extra_style %}{% endblock %}
 </style>
+
+<style>
+  /* Absolute override to guarantee clicks penetrate to the player slots */
+  .player-slot { position: relative !important; z-index: 100 !important; pointer-events: auto !important; cursor: pointer !important; }
+  .pitch-row { position: relative !important; z-index: 90 !important; pointer-events: auto !important; }
+  .totw-pitch > div { position: relative !important; z-index: 90 !important; pointer-events: auto !important; }
+  .pitch-lines, .penalty-box-top, .penalty-box-bottom, .goal-area-top, .goal-area-bottom { pointer-events: none !important; z-index: 1 !important; }
+</style>
 </head>
 <body>
 <div class="page">
