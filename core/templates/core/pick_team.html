@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
-{% block title %}Pick Your Team — MatchDay{% endblock %}
+{% block title %}Pick Your Team — MatchDay{% include 'core/components/player_modal.html' %}
+{% endblock %}
 
 {% block extra_style %}
 /* Layout Grid */
@@ -12,26 +13,11 @@
 .f-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 1px solid #30363d; border-radius: 6px; background: #0d1117; color: #8b949e; cursor: pointer; transition: all 0.2s; }
 .f-btn.active, .f-btn:hover { background: #238636; color: #fff; border-color: #238636; }
 
-.pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; min-width: 350px; }
-.pitch-lines { pointer-events: none; position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); }
-.pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; }
-.penalty-box-top { pointer-events: none; position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
-.penalty-box-bottom { pointer-events: none; position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
-.goal-area-top { pointer-events: none; position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
-.goal-area-bottom { pointer-events: none; position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
 
-.pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; position: relative; z-index: 10; }
-.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 65px; }
-.player-slot:hover .shirt { transform: scale(1.08); }
-
-.shirt { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; transition: transform 0.15s; position: relative; }
-.shirt.empty { background: rgba(13, 17, 23, 0.6); border: 2px dashed #484f58; color: #8b949e; }
-.shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
+.player-slot:hover 
 .captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-.slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(13, 17, 23, 0.9); padding: 3px 4px; border-radius: 4px; border: 1px solid #30363d;}
-.slot-price { font-size: 10px; color: #3fb950; font-weight: 600; }
 .slot-pos { font-size: 10px; color: #8b949e; font-weight: 600; }
 
 .bench-area { margin-top: 1.5rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem 0.5rem; border-radius: 8px; border: 1px solid #30363d; overflow-x: auto;}
@@ -88,13 +74,10 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
 
 /* Ultra-Mobile Pitch Scaling */
 @media screen and (max-width: 500px) {
-    .pitch { min-width: 100% !important; min-height: 400px !important; padding: 10px 0 !important; }
-    .player-slot { width: 45px !important; }
-    .shirt { width: 32px !important; height: 32px !important; font-size: 8px !important; }
-    .slot-name { font-size: 8px !important; padding: 2px !important; }
-    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
+                    .captain-badge, .injury-badge { width: 12px !important; height: 12px !important; font-size: 8px !important; top: -2px !important; right: -2px !important;}
     .btn-confirm { width: 100%; }
 }
+{% include 'core/components/player_modal.html' %}
 {% endblock %}
 
 {% block content %}
@@ -202,6 +185,7 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
     <div class="player-list" id="player-list"></div>
   </div>
 </div>
+{% include 'core/components/player_modal.html' %}
 {% endblock %}
 
 {% block extra_script %}
@@ -341,7 +325,14 @@ try {
       if (slot.player.injured) { const ibadge = document.createElement('div'); ibadge.className = 'injury-badge'; ibadge.textContent = '✚'; shirt.appendChild(ibadge); }
     } else { shirt.textContent = slot.pos; }
     
-    const name = document.createElement('div'); name.className = 'slot-name'; name.textContent = slot.player ? slot.player.name : '+ Add';
+    
+    const name = document.createElement('div'); name.className = 'slot-name'; 
+    if (slot.player) {
+        name.innerHTML = `${slot.player.name} <span onclick="event.stopPropagation(); window.openPlayerModal(${slot.player.id})" style="color:#3fb950; margin-left:2px; font-weight:bold; font-size:11px;" title="View Stats">ℹ</span>`;
+    } else {
+        name.textContent = '+ Add';
+    }
+
     const price = document.createElement('div'); price.className = slot.player ? 'slot-price' : 'slot-pos'; price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
     if (!slot.player) name.style.background = 'transparent';
     
@@ -608,4 +599,5 @@ try {
   document.getElementById('squad-view').innerHTML = `<div style="color:#f85149; padding:15px; border:1px solid #d73a49; border-radius:8px; background:#2d1114;"><b>UI Error:</b><br>${e.message}</div>`;
 }
 </script>
+{% include 'core/components/player_modal.html' %}
 {% endblock %}
