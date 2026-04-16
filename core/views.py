@@ -90,25 +90,34 @@ def pick_team(request):
     active_gw = Gameweek.objects.filter(is_active=True).first()
     existing_picks = []
     saved_formation = '433'
+    bank = 100.0
+    free_transfers = 1
+    
     if active_gw:
         ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
         if not ft:
             ft = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
         if ft:
             saved_formation = ft.formation
+            bank = ft.bank
+            free_transfers = ft.free_transfers
             for pick in ft.picks.all():
                 existing_picks.append({
                     'id': pick.player.id,
                     'pos': pick.player.position,
                     'is_sub': pick.is_sub,
-                    'purchase_price': pick.purchase_price,
-                    'is_captain': pick.is_captain, 'is_vice_captain': getattr(pick, 'is_vice_captain', False)
+                    'purchase_price': pick.purchase_price or pick.player.price,
+                    'is_captain': pick.is_captain,
+                    'is_vice_captain': getattr(pick, 'is_vice_captain', False)
                 })
+                
     context = {
         'players': players,
         'active_gameweek': active_gw,
         'saved_picks_json': json.dumps(existing_picks),
         'saved_formation': saved_formation,
+        'bank': bank,
+        'free_transfers': free_transfers,
     }
     return render(request, 'core/pick_team.html', context)
 
