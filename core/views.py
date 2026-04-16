@@ -48,7 +48,7 @@ def auth_register(request):
         else:
             user = User.objects.create_user(username=username, password=password)
             login(request, user)
-            return redirect(\'index\')
+            return redirect('index')
     return render(request, 'core/auth/register.html', {'error': error})
 
 
