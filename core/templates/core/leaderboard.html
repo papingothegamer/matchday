@@ -1,6 +1,5 @@
 {% extends 'core/base.html' %}
-{% block title %}Leaderboard — MatchDay{% include 'core/components/player_modal.html' %}
-{% endblock %}
+{% block title %}Leaderboard — MatchDay{% endblock %}
 {% block content %}
 <style>
   .lb-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
@@ -10,8 +9,7 @@
   .lb-section { display: none; }
   .lb-section.active { display: block; }
   .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
-  
-  </style>
+</style>
 
 <div style="max-width: 1000px; margin: 0 auto;">
   <h2 style="font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Global Center</h2>
@@ -40,7 +38,7 @@
       <div class="stat-card">
         <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Points</h3>
         {% for p in top_points %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
           <div style="color:#3fb950; font-weight:700;">{{ p.total_pts }}</div>
         </div>
@@ -49,7 +47,7 @@
       <div class="stat-card">
         <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Goalscorers</h3>
         {% for p in top_scorers %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
           <div style="color:#fff; font-weight:700;">{{ p.total_goals }}</div>
         </div>
@@ -58,7 +56,7 @@
       <div class="stat-card">
         <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Assists</h3>
         {% for p in top_assists %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
           <div style="color:#fff; font-weight:700;">{{ p.total_assists }}</div>
         </div>
@@ -82,6 +80,8 @@
   </div>
 </div>
 
+{% include 'core/components/player_modal.html' %}
+
 <script>
 function switchTab(tabId) {
     document.querySelectorAll('.lb-section').forEach(el => el.classList.remove('active'));
@@ -104,7 +104,6 @@ function loadTOTW() {
          }
          
          document.getElementById('totw-title').textContent = `GW${data.gameweek} Dream Team`;
-         
          let html = '';
          const positions = ['GK', 'DEF', 'MID', 'FWD'];
          positions.forEach(pos => {
@@ -116,7 +115,7 @@ function loadTOTW() {
                      <div class="player-slot" onclick="window.openPlayerModal(${p.id || 0})" style="cursor: pointer;">
                         <div class="shirt filled" style="background:${p.color}; color:${p.color2}; border-color:${p.color2};">
                             ${p.team}
-                            ${p.is_captain ? '<div class="captain-badge" style="position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:#f6c90e; border-radius:50%; font-size:9px; font-weight:700; color:#000; display:flex; align-items:center; justify-content:center;">C</div>' : ''}
+                            ${p.is_captain ? '<div class="captain-badge" style="position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:#f6c90e; border-radius:50%; font-size:9px; font-weight:700; color:#000; display:flex; align-items:center; justify-content:center;">★</div>' : ''}
                         </div>
                         <div class="slot-name">${p.name}</div>
                         <div class="slot-price">${p.pts} pts</div>
@@ -126,15 +125,12 @@ function loadTOTW() {
              }
          });
          container.innerHTML = html;
-
       }).catch(e => console.error(e));
 }
 
-// Check URL params for direct TOTW link
 const urlParams = new URLSearchParams(window.location.search);
 if(urlParams.get('tab') === 'totw') {
-    document.querySelector('.lb-tab[onclick="switchTab(\'totw\')"]').click();
+    document.querySelector('.lb-tab[onclick*="totw"]').click();
 }
 </script>
-{% include 'core/components/player_modal.html' %}
 {% endblock %}
