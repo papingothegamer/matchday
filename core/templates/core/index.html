@@ -4,20 +4,31 @@
 {% block extra_style %}
 <style>
   .hero { background: linear-gradient(180deg, rgba(35, 134, 54, 0.1) 0%, transparent 100%); padding: 3rem 0; text-align: center; border-bottom: 1px solid #30363d; margin-bottom: 2rem; }
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; text-align: center; }
-  .stat-value { font-size: 2.5rem; font-weight: 700; color: #fff; margin: 10px 0; }
-  .section-title { font-size: 1.2rem; font-weight: 600; color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+  
+  /* Responsive 2-Column Dashboard Layout */
+  .dashboard-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; align-items: start; }
+  @media (max-width: 950px) { .dashboard-wrap { display: flex; flex-direction: column; } }
+  
+  /* Pitch Container UI (Mirrors Pick Team Page) */
+  .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
+  .bench-area { margin-top: 1.5rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem 0.5rem; border-radius: 8px; border: 1px solid #30363d; overflow-x: auto;}
+  .bench-title { font-size: 13px; font-weight: 600; color: #8b949e; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+  
+  /* Sidebar Elements */
+  .stats-stack { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.2rem; text-align: center; }
+  .stat-value { font-size: 2.2rem; font-weight: 700; color: #fff; margin: 5px 0 0 0; }
+  .section-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
   .match-list { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
   .match-row { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #30363d; align-items: center; }
   .match-row:last-child { border-bottom: none; }
-  .match-teams { font-weight: 600; color: #e6e6e6; }
-  .match-score { background: #0d1117; padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 1.1rem; color: #3fb950; font-weight: bold; border: 1px solid #30363d;}
-  .match-gw { font-size: 0.9rem; color: #8b949e; font-weight: 600; }
+  .match-teams { font-weight: 600; color: #e6e6e6; font-size: 0.95rem; }
+  .match-score { background: #0d1117; padding: 4px 10px; border-radius: 4px; font-family: monospace; font-size: 1rem; color: #3fb950; font-weight: bold; border: 1px solid #30363d;}
+  .match-gw { font-size: 0.85rem; color: #8b949e; font-weight: 600; }
   .empty { padding: 2rem; text-align: center; color: #8b949e; }
   
   /* Ticker Styling */
-  .ticker-wrap { width: 100%; background: #0d1117; border-bottom: 1px solid #30363d; height: 36px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 1.5rem; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5);}
+  .ticker-wrap { width: 100%; background: #0d1117; border-bottom: 1px solid #30363d; height: 36px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 1.5rem; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); max-width: 1000px; margin-left: auto; margin-right: auto;}
   .ticker-wrap:hover .ticker-arrow { color: #fff; background: #2ea043; }
   .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 2px 0 10px rgba(0,0,0,0.5);}
   .ticker-arrow { background: #161b22; color: #3fb950; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; right: 0; z-index: 2; border-left: 1px solid #30363d; transition: 0.2s; box-shadow: -2px 0 10px rgba(0,0,0,0.5);}
@@ -25,6 +36,8 @@
   .ticker-item { font-size: 12px; color: #c9d1d9; margin-right: 30px; font-weight: 500; }
   .ticker-item span { color: #3fb950; font-weight: 700; margin-left: 5px; }
   @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
+  
+  .deadline-banner { background: #238636; color: #fff; padding: 1rem 2rem; border-radius: 8px; margin: 0 auto 1rem auto; display: flex; justify-content: space-between; align-items: center; max-width: 1000px; box-sizing: border-box; }
 </style>
 {% endblock %}
 
@@ -38,9 +51,9 @@
 {% else %}
   
   {% if active_gameweek %}
-  <div style="background: #238636; color: #fff; padding: 1rem 2rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="font-size:24px;font-weight:700;color:#fff;margin:0;">GW{{ active_gameweek.number }} Deadline</h2>
-    <div style="font-size: 1.2rem; font-weight: 600; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
+  <div class="deadline-banner">
+    <h2 style="font-size:20px;font-weight:700;color:#fff;margin:0;">GW{{ active_gameweek.number }} Deadline</h2>
+    <div style="font-size: 1.1rem; font-weight: 600; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
   </div>
   
   <div class="ticker-wrap" onclick="window.location.href='/leaderboard/?tab=totw'">
@@ -50,95 +63,122 @@
   </div>
   {% endif %}
 
-  {% if picks %}
-  <div class="pitch" style="max-width: 800px; margin: 0 auto;">
-    <div class="penalty-box-top"></div><div class="goal-area-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div><div class="goal-area-bottom"></div>
-    <div class="pitch-row">
-      {% for pick in picks %}{% if pick.player.position == 'GK' and not pick.is_sub %}
-      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
-        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
-          {{ pick.player.team.short_name }}
-          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
-        </div>
-        <div class="slot-name">{{ pick.player.display_name }}</div>
-        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-      </div>
-      {% endif %}{% endfor %}
-    </div>
-    <div class="pitch-row">
-      {% for pick in picks %}{% if pick.player.position == 'DEF' and not pick.is_sub %}
-      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
-        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
-          {{ pick.player.team.short_name }}
-          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
-        </div>
-        <div class="slot-name">{{ pick.player.display_name }}</div>
-        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-      </div>
-      {% endif %}{% endfor %}
-    </div>
-    <div class="pitch-row">
-      {% for pick in picks %}{% if pick.player.position == 'MID' and not pick.is_sub %}
-      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
-        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
-          {{ pick.player.team.short_name }}
-          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
-        </div>
-        <div class="slot-name">{{ pick.player.display_name }}</div>
-        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-      </div>
-      {% endif %}{% endfor %}
-    </div>
-    <div class="pitch-row">
-      {% for pick in picks %}{% if pick.player.position == 'FWD' and not pick.is_sub %}
-      <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" style="cursor:pointer;" title="View Player">
-        <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
-          {{ pick.player.team.short_name }}
-          {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-          {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
-        </div>
-        <div class="slot-name">{{ pick.player.display_name }}</div>
-        <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-      </div>
-      {% endif %}{% endfor %}
-    </div>
-    <div style="background: rgba(13, 17, 23, 0.8); border: 1px solid #30363d; padding: 10px; border-radius: 8px; margin-top: 20px;">
-      <div class="pitch-row" style="margin-bottom:0;">
-        {% for pick in picks %}{% if pick.is_sub %}
-        <div class="player-slot" style="opacity: 0.6; cursor:pointer;" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
-          <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
-            {{ pick.player.team.short_name }}
-            {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+  <div class="dashboard-wrap">
+      <div class="main-column">
+          {% if picks %}
+          <div class="pitch-panel">
+              <div class="pitch">
+                <div class="penalty-box-top"></div><div class="goal-area-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div><div class="goal-area-bottom"></div>
+                <div class="pitch-row">
+                  {% for pick in picks %}{% if pick.player.position == 'GK' and not pick.is_sub %}
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                      {{ pick.player.team.short_name }}
+                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+                    </div>
+                    <div class="slot-name">{{ pick.player.display_name }}</div>
+                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+                  </div>
+                  {% endif %}{% endfor %}
+                </div>
+                <div class="pitch-row">
+                  {% for pick in picks %}{% if pick.player.position == 'DEF' and not pick.is_sub %}
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                      {{ pick.player.team.short_name }}
+                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+                    </div>
+                    <div class="slot-name">{{ pick.player.display_name }}</div>
+                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+                  </div>
+                  {% endif %}{% endfor %}
+                </div>
+                <div class="pitch-row">
+                  {% for pick in picks %}{% if pick.player.position == 'MID' and not pick.is_sub %}
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                      {{ pick.player.team.short_name }}
+                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+                    </div>
+                    <div class="slot-name">{{ pick.player.display_name }}</div>
+                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+                  </div>
+                  {% endif %}{% endfor %}
+                </div>
+                <div class="pitch-row">
+                  {% for pick in picks %}{% if pick.player.position == 'FWD' and not pick.is_sub %}
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                      {{ pick.player.team.short_name }}
+                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
+                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+                    </div>
+                    <div class="slot-name">{{ pick.player.display_name }}</div>
+                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+                  </div>
+                  {% endif %}{% endfor %}
+                </div>
+              </div>
+
+              <div class="bench-area">
+                <div class="bench-title">Substitutes</div>
+                <div class="pitch-row" style="margin-bottom:0;">
+                  {% for pick in picks %}{% if pick.is_sub %}
+                  <div class="player-slot" style="opacity: 0.6;" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                      {{ pick.player.team.short_name }}
+                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
+                    </div>
+                    <div class="slot-name">{{ pick.player.display_name }}</div>
+                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
+                  </div>
+                  {% endif %}{% endfor %}
+                </div>
+              </div>
           </div>
-          <div class="slot-name">{{ pick.player.display_name }}</div>
-          <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-        </div>
-        {% endif %}{% endfor %}
+          {% else %}
+          <div style="background:#161b22; border:1px solid #30363d; border-radius:12px; padding:3rem; text-align:center;">
+              <h3 style="color:#fff; margin-bottom:10px;">No Squad Found</h3>
+              <p style="color:#8b949e; margin-bottom:20px;">You haven't picked your team yet!</p>
+              <a href="/pick/" class="btn-primary" style="padding:10px 24px; font-size:16px;">Pick Team Now</a>
+          </div>
+          {% endif %}
       </div>
-    </div>
-  </div>
-  {% endif %}
+      
+      <div class="side-column">
+          <div class="stats-stack">
+            <div class="stat-card">
+                <div style="color: #8b949e; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Current GW Points</div>
+                <div class="stat-value">{% if user_team %}{{ user_team.total_points }}{% else %}0{% endif %}</div>
+            </div>
+            <div class="stat-card">
+                <div style="color: #8b949e; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Previous GW</div>
+                <div class="stat-value">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div>
+            </div>
+            <div class="stat-card">
+                <div style="color: #8b949e; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Global Rank</div>
+                <div class="stat-value">1</div>
+            </div>
+          </div>
 
-  <div class="stats-grid" style="margin-top: 2rem;">
-    <div class="stat-card"><div style="color: #8b949e;">Current Gameweek Points</div><div class="stat-value">{% if user_team %}{{ user_team.total_points }}{% else %}0{% endif %}</div></div>
-    <div class="stat-card"><div style="color: #8b949e;">Previous Gameweek</div><div class="stat-value">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div></div>
-    <div class="stat-card"><div style="color: #8b949e;">Global Rank</div><div class="stat-value">1</div></div>
-  </div>
-
-  <div class="section-title">Recent results</div>
-  <div class="match-list">
-    {% for match in recent_matches %}
-    <div class="match-row">
-      <div class="match-teams">{{ match.home_team }} vs {{ match.away_team }}</div>
-      <div class="match-score">{{ match.home_score }} – {{ match.away_score }}</div>
-      <div class="match-gw">GW{{ match.gameweek.number }}</div>
-    </div>
-    {% empty %}
-    <div class="empty">No results yet.</div>
-    {% endfor %}
+          <div class="section-title">Recent results</div>
+          <div class="match-list">
+            {% for match in recent_matches %}
+            <div class="match-row">
+              <div>
+                  <div class="match-teams">{{ match.home_team.short_name }} vs {{ match.away_team.short_name }}</div>
+                  <div class="match-gw">GW{{ match.gameweek.number }}</div>
+              </div>
+              <div class="match-score">{{ match.home_score }} - {{ match.away_score }}</div>
+            </div>
+            {% empty %}
+            <div class="empty">No results yet.</div>
+            {% endfor %}
+          </div>
+      </div>
   </div>
 {% endif %}
 
