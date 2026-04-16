@@ -128,23 +128,77 @@ def simulate_gameweek(gw=None):
     fantasy_teams = FantasyTeam.objects.filter(gameweek=active_gw)
     for fteam in fantasy_teams:
         in_league = LeagueMember.objects.filter(user=fteam.user).exists()
-        raw_total_points = 0
         
-        for pick in fteam.picks.all():
-            if pick.is_sub: continue 
+        picks = list(fteam.picks.all())
+        pick_stats = {}
+        for pick in picks:
             stats = PlayerStat.objects.filter(player=pick.player, match__gameweek=active_gw)
+            mins = sum(s.minutes_played for s in stats)
             pts = sum(s.fantasy_points for s in stats)
-            if pick.is_captain: pts *= 2
-            pick.points_scored = pts
-            pick.save()
-            raw_total_points += pts
+            pick_stats[pick.id] = {'mins': mins, 'pts': pts}
+
+        # 1. Captain / Vice-Captain Fallback Logic
+        c_pick = next((p for p in picks if p.is_captain), None)
+        vc_pick = next((p for p in picks if getattr(p, 'is_vice_captain', False)), None)
+        active_cap = c_pick
+        if c_pick and pick_stats[c_pick.id]['mins'] == 0:
+            if vc_pick and pick_stats[vc_pick.id]['mins'] > 0:
+                active_cap = vc_pick
+            else:
+                active_cap = None
+
+        # 2. Dynamic Auto-Substitution Logic
+        active_starters = [p for p in picks if not p.is_sub]
+        available_subs = [p for p in picks if p.is_sub]
+
+        # Process GK Sub
+        s_gk = next((p for p in active_starters if p.player.position == 'GK'), None)
+        b_gk = next((p for p in available_subs if p.player.position == 'GK'), None)
+        if s_gk and pick_stats[s_gk.id]['mins'] == 0 and b_gk and pick_stats[b_gk.id]['mins'] > 0:
+            active_starters.remove(s_gk)
+            active_starters.append(b_gk)
+            available_subs.remove(b_gk)
+
+        # Process Outfield Subs (Respecting Formation Rules)
+        def get_counts(arr):
+            c = {'DEF':0, 'MID':0, 'FWD':0}
+            for p in arr:
+                if p.player.position in c: c[p.player.position] += 1
+            return c
+
+        outfield_starters = [p for p in active_starters if p.player.position != 'GK']
+        outfield_subs = [p for p in available_subs if p.player.position != 'GK']
+
+        for s in list(outfield_starters):
+            if pick_stats[s.id]['mins'] == 0:
+                for b in list(outfield_subs):
+                    if pick_stats[b.id]['mins'] > 0:
+                        test_arr = list(active_starters)
+                        test_arr.remove(s)
+                        test_arr.append(b)
+                        counts = get_counts(test_arr)
+                        # FPL minimums: 3 DEF, 2 MID, 1 FWD
+                        if counts['DEF'] >= 3 and counts['MID'] >= 2 and counts['FWD'] >= 1:
+                            active_starters = test_arr
+                            outfield_subs.remove(b)
+                            break
+
+        # 3. Final Tally
+        total = 0
+        for p in picks:
+            pts = pick_stats[p.id]['pts']
+            if p in active_starters:
+                if p == active_cap:
+                    pts *= 2
+                p.points_scored = pts
+                total += pts
+            else:
+                p.points_scored = pts # Saves bench points without adding to total
+            p.save()
             
-        fteam.total_points = raw_total_points
+        fteam.total_points = total
         if not in_league:
-            Notification.objects.get_or_create(
-                user=fteam.user,
-                message=f"GW{active_gw.number} finished! You scored {raw_total_points} pts. Join a league to see how you rank!"
-            )
+            Notification.objects.get_or_create(user=fteam.user, message=f"GW{active_gw.number} finished! You scored {total} pts (Auto-subs applied).")
         fteam.save()
 
     active_gw.is_active = False

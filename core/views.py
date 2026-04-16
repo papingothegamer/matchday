@@ -102,7 +102,7 @@ def pick_team(request):
                     'pos': pick.player.position,
                     'is_sub': pick.is_sub,
                     'purchase_price': pick.purchase_price,
-                    'is_captain': pick.is_captain
+                    'is_captain': pick.is_captain, 'is_vice_captain': getattr(pick, 'is_vice_captain', False)
                 })
     context = {
         'players': players,
@@ -317,6 +317,7 @@ def save_picks(request):
                 FantasyPick.objects.create(
                     fantasy_team=ft, player=player,
                     is_captain=p_data.get('is_captain', False),
+                    is_vice_captain=p_data.get('is_vice_captain', False),
                     is_sub=p_data.get('is_sub', False),
                     purchase_price=pur_price
                 )

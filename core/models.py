@@ -133,6 +133,7 @@ class FantasyPick(models.Model):
     fantasy_team = models.ForeignKey(FantasyTeam, on_delete=models.CASCADE, related_name='picks')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='fantasy_picks')
     is_captain = models.BooleanField(default=False)
+    is_vice_captain = models.BooleanField(default=False)
     is_sub = models.BooleanField(default=False)
     points_scored = models.IntegerField(default=0)
     purchase_price = models.FloatField(default=0.0)

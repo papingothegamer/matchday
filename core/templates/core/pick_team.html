@@ -143,8 +143,12 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
         <button class="f-btn" onclick="setFormation('451',this)">4-5-1</button>
         
         <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 12px; color: #8b949e;">Captain:</span>
-          <select id="captain-select" class="player-search" style="width: 140px; padding: 6px 10px; margin: 0;" onchange="updateCaptain()">
+          <span style="font-size: 12px; color: #8b949e;">VC:</span>
+          <select id="vice-captain-select" class="player-search" style="width: 130px; padding: 6px 10px; margin: 0;" onchange="updateCaptain()">
+            <option value="">Select...</option>
+          </select>
+          <span style="font-size: 12px; color: #8b949e;">C:</span>
+          <select id="captain-select" class="player-search" style="width: 130px; padding: 6px 10px; margin: 0;" onchange="updateCaptain()">
             <option value="">Select...</option>
           </select>
         </div>
@@ -245,6 +249,7 @@ try {
       if (emptySlot) {
         emptySlot.player = p;
         emptySlot.captain = sp.is_captain;
+        emptySlot.vice_captain = sp.is_vice_captain;
         emptySlot.pur_price = sp.purchase_price || p.price;
       }
     });
@@ -332,6 +337,7 @@ try {
     if (slot.player) {
       shirt.style.background = slot.player.color; shirt.style.color = slot.player.color2; shirt.style.borderColor = slot.player.color2; shirt.textContent = slot.player.team;
       if (slot.captain) { const badge = document.createElement('div'); badge.className = 'captain-badge'; badge.textContent = 'C'; shirt.appendChild(badge); }
+      else if (slot.vice_captain) { const badge = document.createElement('div'); badge.className = 'captain-badge'; badge.style.background = '#e6e6e6'; badge.textContent = 'V'; shirt.appendChild(badge); }
       if (slot.player.injured) { const ibadge = document.createElement('div'); ibadge.className = 'injury-badge'; ibadge.textContent = '✚'; shirt.appendChild(ibadge); }
     } else { shirt.textContent = slot.pos; }
     
@@ -455,24 +461,35 @@ try {
   }
 
   function updateCaptainDropdown() {
-    const select = document.getElementById('captain-select');
-    const currentVal = select.value;
-    select.innerHTML = '<option value="">Select...</option>';
+    const cSelect = document.getElementById('captain-select');
+    const vSelect = document.getElementById('vice-captain-select');
+    const cVal = cSelect.value;
+    const vVal = vSelect.value;
+    cSelect.innerHTML = '<option value="">Select...</option>';
+    vSelect.innerHTML = '<option value="">Select...</option>';
     slots.forEach(s => {
       if (s.player && !s.is_sub) {
-        const opt = document.createElement('option');
-        opt.value = s.player.id; opt.textContent = s.player.name;
-        if (s.player.id.toString() === currentVal || s.captain) { opt.selected = true; s.captain = true; } 
-        else { s.captain = false; }
-        select.appendChild(opt);
-      }
+        const optC = document.createElement('option'); optC.value = s.player.id; optC.textContent = s.player.name;
+        const optV = document.createElement('option'); optV.value = s.player.id; optV.textContent = s.player.name;
+        if (s.player.id.toString() === cVal || s.captain) { optC.selected = true; s.captain = true; } else { s.captain = false; }
+        if (s.player.id.toString() === vVal || s.vice_captain) { optV.selected = true; s.vice_captain = true; } else { s.vice_captain = false; }
+        if (s.vice_captain) optC.disabled = true;
+        if (s.captain) optV.disabled = true;
+        cSelect.appendChild(optC); vSelect.appendChild(optV);
+      } else { s.captain = false; s.vice_captain = false; }
     });
   }
 
   function updateCaptain() {
     const capId = document.getElementById('captain-select').value;
-    slots.forEach(s => s.captain = (s.player && s.player.id.toString() === capId));
+    const vcId = document.getElementById('vice-captain-select').value;
+    slots.forEach(s => {
+        s.captain = (s.player && s.player.id.toString() === capId);
+        s.vice_captain = (s.player && s.player.id.toString() === vcId);
+    });
+    updateCaptainDropdown();
     if (isFirstDraft) updateLedger(); 
+    renderPitch();
   }
 
   function updateLedger() {
@@ -539,7 +556,7 @@ try {
         }
     }
 
-    const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain, is_sub: s.is_sub }));
+    const picks = slots.map(s => ({ player_id: s.player.id, is_captain: s.captain, is_vice_captain: s.vice_captain, is_sub: s.is_sub }));
     
     fetch('/pick/save/', {
       method: 'POST',
