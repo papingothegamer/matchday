@@ -14,7 +14,7 @@
 
 {% block extra_style %}
 /* Layout Grid */
-.pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
+.pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; padding-bottom: 100px; }
 @media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; padding-bottom: 100px; } }
 
 /* Squad View (Pitch) */
@@ -53,7 +53,7 @@
 .t-header { display: flex; font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; padding: 0 12px 10px 12px; border-bottom: 1px solid #30363d; margin-bottom: 10px; }
 .t-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; transition: background 0.2s; }
 .t-row:hover { background: #21262d; }
-.t-row.empty { border: 2px dashed #484f58; background: rgba(13, 17, 23, 0.4); margin-bottom: 8px; border-radius: 6px; cursor: pointer; justify-content: center; color: #8b949e; font-size: 13px; padding: 16px;}
+.t-row.empty { display: flex; align-items: center; border: 2px dashed #484f58; background: rgba(13, 17, 23, 0.4); margin-bottom: 8px; border-radius: 6px; cursor: pointer; color: #8b949e; padding: 12px; transition: 0.2s; }
 .t-row.empty:hover { border-color: #8b949e; color: #e6e6e6; }
 .t-row.empty.active-slot { border-color: #38a169; background: rgba(56, 161, 105, 0.1); color: #38a169; }
 .t-pos { font-size: 11px; font-weight: 600; color: #8b949e; width: 40px; text-align: center; background: #0d1117; padding: 4px; border-radius: 4px;}
@@ -422,7 +422,12 @@ try {
           } else {
               row.className = 't-row empty';
               if (activeSlot === idx) row.classList.add('active-slot');
-              row.innerHTML = `<span>+ Select Replacement ${slot.pos}</span>`;
+              row.innerHTML = `
+                  <div class="t-pos">${slot.pos}</div>
+                  <div class="t-info"><div class="t-name" style="color: #8b949e; font-weight: 500;">+ Select Replacement</div></div>
+                  <div class="t-finances" style="flex: 1;"></div>
+                  <div style="width: 60px;"></div>
+              `;
               row.onclick = () => { activeSlot = idx; filterPos(slot.pos, document.querySelector(`.pos-btn[onclick*="'${slot.pos}'"]`)); renderTransferList(); };
           }
           container.appendChild(row);
