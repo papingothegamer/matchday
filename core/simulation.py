@@ -1,122 +1,59 @@
 import random
-from .models import Gameweek, Match, PlayerStat, Player, FantasyTeam, FantasyPick, Notification, LeagueMember
+from .models import Gameweek, Match, Player, PlayerStat, FantasyTeam, LeagueMember, Notification
 
-def get_goal_weights(strength_ratio):
-    # Default distribution: ~1.4 goals per team
-    base = [0.26, 0.34, 0.22, 0.11, 0.05, 0.015, 0.005]
-    if strength_ratio > 1.3: # Strong favorite (e.g. Man City vs Burnley)
-        return [0.10, 0.20, 0.30, 0.25, 0.10, 0.04, 0.01] # Average ~2.2 goals
-    elif strength_ratio < 0.77: # Heavy underdog
-        return [0.45, 0.35, 0.15, 0.04, 0.01, 0.00, 0.00] # Average ~0.8 goals
-    return base
+def update_player_prices(gw):
+    pass
 
 def simulate_match(match):
-    home_players = list(Player.objects.filter(team=match.home_team, is_active=True))
-    away_players = list(Player.objects.filter(team=match.away_team, is_active=True))
+    if match.is_played: return
     
-    # Calculate Dynamic Team Strength (Top 6 teams naturally have higher total values)
-    home_strength = sum(p.price for p in home_players)
-    away_strength = sum(p.price for p in away_players)
-    
-    # Add a 10% intrinsic home-field advantage
-    home_ratio = (home_strength * 1.1) / (away_strength if away_strength > 0 else 1)
-    away_ratio = away_strength / (home_strength * 1.1 if home_strength > 0 else 1)
-
-    home_goals = random.choices(range(7), weights=get_goal_weights(home_ratio))[0]
-    away_goals = random.choices(range(7), weights=get_goal_weights(away_ratio))[0]
-    
-    match.home_score = home_goals
-    match.away_score = away_goals
+    match.home_score = random.choices([0, 1, 2, 3, 4], weights=[30, 35, 20, 10, 5])[0]
+    match.away_score = random.choices([0, 1, 2, 3, 4], weights=[35, 30, 20, 10, 5])[0]
     match.is_played = True
     match.save()
     
-    _distribute_stats(home_players, match, home_goals, away_goals == 0)
-    _distribute_stats(away_players, match, away_goals, home_goals == 0)
-
-def _distribute_stats(players, match, goals_scored, clean_sheet):
-    if not players: return
-        
-    active_players = []
-    
-    for p in players:
-        if p.is_injured:
-            p.injury_weeks -= 1
-            if p.injury_weeks <= 0:
-                p.is_injured = False
-                p.injury_weeks = 0
-            p.save()
-            continue
-
-        if random.random() < 0.03:
-            p.is_injured = True
-            p.injury_weeks = random.randint(1, 3)
-            p.save()
-            impacted_picks = FantasyPick.objects.filter(player=p, fantasy_team__gameweek=match.gameweek)
-            for pick in impacted_picks:
-                Notification.objects.get_or_create(
-                    user=pick.fantasy_team.user, 
-                    message=f"🚨 INJURY ALERT: {p.display_name} has been injured for {p.injury_weeks} week(s)!"
-                )
-            continue
-
-        # Strict Academy Player Filter: Min price players rarely even start
-        start_prob = min(0.98, max(0.02, (p.price - 4.0) / 4.0)) 
-        
-        minutes = 0
-        if random.random() < start_prob:
-            minutes = random.randint(60, 90)
-        elif random.random() < 0.15: # Sub appearance
-            minutes = random.randint(1, 30)
+    def gen_stats(team, goals_scored, goals_conceded):
+        players = list(Player.objects.filter(team=team))
+        if not players: return
+        avail = [p for p in players if not p.is_injured]
+        unavail = [p for p in players if p.is_injured]
+        stats = []
+        for p in unavail:
+            stats.append(PlayerStat(match=match, player=p, minutes_played=0, goals=0, assists=0, fantasy_points=0))
+        random.shuffle(avail)
+        starters = avail[:11]
+        bench = avail[11:]
+        num_subs = min(random.randint(3, 5), len(bench))
+        actual_subs = bench[:num_subs]
+        for p in bench[num_subs:]:
+            stats.append(PlayerStat(match=match, player=p, minutes_played=0, goals=0, assists=0, fantasy_points=0))
             
-        if minutes == 0: continue
+        gs = random.choices([p for p in starters + actual_subs if p.position in ['FWD', 'MID', 'DEF']], k=goals_scored) if goals_scored > 0 else []
+        asts = random.choices([p for p in starters + actual_subs if p.position in ['MID', 'FWD', 'DEF']], k=goals_scored) if goals_scored > 0 else []
+        
+        for p in starters + actual_subs:
+            if p in starters:
+                mins = random.randint(45, 80) if (num_subs > 0 and random.random() < 0.25) else 90
+                if mins < 90: num_subs -= 1
+            else:
+                mins = random.randint(1, 45)
+                
+            g = gs.count(p)
+            a = asts.count(p)
+            pts = 2 if mins >= 60 else (1 if mins > 0 else 0)
+            if goals_conceded == 0 and mins >= 60:
+                if p.position in ['GK', 'DEF']: pts += 4
+                elif p.position == 'MID': pts += 1
+            if p.position in ['GK', 'DEF']: pts += g * 6
+            elif p.position == 'MID': pts += g * 5
+            elif p.position == 'FWD': pts += g * 4
+            pts += a * 3
+            if mins > 0 and random.random() < 0.1: pts -= 1
+            stats.append(PlayerStat(match=match, player=p, minutes_played=mins, goals=g, assists=a, fantasy_points=pts))
+        PlayerStat.objects.bulk_create(stats)
 
-        stat, _ = PlayerStat.objects.get_or_create(player=p, match=match)
-        stat.minutes_played = minutes
-        stat.clean_sheet = clean_sheet and minutes >= 60
-        
-        if random.random() < 0.10: stat.yellow_cards = 1
-        if random.random() < 0.01: stat.red_cards = 1
-        stat.save()
-        
-        active_players.append(p)
-
-    if not active_players: return
-
-    # Goal and Assist Weights (Power of 3 exponentially favors premium players)
-    goal_weights = []
-    assist_weights = []
-    for p in active_players:
-        base_w = (max(0.1, p.price - 4.0)) ** 3.0 
-        
-        g_w = base_w
-        if p.position == 'FWD': g_w *= 4.0
-        elif p.position == 'MID': g_w *= 1.5
-        elif p.position == 'DEF': g_w *= 0.1
-        elif p.position == 'GK': g_w *= 0.001
-        
-        a_w = base_w
-        if p.position == 'MID': a_w *= 2.5
-        elif p.position == 'FWD': a_w *= 1.5
-        elif p.position == 'DEF': a_w *= 0.8
-        elif p.position == 'GK': a_w *= 0.01
-        
-        goal_weights.append(g_w)
-        assist_weights.append(a_w)
-
-    for _ in range(goals_scored):
-        scorer = random.choices(active_players, weights=goal_weights, k=1)[0]
-        stat, _ = PlayerStat.objects.get_or_create(player=scorer, match=match)
-        stat.goals += 1
-        stat.save()
-        
-        if random.random() < 0.75:
-            assisters = [p for p in active_players if p != scorer]
-            if assisters:
-                a_weights = [assist_weights[active_players.index(p)] for p in assisters]
-                assister = random.choices(assisters, weights=a_weights, k=1)[0]
-                a_stat, _ = PlayerStat.objects.get_or_create(player=assister, match=match)
-                a_stat.assists += 1
-                a_stat.save()
+    gen_stats(match.home_team, match.home_score, match.away_score)
+    gen_stats(match.away_team, match.away_score, match.home_score)
 
 def simulate_gameweek(gw=None):
     active_gw = gw or Gameweek.objects.filter(is_active=True).first()
@@ -137,7 +74,6 @@ def simulate_gameweek(gw=None):
             pts = sum(s.fantasy_points for s in stats)
             pick_stats[pick.id] = {'mins': mins, 'pts': pts}
 
-        # 1. Captain / Vice-Captain Fallback Logic
         c_pick = next((p for p in picks if p.is_captain), None)
         vc_pick = next((p for p in picks if getattr(p, 'is_vice_captain', False)), None)
         active_cap = c_pick
@@ -147,11 +83,9 @@ def simulate_gameweek(gw=None):
             else:
                 active_cap = None
 
-        # 2. Dynamic Auto-Substitution Logic
         active_starters = [p for p in picks if not p.is_sub]
         available_subs = [p for p in picks if p.is_sub]
 
-        # Process GK Sub
         s_gk = next((p for p in active_starters if p.player.position == 'GK'), None)
         b_gk = next((p for p in available_subs if p.player.position == 'GK'), None)
         if s_gk and pick_stats[s_gk.id]['mins'] == 0 and b_gk and pick_stats[b_gk.id]['mins'] > 0:
@@ -159,7 +93,6 @@ def simulate_gameweek(gw=None):
             active_starters.append(b_gk)
             available_subs.remove(b_gk)
 
-        # Process Outfield Subs (Respecting Formation Rules)
         def get_counts(arr):
             c = {'DEF':0, 'MID':0, 'FWD':0}
             for p in arr:
@@ -177,13 +110,11 @@ def simulate_gameweek(gw=None):
                         test_arr.remove(s)
                         test_arr.append(b)
                         counts = get_counts(test_arr)
-                        # FPL minimums: 3 DEF, 2 MID, 1 FWD
                         if counts['DEF'] >= 3 and counts['MID'] >= 2 and counts['FWD'] >= 1:
                             active_starters = test_arr
                             outfield_subs.remove(b)
                             break
 
-        # 3. Final Tally
         total = 0
         for p in picks:
             pts = pick_stats[p.id]['pts']
@@ -193,12 +124,12 @@ def simulate_gameweek(gw=None):
                 p.points_scored = pts
                 total += pts
             else:
-                p.points_scored = pts # Saves bench points without adding to total
+                p.points_scored = pts
             p.save()
             
         fteam.total_points = total
         if not in_league:
-            Notification.objects.get_or_create(user=fteam.user, message=f"GW{active_gw.number} finished! You scored {total} pts (Auto-subs applied).")
+            Notification.objects.get_or_create(user=fteam.user, message=f"GW{active_gw.number} finished! You scored {total} pts.")
         fteam.save()
 
     active_gw.is_active = False
@@ -208,21 +139,3 @@ def simulate_gameweek(gw=None):
         next_gw.is_active = True
         next_gw.save()
     return True
-
-
-def update_player_prices(gameweek):
-    """Adjusts player prices based on their GW performance."""
-    from .models import PlayerStat
-    stats = PlayerStat.objects.filter(match__gameweek=gameweek)
-    
-    for stat in stats:
-        # Outstanding performance: +£0.1m
-        if stat.fantasy_points >= 10:
-            stat.player.price = round(stat.player.price + 0.1, 1)
-            stat.player.save()
-        # Poor performance while playing: -£0.1m
-        elif stat.fantasy_points <= 1 and stat.minutes_played > 0:
-            # Don't drop below £3.8m minimum threshold
-            if stat.player.price > 3.8:
-                stat.player.price = round(stat.player.price - 0.1, 1)
-                stat.player.save()
