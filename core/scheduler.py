@@ -22,7 +22,7 @@ def run_auto_engine():
             
         time.sleep(60)
 
-def start():
+def start_scheduler():
     if 'runserver' in sys.argv:
         if os.environ.get('RUN_MAIN') == 'true':
             thread = threading.Thread(target=run_auto_engine, daemon=True)
