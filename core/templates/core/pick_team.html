@@ -259,7 +259,11 @@ function createSlotEl(idx) {
   
   const name = document.createElement('div'); name.className = 'slot-name'; 
   if (slot.player) {
-      name.innerHTML = `${slot.player.name} <span onclick="event.stopPropagation(); window.openPlayerModal(${slot.player.id})" style="color:#3fb950; margin-left:2px; font-weight:bold; font-size:12px;" title="View Stats">ℹ</span>`;
+      name.style.whiteSpace = 'normal';
+      name.style.display = 'flex';
+      name.style.justifyContent = 'space-between';
+      name.style.alignItems = 'center';
+      name.innerHTML = `<span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; text-align:center;">${slot.player.name}</span> <span onclick="event.stopPropagation(); window.openPlayerModal(${slot.player.id})" style="color:#3fb950; margin-left:2px; font-weight:bold; font-size:12px; flex-shrink:0; cursor:pointer;" title="View Stats">ℹ</span>`;
   } else { name.textContent = '+ Add'; name.style.background = 'transparent'; }
   const price = document.createElement('div'); price.className = slot.player ? 'slot-price' : 'slot-pos'; price.textContent = slot.player ? '£' + slot.player.price.toFixed(1) + 'm' : slot.pos;
   

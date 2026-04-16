@@ -260,6 +260,8 @@ def user_profile(request):
 @login_required
 def save_picks(request):
     import math
+    import json
+    from django.http import JsonResponse
     from .models import Gameweek, FantasyTeam, Player, FantasyPick
     
     if request.method == 'POST':
@@ -285,20 +287,23 @@ def save_picks(request):
                 cost = 0
                 
                 for old_pick in players_out:
-                    diff = old_pick.player.price - old_pick.purchase_price
+                    # FIX: Explicit fallback to current price if purchase_price is missing
+                    pur_price = old_pick.purchase_price or old_pick.player.price
+                    diff = float(old_pick.player.price) - float(pur_price)
                     if diff > 0:
-                        sell_price = old_pick.purchase_price + (math.floor(diff * 10) / 20.0)
+                        sell_price = float(pur_price) + (math.floor(diff * 10) / 20.0)
                     else:
-                        sell_price = old_pick.player.price
+                        sell_price = float(old_pick.player.price)
                     revenue += sell_price
                     
                 for new_pick in players_in_data:
                     player = Player.objects.get(id=new_pick['player_id'])
-                    cost += player.price
+                    cost += float(player.price)
                     
                 net_cost = cost - revenue
-                if ft.bank - net_cost < 0:
-                    return JsonResponse({'error': f'Insufficient funds. You are short £{abs(ft.bank - net_cost):.1f}m'})
+                # FIX: Add a tiny tolerance (-0.01) to prevent floating-point rounding errors
+                if float(ft.bank) - net_cost < -0.01: 
+                    return JsonResponse({'error': f'Insufficient funds. You are short £{abs(float(ft.bank) - net_cost):.1f}m'})
                     
                 transfers_made = len(players_in_data)
                 if transfers_made > ft.free_transfers:
@@ -308,11 +313,11 @@ def save_picks(request):
                 else:
                     ft.free_transfers -= transfers_made
                     
-                ft.bank -= net_cost
+                ft.bank = float(ft.bank) - net_cost
             
             elif not ft.picks.exists():
-                cost = sum(Player.objects.get(id=p['player_id']).price for p in picks_data)
-                if 100.0 - cost < 0:
+                cost = sum(float(Player.objects.get(id=p['player_id']).price) for p in picks_data)
+                if 100.0 - cost < -0.01:
                     return JsonResponse({'error': 'Budget exceeded.'})
                 ft.bank = 100.0 - cost
 
@@ -322,7 +327,8 @@ def save_picks(request):
             ft.picks.all().delete()
             for p_data in picks_data:
                 player = Player.objects.get(id=p_data['player_id'])
-                pur_price = old_picks[player.id].purchase_price if player.id in old_picks else player.price
+                old_pur = old_picks[player.id].purchase_price if player.id in old_picks else None
+                pur_price = old_pur or player.price
                 FantasyPick.objects.create(
                     fantasy_team=ft, player=player,
                     is_captain=p_data.get('is_captain', False),
@@ -336,26 +342,3 @@ def save_picks(request):
             return JsonResponse({'error': str(e)})
             
     return JsonResponse({'error': 'POST required'}, status=405)
-
-@login_required
-def fixtures(request):
-    from .models import Gameweek
-    gameweeks = Gameweek.objects.prefetch_related('matches__home_team', 'matches__away_team').order_by('number')
-    return render(request, 'core/fixtures.html', {'gameweeks': gameweeks})
-
-@login_required
-def get_player_detail(request, player_id):
-    from .models import Player, PlayerStat
-    from django.shortcuts import get_object_or_404
-    player = get_object_or_404(Player, id=player_id)
-    stats = PlayerStat.objects.filter(player=player).select_related('match__gameweek', 'match__home_team', 'match__away_team').order_by('match__gameweek__number')
-    
-    history = []
-    total_pts = 0
-    for s in stats:
-        opp = s.match.away_team.short_name if s.match.home_team == player.team else s.match.home_team.short_name
-        history.append({'gw': s.match.gameweek.number, 'opp': opp, 'mins': s.minutes_played, 'pts': s.fantasy_points, 'goals': s.goals, 'assists': s.assists})
-        total_pts += s.fantasy_points
-        
-    data = {'id': player.id, 'name': player.full_name, 'team': player.team.name, 'pos': player.position, 'price': player.price, 'total_pts': total_pts, 'history': history}
-    return JsonResponse(data)
