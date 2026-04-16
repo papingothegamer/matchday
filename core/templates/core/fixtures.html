@@ -2,20 +2,34 @@
 {% block title %}Fixtures — MatchDay{% endblock %}
 {% block content %}
 <style>
-  .fx-gw-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 2rem; padding: 1.5rem; }
-  .fx-gw-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #21262d; padding-bottom: 10px; display: flex; align-items: center; }
+  .fx-gw-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 2rem; padding: 1.5rem; display: none; }
+  .fx-gw-card.active { display: block; }
   .fx-match { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; }
   .fx-match:last-child { border-bottom: none; }
   .fx-team { flex: 1; font-size: 15px; font-weight: 500; color: #e6e6e6; }
   .fx-team.away { text-align: right; }
   .fx-score { font-size: 16px; font-weight: 700; background: #0d1117; color: #3fb950; padding: 6px 16px; border-radius: 6px; border: 1px solid #30363d; min-width: 60px; text-align: center; }
   .fx-vs { font-size: 13px; color: #8b949e; background: #21262d; padding: 4px 10px; border-radius: 4px; font-weight: 600; }
+  
+  .gw-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: #161b22; padding: 12px 20px; border-radius: 12px; border: 1px solid #30363d; }
+  .btn-nav { background: #21262d; color: #e6e6e6; border: 1px solid #30363d; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
+  .btn-nav:hover:not(:disabled) { background: #3fb950; color: #fff; border-color: #3fb950; }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+  .gw-title-main { font-size: 20px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 10px; }
+  .active-badge { font-size: 11px; background: #238636; color: #fff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 </style>
+
 <div style="max-width: 800px; margin: 0 auto;">
-  <h2 style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Season Fixtures</h2>
+  <h2 style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 1.5rem; text-align: center;">Season Fixtures</h2>
+  
+  <div class="gw-nav">
+    <button id="btn-prev" class="btn-nav" onclick="changeGw(-1)">&larr; Previous</button>
+    <div id="gw-display" class="gw-title-main">Gameweek --</div>
+    <button id="btn-next" class="btn-nav" onclick="changeGw(1)">Next &rarr;</button>
+  </div>
+
   {% for gw in gameweeks %}
-  <div class="fx-gw-card">
-    <div class="fx-gw-title">Gameweek {{ gw.number }} {% if gw.is_active %}<span style="font-size:11px; background:#238636; color:#fff; padding:3px 8px; border-radius:12px; margin-left:12px; text-transform:uppercase; letter-spacing:0.5px;">Active</span>{% endif %}</div>
+  <div class="fx-gw-card" id="gw-card-{{ forloop.counter0 }}" data-gw="Gameweek {{ gw.number }}" data-is-active="{{ gw.is_active|yesno:'true,false' }}">
     {% for match in gw.matches.all %}
     <div class="fx-match">
         <div class="fx-team">{{ match.home_team.name }}</div>
@@ -32,4 +46,37 @@
   </div>
   {% endfor %}
 </div>
+
+<script>
+  let currentIndex = 0;
+  const totalGw = {{ gameweeks|length }};
+  const cards = document.querySelectorAll('.fx-gw-card');
+  const display = document.getElementById('gw-display');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+
+  let activeFound = false;
+  cards.forEach((card, index) => {
+      if (card.getAttribute('data-is-active') === 'true') {
+          currentIndex = index; activeFound = true;
+      }
+  });
+  if (!activeFound && totalGw > 0) currentIndex = totalGw - 1;
+
+  function showGw(index) {
+      if (totalGw === 0) return;
+      cards.forEach(c => c.classList.remove('active'));
+      cards[index].classList.add('active');
+      let titleHtml = cards[index].getAttribute('data-gw');
+      if (cards[index].getAttribute('data-is-active') === 'true') { titleHtml += ` <span class="active-badge">Active</span>`; }
+      display.innerHTML = titleHtml;
+      btnPrev.disabled = (index === 0); btnNext.disabled = (index === totalGw - 1);
+  }
+
+  function changeGw(direction) {
+      let newIndex = currentIndex + direction;
+      if (newIndex >= 0 && newIndex < totalGw) { currentIndex = newIndex; showGw(currentIndex); }
+  }
+  showGw(currentIndex);
+</script>
 {% endblock %}

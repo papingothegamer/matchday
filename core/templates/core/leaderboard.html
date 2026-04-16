@@ -9,9 +9,16 @@
   .lb-section { display: none; }
   .lb-section.active { display: block; }
   .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
+  
+  /* TOTW Dashboard styling */
+  .totw-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: start; }
+  @media (max-width: 900px) { .totw-dashboard { grid-template-columns: 1fr; } }
+  .totw-sidebar-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+  .totw-big-number { font-size: 3rem; font-weight: 800; color: #3fb950; line-height: 1; margin: 10px 0; }
+  .totw-label { font-size: 12px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 </style>
 
-<div style="max-width: 1000px; margin: 0 auto;">
+<div style="max-width: 1100px; margin: 0 auto;">
   <h2 style="font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Global Center</h2>
   <div class="lb-tabs">
     <div class="lb-tab active" onclick="switchTab('global', event)">Global Rankings</div>
@@ -65,15 +72,32 @@
   </div>
 
   <div id="tab-totw" class="lb-section">
-    <div style="text-align: center; margin-bottom: 10px;">
-        <h3 id="totw-title" style="color:#fff; font-size:22px; margin-bottom: 5px;">Dream Team</h3>
-        <p style="color:#8b949e; font-size:14px;">The highest scoring players of the previous gameweek.</p>
-    </div>
-    
-    <div id="totw-pitch-container" class="pitch" style="max-width: 600px; margin: 20px auto 0 auto;">
-        <div class="penalty-box-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div>
-        <div id="totw-rows">
-            <div style="text-align:center; color:#8b949e; margin-top: 40%;">Loading Dream Team...</div>
+    <div class="totw-dashboard">
+        <div>
+            <div class="totw-sidebar-card">
+                <div class="totw-label" id="totw-gw-label">Gameweek --</div>
+                <div class="totw-big-number" id="totw-total-pts">--</div>
+                <div style="font-size: 14px; color: #fff; font-weight: 600;">Total Dream Team Points</div>
+            </div>
+            
+            <div class="totw-sidebar-card" style="text-align: left; padding: 20px;">
+                <div class="totw-label" style="margin-bottom: 15px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Star Player</div>
+                <div id="totw-star-player">
+                    <div style="color: #8b949e; text-align: center;">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                <h3 style="color:#fff; font-size:20px; margin: 0;">Dream Team Formation</h3>
+            </div>
+            <div id="totw-pitch-container" class="pitch">
+                <div class="penalty-box-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div>
+                <div id="totw-rows">
+                    <div style="text-align:center; color:#8b949e; margin-top: 40%;">Loading Dream Team...</div>
+                </div>
+            </div>
         </div>
     </div>
   </div>
@@ -97,7 +121,25 @@ function loadTOTW() {
          window.totwLoaded = true;
          const container = document.getElementById('totw-rows');
          if (data.error) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">${data.error}</div>`; return; }
-         document.getElementById('totw-title').textContent = `GW${data.gameweek} Dream Team`;
+         
+         // Calculate Dashboard Metrics
+         let totalPoints = data.players.reduce((sum, p) => sum + p.pts, 0);
+         let starPlayer = data.players.reduce((prev, current) => (prev.pts > current.pts) ? prev : current);
+         
+         document.getElementById('totw-gw-label').textContent = `Gameweek ${data.gameweek}`;
+         document.getElementById('totw-total-pts').textContent = totalPoints;
+         
+         document.getElementById('totw-star-player').innerHTML = `
+            <div style="display:flex; align-items:center; gap:15px; cursor:pointer;" onclick="window.openPlayerModal(${starPlayer.id || 0})">
+                <div style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: ${starPlayer.color2}; background: ${starPlayer.color}; border: 2px solid #fff;">${starPlayer.team}</div>
+                <div>
+                    <div style="font-size: 18px; font-weight: 700; color: #fff;">${starPlayer.name}</div>
+                    <div style="font-size: 14px; color: #3fb950; font-weight: 600;">★ ${starPlayer.pts} pts</div>
+                </div>
+            </div>
+         `;
+
+         // Render Pitch
          let html = '';
          ['GK', 'DEF', 'MID', 'FWD'].forEach(pos => {
              const players = data.players.filter(p => p.pos === pos);

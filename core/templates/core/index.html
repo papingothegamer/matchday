@@ -13,8 +13,10 @@
   .match-row:last-child { border-bottom: none; }
   .match-teams { font-weight: 600; color: #e6e6e6; }
   .match-score { background: #0d1117; padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 1.1rem; color: #3fb950; font-weight: bold; border: 1px solid #30363d;}
+  .match-gw { font-size: 0.9rem; color: #8b949e; font-weight: 600; }
   .empty { padding: 2rem; text-align: center; color: #8b949e; }
   
+  /* Ticker Styling */
   .ticker-wrap { width: 100%; background: #0d1117; border-bottom: 1px solid #30363d; height: 36px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 1.5rem; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5);}
   .ticker-wrap:hover .ticker-arrow { color: #fff; background: #2ea043; }
   .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 2px 0 10px rgba(0,0,0,0.5);}
@@ -37,7 +39,7 @@
   
   {% if active_gameweek %}
   <div style="background: #238636; color: #fff; padding: 1rem 2rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="font-size:24px;font-weight:700;color:#fff;">GW{{ active_gameweek.number }} Deadline</h2>
+    <h2 style="font-size:24px;font-weight:700;color:#fff;margin:0;">GW{{ active_gameweek.number }} Deadline</h2>
     <div style="font-size: 1.2rem; font-weight: 600; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
   </div>
   
@@ -124,6 +126,19 @@
     <div class="stat-card"><div style="color: #8b949e;">Current Gameweek Points</div><div class="stat-value">{% if user_team %}{{ user_team.total_points }}{% else %}0{% endif %}</div></div>
     <div class="stat-card"><div style="color: #8b949e;">Previous Gameweek</div><div class="stat-value">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div></div>
     <div class="stat-card"><div style="color: #8b949e;">Global Rank</div><div class="stat-value">1</div></div>
+  </div>
+
+  <div class="section-title">Recent results</div>
+  <div class="match-list">
+    {% for match in recent_matches %}
+    <div class="match-row">
+      <div class="match-teams">{{ match.home_team }} vs {{ match.away_team }}</div>
+      <div class="match-score">{{ match.home_score }} – {{ match.away_score }}</div>
+      <div class="match-gw">GW{{ match.gameweek.number }}</div>
+    </div>
+    {% empty %}
+    <div class="empty">No results yet.</div>
+    {% endfor %}
   </div>
 {% endif %}
 
