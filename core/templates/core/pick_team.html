@@ -14,8 +14,8 @@
 
 {% block extra_style %}
 /* Layout Grid */
-.pick-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; padding-bottom: 100px; }
-@media (max-width: 950px) { .pick-wrap { display: flex; flex-direction: column; padding-bottom: 100px; } }
+.pick-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; padding-bottom: 120px; align-items: start; }
+@media (max-width: 950px) { .pick-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; padding-bottom: 120px; align-items: start; } }
 
 /* Squad View (Pitch) */
 .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
@@ -53,7 +53,7 @@
 .t-header { display: grid; grid-template-columns: 40px 1fr 80px 70px; gap: 15px; align-items: center; font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 600; padding: 0 12px 10px 12px; border-bottom: 1px solid #30363d; margin-bottom: 10px; }
 .t-row { display: grid; grid-template-columns: 40px 1fr 80px 70px; gap: 15px; align-items: center; padding: 12px; border-bottom: 1px solid #21262d; transition: background 0.2s; }
 .t-row:hover { background: #21262d; }
-.t-row.empty { display: flex; align-items: center; border: 2px dashed #484f58; background: rgba(13, 17, 23, 0.4); margin-bottom: 8px; border-radius: 6px; cursor: pointer; color: #8b949e; padding: 12px; transition: 0.2s; }
+.t-row.empty { display: flex; align-items: center; justify-content: center; width: 100%; border: 2px dashed #484f58; background: rgba(13, 17, 23, 0.4); margin-bottom: 8px; border-radius: 6px; cursor: pointer; color: #8b949e; font-size: 13px; padding: 16px; box-sizing: border-box; }
 .t-row.empty:hover { border-color: #8b949e; color: #e6e6e6; }
 .t-row.empty.active-slot { border-color: #38a169; background: rgba(56, 161, 105, 0.1); color: #38a169; }
 .t-pos { font-size: 11px; font-weight: 600; color: #8b949e; width: 40px; text-align: center; background: #0d1117; padding: 4px; border-radius: 4px;}
@@ -130,13 +130,23 @@ select.player-search { appearance: none; background-image: url("data:image/svg+x
     </div>
   </div>
   
-      <div id="top-financials" style="background: #161b22; padding: 10px 15px; border-radius: 8px; border: 1px solid #30363d; display: none; align-items: center; gap: 15px;">
-    <div style="text-align: right;">
-      <div style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Free Transfers: <strong id="top-ft" style="color: #fff; font-size: 14px;">{{ free_transfers }}</strong> <span style="margin: 0 5px;">|</span> Cost: <strong id="top-cost" style="color: #fff; font-size: 14px;">0 pts</strong></div>
-      <div style="font-size: 12px; color: #8b949e;">Bank: <strong id="top-bank" style="color: #3fb950; font-size: 14px;">£{{ bank|floatformat:1 }}m</strong></div>
+      <div id="top-financials" style="background: #161b22; padding: 12px 20px; border-radius: 8px; border: 1px solid #30363d; display: none; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
+  <div style="display: flex; gap: 24px; align-items: center;">
+    <div>
+      <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Free Transfers</div>
+      <div style="font-size: 15px; color: #fff; font-weight: 700; margin-top: 2px;" id="top-ft">{{ free_transfers }}</div>
     </div>
-    <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Save Team</button>
+    <div>
+      <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Hit Cost</div>
+      <div style="font-size: 15px; color: #fff; font-weight: 700; margin-top: 2px;" id="top-cost">0 pts</div>
+    </div>
+    <div>
+      <div style="font-size: 10px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Bank</div>
+      <div style="font-size: 15px; color: #3fb950; font-weight: 700; margin-top: 2px;" id="top-bank">£{{ bank|floatformat:1 }}m</div>
+    </div>
   </div>
+  <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 24px; font-size: 14px; white-space: nowrap; margin: 0;">Save Team</button>
+</div>
     <button class="btn-confirm" id="top-confirm" disabled onclick="submitTeam()" style="padding: 10px 15px; font-size: 13px; margin: 0;">Save Team</button>
   </div>
 </div>
@@ -284,7 +294,7 @@ try {
     const tt = document.getElementById('tabTransfers');
     
     // THE NEW "FIRST DRAFT" ONBOARDING UI
-    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'block'; }
+    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
         if (ts) ts.parentElement.style.display = 'none'; // Hide the tabs
         document.getElementById('squad-view').style.display = 'block';
@@ -325,7 +335,7 @@ try {
   }
 
   function clickSlot(idx) {
-      if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'block'; }
+      if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
           if (slots[idx].player) {
               slots[idx].player = null;
@@ -478,7 +488,7 @@ try {
     slot.pur_price = p.price;
     activeSlot = null;
     
-    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'block'; }
+    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
         renderPitch();
         updateLedger();
@@ -513,7 +523,7 @@ try {
       const hasCaptain = slots.some(s => s.captain);
 
       // FIRST DRAFT MATH (No taxes, no hits)
-      if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'block'; }
+      if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
           let currentBank = 100.0;
           slots.forEach(s => { if (s.player) currentBank -= s.player.price; });
@@ -611,7 +621,7 @@ try {
     document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
     
-    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'block'; }
+    if (!isFirstDraft) { const tf = document.getElementById('top-financials'); if(tf) tf.style.display = 'flex'; }
       if (isFirstDraft) {
         renderPitch();
         updateLedger();
