@@ -187,13 +187,23 @@ def join_league(request):
 
 @login_required
 def leaderboard(request):
+    from django.contrib.auth.models import User
+    from django.db.models import Sum
+    
     user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
+    
+    # Calculate Global Rankings
+    users = User.objects.annotate(total_pts=Sum('fantasyteam__total_points')).exclude(total_pts__isnull=True).order_by('-total_pts')[:50]
+    global_rankings = [{'rank': i + 1, 'user': u.username, 'pts': u.total_pts} for i, u in enumerate(users)]
+    
+    # Top Player Stats
     top_scorers = Player.objects.annotate(total_goals=Sum('stats__goals')).filter(total_goals__gt=0).order_by('-total_goals')[:5]
     top_assists = Player.objects.annotate(total_assists=Sum('stats__assists')).filter(total_assists__gt=0).order_by('-total_assists')[:5]
     top_points = Player.objects.annotate(total_pts=Sum('stats__fantasy_points')).filter(total_pts__gt=0).order_by('-total_pts')[:5]
 
     return render(request, 'core/leaderboard.html', {
-        'user_leagues': user_leagues, 'top_scorers': top_scorers, 'top_assists': top_assists, 'top_points': top_points,
+        'user_leagues': user_leagues, 'top_scorers': top_scorers, 'top_assists': top_assists, 
+        'top_points': top_points, 'global_rankings': global_rankings,
     })
 
 @login_required

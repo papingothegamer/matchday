@@ -11,11 +11,22 @@
   .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
   
   /* TOTW Dashboard styling */
-  .totw-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: start; }
+  .totw-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: start; margin-bottom: 2rem; }
   @media (max-width: 900px) { .totw-dashboard { grid-template-columns: 1fr; } }
   .totw-sidebar-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
   .totw-big-number { font-size: 3rem; font-weight: 800; color: #3fb950; line-height: 1; margin: 10px 0; }
   .totw-label { font-size: 12px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  
+  /* Rankings Table Styling */
+  .rank-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; color: #e6e6e6; }
+  .rank-table th { padding: 12px 15px; color: #8b949e; font-weight: 600; border-bottom: 1px solid #30363d; background: #0d1117; }
+  .rank-table td { padding: 12px 15px; border-bottom: 1px solid #21262d; }
+  .rank-table tr:hover td { background: #21262d; }
+  .rank-table tr.highlight td { background: rgba(35, 134, 54, 0.1); font-weight: 600; border-left: 3px solid #3fb950; }
+  .t-rank { width: 50px; font-weight: 700; color: #8b949e; text-align: center; }
+  .t-pts { font-weight: 700; color: #3fb950; text-align: right; }
+  .btn-join { display: inline-block; background: #21262d; color: #e6e6e6; border: 1px solid #30363d; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; }
+  .btn-join:hover { background: #30363d; color: #fff; }
 </style>
 
 <div style="max-width: 1100px; margin: 0 auto;">
@@ -26,23 +37,90 @@
   </div>
 
   <div id="tab-global" class="lb-section active">
-    {% if user_leagues %}
-    <h3 style="color:#fff; margin-bottom:15px; font-size:18px;">Your Mini-Leagues</h3>
-    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-bottom: 30px;">
-      {% for l in user_leagues %}
-      <a href="/league/{{ l.league.code }}/" style="text-decoration:none;">
-        <div class="stat-card" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-          <div style="font-size:18px; font-weight:600; color:#fff;">{{ l.league.name }}</div>
-          <div style="font-size:12px; color:#8b949e; margin-top:5px;">Code: {{ l.league.code }}</div>
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
+        
+        <div class="stat-card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 15px 20px; font-size: 16px; font-weight: 700; color: #fff; border-bottom: 1px solid #30363d; background: #21262d;">Global Top 50 Managers</div>
+            <table class="rank-table">
+                <thead>
+                    <tr>
+                        <th class="t-rank">Rank</th>
+                        <th>Manager</th>
+                        <th class="t-pts">Total Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in global_rankings %}
+                    <tr class="{% if row.user == request.user.username %}highlight{% endif %}">
+                        <td class="t-rank">{{ row.rank }}</td>
+                        <td>{{ row.user }}{% if row.user == request.user.username %} (You){% endif %}</td>
+                        <td class="t-pts">{{ row.pts }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center; color:#8b949e; padding: 2rem;">No global rankings available yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-      </a>
-      {% endfor %}
-    </div>
-    {% endif %}
 
+        <div>
+            <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
+                <h3 style="color:#fff; margin-bottom:15px; font-size:18px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Your Mini-Leagues</h3>
+                {% if user_leagues %}
+                    {% for l in user_leagues %}
+                    <a href="/leagues/{{ l.league.code }}/" style="text-decoration:none; display: block; margin-bottom: 10px;">
+                        <div style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px; transition: 0.2s;" onmouseover="this.style.borderColor='#8b949e'" onmouseout="this.style.borderColor='#30363d'">
+                            <div style="font-size:15px; font-weight:600; color:#fff; margin-bottom: 4px;">{{ l.league.name }}</div>
+                            <div style="font-size:12px; color:#8b949e;">Code: {{ l.league.code }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <a href="/leagues/join/" class="btn-join" style="flex: 1; text-align: center;">Join Another</a>
+                        <a href="/leagues/create/" class="btn-join" style="flex: 1; text-align: center; background: #238636; color: #fff; border-color: #2ea043;">Create</a>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 1rem 0;">
+                        <div style="color:#8b949e; font-size:14px; margin-bottom:15px;">You aren't competing in any private leagues yet!</div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <a href="/leagues/join/" class="btn-join">Join League</a>
+                            <a href="/leagues/create/" class="btn-join" style="background: #238636; color: #fff; border-color: #2ea043;">Create League</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="tab-totw" class="lb-section">
+    
+    <div class="totw-dashboard">
+        <div>
+            <div class="totw-sidebar-card">
+                <div class="totw-label" id="totw-gw-label">Gameweek --</div>
+                <div class="totw-big-number" id="totw-total-pts">--</div>
+                <div style="font-size: 14px; color: #fff; font-weight: 600;">Total Dream Team Points</div>
+            </div>
+            <div class="totw-sidebar-card" style="text-align: left; padding: 20px;">
+                <div class="totw-label" style="margin-bottom: 15px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Star Player</div>
+                <div id="totw-star-player"><div style="color: #8b949e; text-align: center;">Loading...</div></div>
+            </div>
+        </div>
+        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                <h3 style="color:#fff; font-size:20px; margin: 0;">Dream Team Formation</h3>
+            </div>
+            <div id="totw-pitch-container" class="pitch">
+                <div class="penalty-box-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div>
+                <div id="totw-rows"><div style="text-align:center; color:#8b949e; margin-top: 40%;">Loading Dream Team...</div></div>
+            </div>
+        </div>
+    </div>
+    
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
       <div class="stat-card">
-        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Points</h3>
+        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px; border-bottom:1px solid #30363d; padding-bottom:10px;">Top Points</h3>
         {% for p in top_points %}
         <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
@@ -51,7 +129,7 @@
         {% endfor %}
       </div>
       <div class="stat-card">
-        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Goals</h3>
+        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px; border-bottom:1px solid #30363d; padding-bottom:10px;">Top Goals</h3>
         {% for p in top_scorers %}
         <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
@@ -60,7 +138,7 @@
         {% endfor %}
       </div>
       <div class="stat-card">
-        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px;">Top Assists</h3>
+        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px; border-bottom:1px solid #30363d; padding-bottom:10px;">Top Assists</h3>
         {% for p in top_assists %}
         <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
           <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
@@ -69,37 +147,7 @@
         {% endfor %}
       </div>
     </div>
-  </div>
 
-  <div id="tab-totw" class="lb-section">
-    <div class="totw-dashboard">
-        <div>
-            <div class="totw-sidebar-card">
-                <div class="totw-label" id="totw-gw-label">Gameweek --</div>
-                <div class="totw-big-number" id="totw-total-pts">--</div>
-                <div style="font-size: 14px; color: #fff; font-weight: 600;">Total Dream Team Points</div>
-            </div>
-            
-            <div class="totw-sidebar-card" style="text-align: left; padding: 20px;">
-                <div class="totw-label" style="margin-bottom: 15px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Star Player</div>
-                <div id="totw-star-player">
-                    <div style="color: #8b949e; text-align: center;">Loading...</div>
-                </div>
-            </div>
-        </div>
-        
-        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
-                <h3 style="color:#fff; font-size:20px; margin: 0;">Dream Team Formation</h3>
-            </div>
-            <div id="totw-pitch-container" class="pitch">
-                <div class="penalty-box-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div>
-                <div id="totw-rows">
-                    <div style="text-align:center; color:#8b949e; margin-top: 40%;">Loading Dream Team...</div>
-                </div>
-            </div>
-        </div>
-    </div>
   </div>
 </div>
 
@@ -122,7 +170,6 @@ function loadTOTW() {
          const container = document.getElementById('totw-rows');
          if (data.error) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">${data.error}</div>`; return; }
          
-         // Calculate Dashboard Metrics
          let totalPoints = data.players.reduce((sum, p) => sum + p.pts, 0);
          let starPlayer = data.players.reduce((prev, current) => (prev.pts > current.pts) ? prev : current);
          
@@ -139,7 +186,6 @@ function loadTOTW() {
             </div>
          `;
 
-         // Render Pitch
          let html = '';
          ['GK', 'DEF', 'MID', 'FWD'].forEach(pos => {
              const players = data.players.filter(p => p.pos === pos);
