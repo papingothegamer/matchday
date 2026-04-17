@@ -193,7 +193,7 @@ def leaderboard(request):
     user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
     
     # Calculate Global Rankings
-    users = User.objects.annotate(total_pts=Sum('fantasyteam__total_points')).exclude(total_pts__isnull=True).order_by('-total_pts')[:50]
+    users = User.objects.annotate(total_pts=Sum('fantasy_teams__total_points')).exclude(total_pts__isnull=True).order_by('-total_pts')[:50]
     global_rankings = [{'rank': i + 1, 'user': u.username, 'pts': u.total_pts} for i, u in enumerate(users)]
     
     # Top Player Stats
