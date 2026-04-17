@@ -11,11 +11,22 @@
   .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
   
   /* TOTW Dashboard styling */
-  .totw-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: start; margin-bottom: 2rem; }
+  .totw-dashboard { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; margin-bottom: 2rem; }
   @media (max-width: 900px) { .totw-dashboard { grid-template-columns: 1fr; } }
-  .totw-sidebar-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+  .totw-sidebar-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; text-align: center; }
   .totw-big-number { font-size: 3rem; font-weight: 800; color: #3fb950; line-height: 1; margin: 10px 0; }
   .totw-label { font-size: 12px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  
+  /* Carousel Bento Box Styling */
+  .stat-carousel-wrap { position: relative; overflow: hidden; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem 0; text-align: left; }
+  .stat-carousel-track { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 300%; }
+  .stat-slide { width: 33.3333%; flex-shrink: 0; padding: 0 1.5rem; box-sizing: border-box; }
+  .carousel-dots { display: flex; gap: 6px; justify-content: center; margin-top: 15px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #30363d; cursor: pointer; transition: 0.3s; }
+  .dot.active { background: #3fb950; transform: scale(1.2); }
+  .stat-row { display:flex; justify-content:space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid #21262d; cursor: pointer; transition: background 0.2s; border-radius: 6px;}
+  .stat-row:hover { background: #21262d; }
+  .stat-row:last-child { border-bottom: none; }
   
   /* Rankings Table Styling */
   .rank-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; color: #e6e6e6; }
@@ -96,17 +107,60 @@
   <div id="tab-totw" class="lb-section">
     
     <div class="totw-dashboard">
-        <div>
+        
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
             <div class="totw-sidebar-card">
                 <div class="totw-label" id="totw-gw-label">Gameweek --</div>
                 <div class="totw-big-number" id="totw-total-pts">--</div>
                 <div style="font-size: 14px; color: #fff; font-weight: 600;">Total Dream Team Points</div>
             </div>
+            
             <div class="totw-sidebar-card" style="text-align: left; padding: 20px;">
                 <div class="totw-label" style="margin-bottom: 15px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Star Player</div>
                 <div id="totw-star-player"><div style="color: #8b949e; text-align: center;">Loading...</div></div>
             </div>
+
+            <div class="stat-carousel-wrap" id="carousel-wrap" style="display: none;">
+                <div class="stat-carousel-track" id="stat-track">
+                    <div class="stat-slide">
+                        <h3 style="color:#e6e6e6; margin:0 0 10px 0; font-size:15px; font-weight:700;">Top Scored Points</h3>
+                        {% for p in top_points %}
+                        <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
+                            <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
+                            <div style="color:#3fb950; font-weight:700; font-size:15px;">{{ p.total_pts }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="stat-slide">
+                        <h3 style="color:#e6e6e6; margin:0 0 10px 0; font-size:15px; font-weight:700;">Top Goalscorers</h3>
+                        {% for p in top_scorers %}
+                        <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
+                            <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
+                            <div style="color:#fff; font-weight:700; font-size:15px;">{{ p.total_goals }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="stat-slide">
+                        <h3 style="color:#e6e6e6; margin:0 0 10px 0; font-size:15px; font-weight:700;">Top Playmakers</h3>
+                        {% for p in top_assists %}
+                        <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
+                            <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
+                            <div style="color:#fff; font-weight:700; font-size:15px;">{{ p.total_assists }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="carousel-dots">
+                    <div class="dot active" onclick="goToSlide(0)"></div>
+                    <div class="dot" onclick="goToSlide(1)"></div>
+                    <div class="dot" onclick="goToSlide(2)"></div>
+                </div>
+            </div>
+
         </div>
+        
         <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
                 <h3 style="color:#fff; font-size:20px; margin: 0;">Dream Team Formation</h3>
@@ -116,44 +170,15 @@
                 <div id="totw-rows"><div style="text-align:center; color:#8b949e; margin-top: 40%;">Loading Dream Team...</div></div>
             </div>
         </div>
+        
     </div>
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-      <div class="stat-card">
-        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px; border-bottom:1px solid #30363d; padding-bottom:10px;">Top Points</h3>
-        {% for p in top_points %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
-          <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
-          <div style="color:#3fb950; font-weight:700;">{{ p.total_pts }}</div>
-        </div>
-        {% endfor %}
-      </div>
-      <div class="stat-card">
-        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px; border-bottom:1px solid #30363d; padding-bottom:10px;">Top Goals</h3>
-        {% for p in top_scorers %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
-          <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
-          <div style="color:#fff; font-weight:700;">{{ p.total_goals }}</div>
-        </div>
-        {% endfor %}
-      </div>
-      <div class="stat-card">
-        <h3 style="color:#e6e6e6; margin-bottom:15px; font-size:16px; border-bottom:1px solid #30363d; padding-bottom:10px;">Top Assists</h3>
-        {% for p in top_assists %}
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #21262d; cursor:pointer;" onclick="window.openPlayerModal({{ p.id }})">
-          <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
-          <div style="color:#fff; font-weight:700;">{{ p.total_assists }}</div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-
   </div>
 </div>
 
 {% include 'core/components/player_modal.html' %}
 
 <script>
+// Tab Logic
 function switchTab(tabId, event) {
     document.querySelectorAll('.lb-section').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.lb-tab').forEach(el => el.classList.remove('active'));
@@ -162,6 +187,35 @@ function switchTab(tabId, event) {
     if(tabId === 'totw' && !window.totwLoaded) loadTOTW();
 }
 
+// Carousel Logic
+let currentSlide = 0;
+const totalSlides = 3;
+let slideInterval;
+
+function goToSlide(index) {
+    currentSlide = index;
+    document.getElementById('stat-track').style.transform = `translateX(-${currentSlide * 33.3333}%)`;
+    document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentSlide);
+    });
+}
+
+function startCarousel() {
+    if(slideInterval) clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        goToSlide(currentSlide);
+    }, 4500); // Transitions every 4.5 seconds
+}
+
+// Hover interactions to pause carousel
+const carouselWrap = document.getElementById('carousel-wrap');
+if(carouselWrap) {
+    carouselWrap.addEventListener('mouseenter', () => clearInterval(slideInterval));
+    carouselWrap.addEventListener('mouseleave', startCarousel);
+}
+
+// Fetch TOTW
 function loadTOTW() {
     fetch('/api/totw/')
       .then(res => res.json())
@@ -206,8 +260,14 @@ function loadTOTW() {
              }
          });
          container.innerHTML = html;
+         
+         // Unhide and start carousel once TOTW loads
+         document.getElementById('carousel-wrap').style.display = 'block';
+         startCarousel();
+         
       }).catch(e => console.error(e));
 }
+
 const urlParams = new URLSearchParams(window.location.search);
 if(urlParams.get('tab') === 'totw') {
     const totwTab = document.querySelector('.lb-tab:nth-child(2)');
