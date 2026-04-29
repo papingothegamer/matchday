@@ -1,40 +1,30 @@
-# MatchDay — Premier League Fantasy Simulator
+﻿# MatchDay: Full-Stack Fantasy Simulation Engine
 
-MatchDay is a fully-featured, Django-based Fantasy Football application complete with a simulated Match Engine, dynamic player economy, and competitive mini-leagues.
+MatchDay is a comprehensive web application built with Django that merges a realistic football simulation engine with an interactive fantasy management dashboard.
 
-## Development Roadmap & Features
+## 🔗 Video Demonstration
+**[INSERT YOUR YOUTUBE/GOOGLE DRIVE VIDEO LINK HERE]**
 
-### Phase 1: Foundation & Authentication
-- Custom Django Models for Teams, Players, Gameweeks, Matches, and PlayerStats.
-- Robust user registration, login, and Administrator firewall modes.
-- Dark-themed, minimalist UI established across base templates.
+## 🚀 Quick Start (How to Run)
+1. Clone the repository and navigate to the project directory.
+2. Create a virtual environment: `python -m venv venv` and activate it.
+3. Install dependencies: `pip install -r requirements.txt`
+4. Apply database migrations: `python manage.py migrate`
+5. *(Optional) Run `python populate_pl.py` to seed the database with real teams.*
+6. Start the server: `python manage.py runserver`
 
-### Phase 2: Real-World Data Integration
-- Automated `populate_pl.py` script bridging real-world Premier League data (teams, crests, player rosters) into the Django database.
-- Scalable database schema supporting over 1,000 active players.
+## 🧠 Core Methodology & Architecture
+This project utilizes the **MVT (Model-View-Template)** architecture to separate database logic from the frontend UI.
+* **Backend:** Python/Django handles the simulation algorithms, relational data integrity, and strict payload validation (e.g., preventing budget exploits).
+* **Database:** SQLite with a highly relational structure (`Teams` -> `Players` -> `Matches` -> `PlayerStats` -> `FantasyPicks` -> `User`).
+* **Frontend:** Vanilla JavaScript and the Fetch API (AJAX) drive a dynamic, SPA-like experience without heavy frameworks. Chart.js is used for data visualization.
 
-### Phase 3: The Match Engine
-- Automated `simulation.py` and scheduling system.
-- Randomized match score simulations utilizing weighted team strength variables.
-- Individual player stat generation (Goals, Assists, Clean Sheets, Yellow/Red Cards) tying directly into standard FPL point calculations.
+## ⚙️ Key Engine Features
+### 1. The Simulation Algorithm (`simulation.py`)
+Unlike apps with static data, MatchDay features a background algorithmic heuristic engine. When a Gameweek rolls over, the engine simulates 10 matches using weighted randomization, realistically distributes player minutes (including substitutions and injuries), assigns match events (goals/assists), and calculates official FPL points.
 
-### Phase 4: Leaderboards & Mini-Leagues
-- Dynamic Global Leaderboard tracking top points, goals, and assists.
-- Competitive Mini-League system using secure, randomly generated 8-character Share Codes.
-- Automatic aggregation of user team history for season-long standings.
+### 2. Strict State Management (Pick Team)
+The application enforces strict economic and state rules. Users are capped at a £100.0m budget and a 15-player squad limit. The backend calculates dynamic player depreciation and validates all API payloads to prevent client-side manipulation or budget exploits.
 
-### Phase 5: Manager Hub & Notifications
-- Manager Profile page featuring an interactive, CSS-animated Gameweek History Bar Chart.
-- AJAX-powered Notification Dropdown system alerting managers of simulation updates and deadlines.
-- Responsive, native-app style mobile navigation and routing.
-
-### Phase 6: The Transfer Market & Economy
-- Distinct UI separation between "Squad Management" and "Transfer Market" modes.
-- Enforcement of a strict £100.0m salary cap.
-- **Dynamic Pricing Engine:** Player prices algorithmically rise (+£0.1m) or fall (-£0.1m) based on gameweek performance.
-- **Transfer Ledger:** Tracking of 1 Free Transfer per week, deducting -4 points for excessive transfers, and calculating the classic 50% profit tax upon player sale.
-
-## Technical Stack
-* **Backend:** Python / Django
-* **Database:** SQLite (dev)
-* **Frontend:** HTML5 / Vanilla JavaScript / Pure CSS (No external frameworks)
+### 3. Dynamic Data Aggregation (Global Hubs)
+The system aggregates simulated data on the fly. The **Fixtures Hub** calculates a live 20-team Premier League standings table based purely on the background engine's match results, while the **Leaderboard** aggregates global user points dynamically using Django's ORM `Sum` and `annotate` functions.
