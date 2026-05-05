@@ -219,10 +219,11 @@ if(carouselWrap) {
 function loadTOTW() {
     fetch('/api/totw/')
       .then(res => res.json())
-      .then(data => {
+     .then(data => {
          window.totwLoaded = true;
          const container = document.getElementById('totw-rows');
          if (data.error) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">${data.error}</div>`; return; }
+         if (!data.players || data.players.length === 0) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">No matches played in this gameweek yet.</div>`; return; }
          
          let totalPoints = data.players.reduce((sum, p) => sum + p.pts, 0);
          let starPlayer = data.players.reduce((prev, current) => (prev.pts > current.pts) ? prev : current);

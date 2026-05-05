@@ -100,7 +100,15 @@ class PlayerStat(models.Model):
             points += 2
         elif self.minutes_played > 0:
             points += 1
-        points += self.goals * 6
+            
+        # Positional Scoring for Goals
+        if self.player.position in ('GK', 'DEF'):
+            points += self.goals * 6
+        elif self.player.position == 'MID':
+            points += self.goals * 5
+        elif self.player.position == 'FWD':
+            points += self.goals * 4
+            
         points += self.assists * 3
         if self.clean_sheet and self.player.position in ('GK', 'DEF'):
             points += 4

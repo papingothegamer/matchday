@@ -15,24 +15,32 @@ def simulate_match(match):
     def gen_stats(team, goals_scored, goals_conceded):
         players = list(Player.objects.filter(team=team))
         if not players: return
+        
+        # Safety check: Clear existing stats for this match/team if re-simulating
+        PlayerStat.objects.filter(match=match, player__team=team).delete()
+        
         avail = [p for p in players if not p.is_injured]
         unavail = [p for p in players if p.is_injured]
         stats = []
         for p in unavail:
-            stats.append(PlayerStat(match=match, player=p, minutes_played=0, goals=0, assists=0, fantasy_points=0))
+            stats.append(PlayerStat(match=match, player=p, minutes_played=0, goals=0, assists=0, fantasy_points=0, clean_sheet=False))
+            
         random.shuffle(avail)
         starters = avail[:11]
         bench = avail[11:]
         num_subs = min(random.randint(3, 5), len(bench))
         actual_subs = bench[:num_subs]
         for p in bench[num_subs:]:
-            stats.append(PlayerStat(match=match, player=p, minutes_played=0, goals=0, assists=0, fantasy_points=0))
+            stats.append(PlayerStat(match=match, player=p, minutes_played=0, goals=0, assists=0, fantasy_points=0, clean_sheet=False))
             
         gs = random.choices([p for p in starters + actual_subs if p.position in ['FWD', 'MID', 'DEF']], k=goals_scored) if goals_scored > 0 else []
-        asts = random.choices([p for p in starters + actual_subs if p.position in ['MID', 'FWD', 'DEF']], k=goals_scored) if goals_scored > 0 else []
+        # Realistic Assists: Not every goal has an assist
+        num_assists = random.randint(0, goals_scored) if goals_scored > 0 else 0
+        asts = random.choices([p for p in starters + actual_subs if p.position in ['MID', 'FWD', 'DEF']], k=num_assists) if num_assists > 0 else []
         
         for p in starters + actual_subs:
-            if p in starters:
+            is_starter = p in starters
+            if is_starter:
                 mins = random.randint(45, 80) if (num_subs > 0 and random.random() < 0.25) else 90
                 if mins < 90: num_subs -= 1
             else:
@@ -40,16 +48,26 @@ def simulate_match(match):
                 
             g = gs.count(p)
             a = asts.count(p)
+            is_cs = (goals_conceded == 0 and mins >= 60)
+            
+            # Use a dummy PlayerStat to leverage the model's calculation logic if needed, 
+            # but here we follow the simulation's specific weights
             pts = 2 if mins >= 60 else (1 if mins > 0 else 0)
-            if goals_conceded == 0 and mins >= 60:
+            if is_cs:
                 if p.position in ['GK', 'DEF']: pts += 4
                 elif p.position == 'MID': pts += 1
+            
             if p.position in ['GK', 'DEF']: pts += g * 6
             elif p.position == 'MID': pts += g * 5
             elif p.position == 'FWD': pts += g * 4
             pts += a * 3
-            if mins > 0 and random.random() < 0.1: pts -= 1
-            stats.append(PlayerStat(match=match, player=p, minutes_played=mins, goals=g, assists=a, fantasy_points=pts))
+            
+            if mins > 0 and random.random() < 0.1: pts -= 1 # Yellow card simulation
+            
+            stats.append(PlayerStat(
+                match=match, player=p, minutes_played=mins, 
+                goals=g, assists=a, fantasy_points=pts, clean_sheet=is_cs
+            ))
         PlayerStat.objects.bulk_create(stats)
 
     gen_stats(match.home_team, match.home_score, match.away_score)
@@ -74,6 +92,7 @@ def simulate_gameweek(gw=None):
             pts = sum(s.fantasy_points for s in stats)
             pick_stats[pick.id] = {'mins': mins, 'pts': pts}
 
+        # Captaincy Logic
         c_pick = next((p for p in picks if p.is_captain), None)
         vc_pick = next((p for p in picks if getattr(p, 'is_vice_captain', False)), None)
         active_cap = c_pick
@@ -83,6 +102,7 @@ def simulate_gameweek(gw=None):
             else:
                 active_cap = None
 
+        # Auto-Subs
         active_starters = [p for p in picks if not p.is_sub]
         available_subs = [p for p in picks if p.is_sub]
 
@@ -119,23 +139,16 @@ def simulate_gameweek(gw=None):
         for p in picks:
             pts = pick_stats[p.id]['pts']
             if p in active_starters:
-                if p == active_cap:
-                    pts *= 2
+                if p == active_cap: pts *= 2
                 p.points_scored = pts
                 total += pts
             else:
                 p.points_scored = pts
             p.save()
             
-        fteam.total_points = total
+        fteam.total_points = max(0, total - fteam.points_hit)
         if not in_league:
-            Notification.objects.get_or_create(user=fteam.user, message=f"GW{active_gw.number} finished! You scored {total} pts.")
+            Notification.objects.get_or_create(user=fteam.user, message=f"GW{active_gw.number} finished! You scored {fteam.total_points} pts.")
         fteam.save()
 
-    active_gw.is_active = False
-    active_gw.save()
-    next_gw = Gameweek.objects.filter(number=active_gw.number + 1).first()
-    if next_gw:
-        next_gw.is_active = True
-        next_gw.save()
     return True

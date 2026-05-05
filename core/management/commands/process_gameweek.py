@@ -1,6 +1,7 @@
-﻿from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand
 from core.models import Gameweek, FantasyTeam, FantasyPick
 from django.db import transaction
+from core.simulation import simulate_gameweek
 
 class Command(BaseCommand):
     help = 'Executes the Gameweek Rollover: Clones teams, resets hits, and grants free transfers.'
@@ -8,15 +9,18 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         active_gw = Gameweek.objects.filter(is_active=True).first()
         if not active_gw:
-            self.stdout.write(self.style.ERROR('❌ No active Gameweek found.'))
+            self.stdout.write(self.style.ERROR('No active Gameweek found.'))
             return
 
         next_gw = Gameweek.objects.filter(number=active_gw.number + 1).first()
         if not next_gw:
-            self.stdout.write(self.style.WARNING(f'⚠️ No Gameweek {active_gw.number + 1} found. Season is over!'))
+            self.stdout.write(self.style.WARNING(f'No Gameweek {active_gw.number + 1} found. Season is over!'))
             return
 
-        self.stdout.write(f'🔄 Initiating Rollover: GW{active_gw.number} -> GW{next_gw.number}...')
+        self.stdout.write(f'Simulating matches for GW{active_gw.number}...')
+        simulate_gameweek(active_gw)
+
+        self.stdout.write(f'Initiating Rollover: GW{active_gw.number} -> GW{next_gw.number}...')
 
         with transaction.atomic():
             current_teams = FantasyTeam.objects.filter(gameweek=active_gw)
@@ -57,4 +61,4 @@ class Command(BaseCommand):
             next_gw.is_active = True
             next_gw.save()
 
-            self.stdout.write(self.style.SUCCESS(f'✅ Rollover Complete! Cloned {count} teams. GW{next_gw.number} is now active.'))
+            self.stdout.write(self.style.SUCCESS(f'Rollover Complete! Cloned {count} teams. GW{next_gw.number} is now active.'))

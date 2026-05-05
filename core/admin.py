@@ -1,40 +1,44 @@
 from django.contrib import admin
-from .models import Team, Player, Gameweek, Match, PlayerStat, FantasyTeam, FantasyPick
-
-
-@admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name', 'stadium', 'founded_year')
-
-
-@admin.register(Player)
-class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'team', 'position', 'price', 'is_active')
-    list_filter = ('position', 'team', 'is_active')
-    search_fields = ('first_name', 'last_name')
-
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, Notification, League, LeagueMember
 
 @admin.register(Gameweek)
 class GameweekAdmin(admin.ModelAdmin):
-    list_display = ('number', 'deadline', 'is_active')
-
+    list_display = ('number', 'deadline', 'is_active', 'is_finished')
+    list_editable = ('is_active',)
+    
+    def is_finished(self, obj):
+        return obj.matches.filter(is_played=False).count() == 0
+    is_finished.boolean = True
 
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'match_date', 'home_score', 'away_score', 'is_played')
+    list_display = ('__str__', 'match_date', 'gameweek', 'home_score', 'away_score', 'is_played')
     list_filter = ('gameweek', 'is_played')
+    actions = ['simulate_selected_matches']
 
+    def simulate_selected_matches(self, request, queryset):
+        from core.simulation import simulate_match
+        count = 0
+        for match in queryset.filter(is_played=False):
+            simulate_match(match)
+            count += 1
+        self.message_user(request, f"Successfully simulated {count} matches.")
+    simulate_selected_matches.short_description = "Simulate selected matches now"
+
+@admin.register(Player)
+class PlayerAdmin(admin.ModelAdmin):
+    list_display = ('display_name', 'team', 'position', 'price', 'is_injured')
+    list_filter = ('team', 'position', 'is_injured')
+    search_fields = ('display_name',)
 
 @admin.register(PlayerStat)
 class PlayerStatAdmin(admin.ModelAdmin):
-    list_display = ('player', 'match', 'goals', 'assists', 'minutes_played', 'clean_sheet', 'fantasy_points')
+    list_display = ('player', 'match', 'minutes_played', 'goals', 'assists', 'fantasy_points', 'clean_sheet')
+    list_filter = ('match__gameweek', 'clean_sheet')
 
-
-@admin.register(FantasyTeam)
-class FantasyTeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'gameweek', 'total_points')
-
-
-@admin.register(FantasyPick)
-class FantasyPickAdmin(admin.ModelAdmin):
-    list_display = ('player', 'fantasy_team', 'is_captain', 'points_scored')
+admin.site.register(Team)
+admin.site.register(FantasyTeam)
+admin.site.register(FantasyPick)
+admin.site.register(Notification)
+admin.site.register(League)
+admin.site.register(LeagueMember)

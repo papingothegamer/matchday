@@ -119,7 +119,7 @@
   if (!activeFound && totalGw > 0) currentIndex = totalGw - 1;
 
   function showGw(index) {
-      if (totalGw === 0) return;
+      if (totalGw === 0 || !cards[index]) return;
       cards.forEach(c => c.classList.remove('active'));
       cards[index].classList.add('active');
       let titleHtml = cards[index].getAttribute('data-gw');
