@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
+from django.utils import timezone
 import json
 import math
 from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification
@@ -61,10 +62,15 @@ def index(request):
             prev_team = FantasyTeam.objects.filter(user=request.user, gameweek=prev_gw).first()
             if prev_team: prev_points = prev_team.total_points
 
+    is_deadline_passed = False
+    if active_gw:
+        is_deadline_passed = timezone.now() > active_gw.deadline
+
     context = {
         'num_teams': Team.objects.count(),
         'num_players': Player.objects.count(),
         'active_gameweek': active_gw,
+        'is_deadline_passed': is_deadline_passed,
         'recent_matches': Match.objects.filter(is_played=True).order_by('-gameweek__number', '-match_date')[:5],
         'user_team': user_team,
         'picks': picks,
@@ -110,14 +116,38 @@ def league_detail(request, code):
     league = get_object_or_404(League, code=code)
     members = LeagueMember.objects.filter(league=league).select_related('user')
     rankings = []
+    mvps = []
     for member in members:
         teams = FantasyTeam.objects.filter(user=member.user)
         total = teams.aggregate(t=Sum('total_points'))['t'] or 0
         gw_scores = list(teams.order_by('gameweek__number').values_list('total_points', flat=True))
         rankings.append({'user': member.user, 'total': total, 'gw_scores': gw_scores[-5:]})
+        
+        # MVP Logic: Top player in their current squad
+        latest_team = teams.order_by('-gameweek__number').first()
+        if latest_team:
+            top_player = Player.objects.filter(fantasy_picks__fantasy_team=latest_team).annotate(total_pts=Sum('stats__fantasy_points')).order_by('-total_pts').first()
+            if top_player:
+                mvps.append({
+                    'manager': member.user.username,
+                    'player': top_player.display_name,
+                    'pts': top_player.total_pts or 0,
+                    'pos': top_player.position,
+                    'team': top_player.team.short_name,
+                    'color': top_player.team.primary_color,
+                    'color2': top_player.team.secondary_color
+                })
+
     rankings.sort(key=lambda x: x['total'], reverse=True)
     for i, r in enumerate(rankings): r['rank'] = i + 1
-    return render(request, 'core/league_detail.html', {'league': league, 'rankings': rankings, 'is_member': request.user.is_authenticated and members.filter(user=request.user).exists()})
+    
+    context = {
+        'league': league, 
+        'rankings': rankings, 
+        'mvps': mvps,
+        'is_member': request.user.is_authenticated and members.filter(user=request.user).exists()
+    }
+    return render(request, 'core/league_detail.html', context)
 
 @login_required
 def get_notifications(request):
@@ -186,6 +216,19 @@ def join_league(request):
     return render(request, 'core/join_league.html')
 
 @login_required
+def leave_league(request, code):
+    league = get_object_or_404(League, code=code)
+    LeagueMember.objects.filter(league=league, user=request.user).delete()
+    return redirect('leaderboard')
+
+@login_required
+def delete_league(request, code):
+    league = get_object_or_404(League, code=code)
+    if league.created_by == request.user:
+        league.delete()
+    return redirect('leaderboard')
+
+@login_required
 def leaderboard(request):
     from django.contrib.auth.models import User
     from django.db.models import Sum
@@ -208,7 +251,12 @@ def leaderboard(request):
 
 @login_required
 def user_profile(request):
-    teams = FantasyTeam.objects.filter(user=request.user).order_by('gameweek__number')
+    active_gw = Gameweek.objects.filter(is_active=True).first()
+    active_num = active_gw.number if active_gw else 99
+    
+    # Only show teams from completed gameweeks in the history chart
+    teams = FantasyTeam.objects.filter(user=request.user, gameweek__number__lt=active_num).order_by('gameweek__number')
+    
     total_points = sum(t.total_points for t in teams)
     history_data = [{'gw': t.gameweek.number, 'pts': t.total_points} for t in teams]
     user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')

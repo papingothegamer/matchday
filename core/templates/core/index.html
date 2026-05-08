@@ -51,8 +51,8 @@
 {% else %}
   
   {% if active_gameweek %}
-  <div class="deadline-banner">
-    <h2 style="font-size:20px;font-weight:700;color:#fff;margin:0;">GW{{ active_gameweek.number }} Deadline</h2>
+  <div class="deadline-banner" style="{% if is_deadline_passed %}background: #cf222e;{% endif %}">
+    <h2 style="font-size:20px;font-weight:700;color:#fff;margin:0;">GW{{ active_gameweek.number }} {% if is_deadline_passed %}Closed{% else %}Deadline{% endif %}</h2>
     <div style="font-size: 1.1rem; font-weight: 600; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
   </div>
   

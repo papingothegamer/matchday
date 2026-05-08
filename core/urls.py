@@ -1,4 +1,4 @@
-﻿from django.urls import path
+from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -18,4 +18,6 @@ urlpatterns = [
     path('leagues/create/', views.create_league, name='create_league'),
     path('leagues/join/', views.join_league, name='join_league'),
     path('leagues/<str:code>/', views.league_detail, name='league_detail'),
+    path('leagues/<str:code>/leave/', views.leave_league, name='leave_league'),
+    path('leagues/<str:code>/delete/', views.delete_league, name='delete_league'),
 ]
