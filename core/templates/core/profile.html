@@ -3,83 +3,89 @@
 
 {% block extra_style %}
 <style>
-  .profile-header { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 2rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 20px;}
-  .user-info { display: flex; align-items: center; gap: 20px; }
-  .avatar { width: 80px; height: 80px; background: #238636; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 700; text-transform: uppercase; border: 3px solid #3fb950; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
-  .username { font-size: 26px; font-weight: 700; color: #fff; margin: 0; }
-  .joined-date { font-size: 14px; color: #8b949e; margin-top: 4px; font-weight: 500;}
+  .profile-header { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 2.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); flex-wrap: wrap; gap: 2rem; }
+  .user-info { display: flex; align-items: center; gap: 2rem; }
+  .avatar { width: 100px; height: 100px; background: #238636; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; text-transform: uppercase; border: 4px solid #3fb950; box-shadow: 0 8px 20px rgba(63, 185, 80, 0.4); }
+  .username { font-size: 32px; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.5px; }
+  .user-role { font-size: 14px; color: #3fb950; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  
   .total-pts-box { text-align: right; }
-  .total-pts-label { font-size: 12px; color: #8b949e; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-  .total-pts-value { font-size: 3.5rem; font-weight: 800; color: #3fb950; line-height: 1; margin-top: 5px; text-shadow: 0 2px 10px rgba(63, 185, 80, 0.2);}
+  .total-pts-label { font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+  .total-pts-value { font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-top: 5px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
 
-  .profile-grid { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; align-items: start; }
-  @media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
+  .profile-grid { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; align-items: start; }
+  @media (max-width: 1000px) { .profile-grid { grid-template-columns: 1fr; } }
 
-  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
-  .card-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #21262d; padding-bottom: 10px;}
+  .card-p { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .card-p-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #21262d; padding-bottom: 12px; }
 
-  .league-card { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 12px; transition: transform 0.2s, border-color 0.2s; display: block; text-decoration: none; position: relative; overflow: hidden;}
-  .league-card:hover { transform: translateY(-2px); border-color: #8b949e; }
-  .league-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #238636; }
-  .league-name { font-size: 16px; font-weight: 600; color: #e6e6e6; margin-bottom: 4px;}
-  .league-meta { font-size: 12px; color: #8b949e; display: flex; justify-content: space-between; align-items: center;}
-  .btn-join { display: inline-block; background: #21262d; color: #e6e6e6; border: 1px solid #30363d; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; width: 100%; text-align: center; box-sizing: border-box; margin-top: 10px; }
-  .btn-join:hover { background: #30363d; color: #fff; }
+  .league-item { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: 0.3s; position: relative; overflow: hidden; display: block; text-decoration: none; }
+  .league-item:hover { transform: translateY(-3px); border-color: #3fb950; background: #161b22; }
+  .league-item::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #238636; }
+  .league-item-name { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .league-item-meta { font-size: 12px; color: #8b949e; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+  
+  .btn-action-p { display: inline-block; background: #21262d; color: #fff; border: 1px solid #30363d; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 700; transition: 0.2s; width: 100%; text-align: center; box-sizing: border-box; margin-top: 10px; }
+  .btn-action-p:hover { background: #30363d; transform: scale(1.02); }
+  .btn-action-p.primary { background: #238636; border-color: #2ea043; }
+  .btn-action-p.primary:hover { background: #2ea043; }
 </style>
 {% endblock %}
 
 {% block content %}
-<div style="max-width: 1100px; margin: 0 auto;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
     
     <div class="profile-header">
         <div class="user-info">
             <div class="avatar">{{ request.user.username|make_list|first|upper }}</div>
             <div>
                 <h2 class="username">{{ request.user.username }}</h2>
-                <div class="joined-date">MatchDay Manager</div>
+                <div class="user-role">Elite Simulation Manager</div>
             </div>
         </div>
         <div class="total-pts-box">
-            <div class="total-pts-label">Total Season Points</div>
+            <div class="total-pts-label">Total Points Accumulation</div>
             <div class="total-pts-value">{{ total_points }}</div>
         </div>
     </div>
 
     <div class="profile-grid">
-        <div class="card">
-            <div class="card-title">Performance History</div>
+        <div class="card-p">
+            <div class="card-p-title">Performance Trajectory</div>
             {% if history_data %}
-            <div style="position: relative; height: 350px; width: 100%;">
+            <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="ptsChart"></canvas>
             </div>
             {% else %}
-            <div style="text-align: center; color: #8b949e; padding: 4rem 0; font-size: 14px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d;">
-                No match history available yet.<br>Your points will graph here after your first Gameweek!
+            <div style="text-align: center; color: #8b949e; padding: 5rem 0; font-size: 15px; background: #0d1117; border-radius: 12px; border: 1px dashed #30363d;">
+                No simulated data recorded yet.<br>Your trajectory will populate after the next Gameweek.
             </div>
             {% endif %}
         </div>
 
-        <div class="card">
-            <div class="card-title">
-                Mini-Leagues
-                <span style="background: #238636; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700;">{{ user_leagues|length }}</span>
+        <div class="card-p">
+            <div class="card-p-title">
+                Competitions
+                <span style="background: #238636; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 800;">{{ user_leagues|length }} ACTIVE</span>
             </div>
             
-            {% for l in user_leagues %}
-            <a href="/leagues/{{ l.league.code }}/" class="league-card">
-                <div class="league-name">{{ l.league.name }}</div>
-                <div class="league-meta">
-                    <span>Code: <code style="background: #161b22; padding: 2px 6px; border-radius: 4px; color: #c9d1d9;">{{ l.league.code }}</code></span>
-                    <span style="color: #3fb950; font-weight: bold;">View &rarr;</span>
-                </div>
-            </a>
-            {% empty %}
-            <div style="text-align: center; color: #8b949e; padding: 2rem 0; font-size: 13px; background: #0d1117; border-radius: 8px; border: 1px solid #21262d; margin-bottom: 15px;">You haven't joined any leagues.</div>
-            {% endfor %}
+            <div style="max-height: 480px; overflow-y: auto; padding-right: 5px;">
+                {% for l in user_leagues %}
+                <a href="/leagues/{{ l.league.code }}/" class="league-item">
+                    <div class="league-item-name">{{ l.league.name }}</div>
+                    <div class="league-item-meta">
+                        <span>CODE: <code style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ l.league.code }}</code></span>
+                        <span style="color: #3fb950;">Enter Hub &rarr;</span>
+                    </div>
+                </a>
+                {% empty %}
+                <div style="text-align: center; color: #8b949e; padding: 3rem 0; font-size: 14px; background: #0d1117; border-radius: 12px; border: 1px dashed #30363d; margin-bottom: 20px;">You are not currently competing in any leagues.</div>
+                {% endfor %}
+            </div>
             
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <a href="/leagues/join/" class="btn-join">Join</a>
-                <a href="/leagues/create/" class="btn-join" style="background: #238636; color: #fff; border-color: #2ea043;">Create</a>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+                <a href="/leagues/join/" class="btn-action-p">Join League</a>
+                <a href="/leagues/create/" class="btn-action-p primary">Create New</a>
             </div>
         </div>
     </div>
@@ -96,6 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = rawData.map(d => d.pts);
 
         const ctx = document.getElementById('ptsChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(63, 185, 80, 0.3)');
+        gradient.addColorStop(1, 'rgba(63, 185, 80, 0)');
+
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -104,15 +114,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: 'Gameweek Points',
                     data: data,
                     borderColor: '#3fb950',
-                    backgroundColor: 'rgba(63, 185, 80, 0.1)',
-                    borderWidth: 3,
-                    pointBackgroundColor: '#0d1117',
+                    backgroundColor: gradient,
+                    borderWidth: 4,
+                    pointBackgroundColor: '#fff',
                     pointBorderColor: '#3fb950',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
                     fill: true,
-                    tension: 0.3
+                    tension: 0.4
                 }]
             },
             options: {
@@ -126,22 +136,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         bodyColor: '#fff',
                         borderColor: '#30363d',
                         borderWidth: 1,
-                        padding: 12,
+                        padding: 15,
                         displayColors: false,
-                        titleFont: { size: 13 },
-                        bodyFont: { size: 15, weight: 'bold' },
-                        callbacks: { label: function(context) { return context.parsed.y + ' pts'; } }
+                        titleFont: { size: 14, weight: '800' },
+                        bodyFont: { size: 18, weight: '800' },
+                        callbacks: { label: function(context) { return context.parsed.y + ' PTS'; } }
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#21262d', drawBorder: false },
-                        ticks: { color: '#8b949e', font: { size: 11 }, padding: 10 }
+                        grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+                        ticks: { color: '#8b949e', font: { size: 12, weight: '600' }, padding: 15 }
                     },
                     x: {
                         grid: { display: false, drawBorder: false },
-                        ticks: { color: '#8b949e', font: { size: 11 }, padding: 10 }
+                        ticks: { color: '#8b949e', font: { size: 12, weight: '600' }, padding: 15 }
                     }
                 },
                 interaction: { intersect: false, mode: 'index', }

@@ -268,7 +268,7 @@ def fixtures(request):
     gameweeks = Gameweek.objects.prefetch_related('matches__home_team', 'matches__away_team').order_by('number')
     
     # Dynamically calculate the simulated Premier League Table
-    teams_data = {t.id: {'name': t.name, 'short': t.short_name, 'played': 0, 'w': 0, 'd': 0, 'l': 0, 'gf': 0, 'ga': 0, 'gd': 0, 'pts': 0} for t in Team.objects.all()}
+    teams_data = {t.id: {'name': t.name, 'logo': t.logo_filename, 'short': t.short_name, 'played': 0, 'w': 0, 'd': 0, 'l': 0, 'gf': 0, 'ga': 0, 'gd': 0, 'pts': 0} for t in Team.objects.all()}
     
     played_matches = Match.objects.filter(is_played=True)
     for m in played_matches:
@@ -375,3 +375,38 @@ def save_picks(request):
             return JsonResponse({'success': True, 'status': 'ok'})
         except Exception as e: return JsonResponse({'error': str(e)})
     return JsonResponse({'error': 'POST required'}, status=405)
+
+@login_required
+def players(request):
+    teams = Team.objects.all().order_by('name')
+    return render(request, 'core/players.html', {'teams': teams})
+
+@login_required
+def team_detail(request, short_name):
+    team = get_object_or_404(Team, short_name=short_name)
+    
+    # Get top players for each position
+    gk = Player.objects.filter(team=team, position='GK').order_by('-price')[:1]
+    defenders = Player.objects.filter(team=team, position='DEF').order_by('-price')[:4]
+    midfielders = Player.objects.filter(team=team, position='MID').order_by('-price')[:3]
+    forwards = Player.objects.filter(team=team, position='FWD').order_by('-price')[:3]
+    
+    starters = list(gk) + list(defenders) + list(midfielders) + list(forwards)
+    starter_ids = [p.id for p in starters]
+    
+    # Rest of the squad
+    subs = Player.objects.filter(team=team).exclude(id__in=starter_ids).order_by('-price')[:7]
+    sub_ids = [p.id for p in subs]
+    reserves = Player.objects.filter(team=team).exclude(id__in=starter_ids + sub_ids).order_by('position', '-price')
+    
+    # Combined list for the "Simulation Squad List" table
+    ordered_squad = list(starters) + list(subs) + list(reserves)
+    
+    context = {
+        'team': team,
+        'starters': starters,
+        'subs': subs,
+        'reserves': reserves,
+        'all_players': ordered_squad
+    }
+    return render(request, 'core/team_detail.html', context)

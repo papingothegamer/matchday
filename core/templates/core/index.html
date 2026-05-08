@@ -1,65 +1,75 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block title %}Dashboard — MatchDay{% endblock %}
 
 {% block extra_style %}
 <style>
-  .hero { background: linear-gradient(180deg, rgba(35, 134, 54, 0.1) 0%, transparent 100%); padding: 3rem 0; text-align: center; border-bottom: 1px solid #30363d; margin-bottom: 2rem; }
+  .hero { background: radial-gradient(circle at top, rgba(35, 134, 54, 0.15) 0%, transparent 70%); padding: 4rem 0; text-align: center; border-bottom: 1px solid #30363d; margin-bottom: 2rem; border-radius: 0 0 40px 40px; }
   
   /* Responsive 2-Column Dashboard Layout */
-  .dashboard-wrap { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; max-width: 1000px; margin: 0 auto; align-items: start; }
-  @media (max-width: 950px) { .dashboard-wrap { display: flex; flex-direction: column; } }
+  .dashboard-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: start; }
+  @media (max-width: 1000px) { .dashboard-wrap { display: flex; flex-direction: column; } }
   
-  /* Pitch Container UI (Mirrors Pick Team Page) */
-  .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; overflow-x: auto; }
-  .bench-area { margin-top: 1.5rem; background: rgba(13, 17, 23, 0.8); padding: 1.5rem 0.5rem; border-radius: 8px; border: 1px solid #30363d; overflow-x: auto;}
-  .bench-title { font-size: 13px; font-weight: 600; color: #8b949e; text-align: center; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+  /* Pitch Container UI */
+  .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .bench-area { margin-top: 2rem; background: rgba(13, 17, 23, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px solid #30363d; }
+  .bench-title { font-size: 11px; font-weight: 800; color: #8b949e; text-align: center; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
   
   /* Sidebar Elements */
-  .stats-stack { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.2rem; text-align: center; }
-  .stat-value { font-size: 2.2rem; font-weight: 700; color: #fff; margin: 5px 0 0 0; }
-  .section-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-  .match-list { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
-  .match-row { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #30363d; align-items: center; }
+  .stats-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 1.5rem; text-align: center; transition: 0.3s; }
+  .stat-card:hover { border-color: #3fb950; transform: translateY(-3px); }
+  .stat-value { font-size: 2.5rem; font-weight: 800; color: #fff; margin-top: 8px; line-height: 1; }
+  .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+
+  .section-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: #30363d; }
+
+  .match-list { background: #161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .match-row { display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid #21262d; align-items: center; transition: 0.2s; }
+  .match-row:hover { background: #1c2128; }
   .match-row:last-child { border-bottom: none; }
-  .match-teams { font-weight: 600; color: #e6e6e6; font-size: 0.95rem; }
-  .match-score { background: #0d1117; padding: 4px 10px; border-radius: 4px; font-family: monospace; font-size: 1rem; color: #3fb950; font-weight: bold; border: 1px solid #30363d;}
-  .match-gw { font-size: 0.85rem; color: #8b949e; font-weight: 600; }
-  .empty { padding: 2rem; text-align: center; color: #8b949e; }
+  
+  .match-team-pair { display: flex; align-items: center; gap: 12px; }
+  .match-teams-text { font-weight: 700; color: #f0f6fc; font-size: 14px; }
+  .match-score { background: #0d1117; padding: 6px 12px; border-radius: 6px; font-family: monospace; font-size: 16px; color: #3fb950; font-weight: 800; border: 1px solid #30363d; min-width: 50px; text-align: center; }
   
   /* Ticker Styling */
-  .ticker-wrap { width: 100%; background: #0d1117; border-bottom: 1px solid #30363d; height: 36px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 1.5rem; cursor: pointer; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); max-width: 1000px; margin-left: auto; margin-right: auto;}
-  .ticker-wrap:hover .ticker-arrow { color: #fff; background: #2ea043; }
-  .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 2px 0 10px rgba(0,0,0,0.5);}
-  .ticker-arrow { background: #161b22; color: #3fb950; font-size: 11px; font-weight: 700; padding: 0 15px; height: 100%; display: flex; align-items: center; position: absolute; right: 0; z-index: 2; border-left: 1px solid #30363d; transition: 0.2s; box-shadow: -2px 0 10px rgba(0,0,0,0.5);}
-  .ticker-track { display: flex; white-space: nowrap; animation: ticker 25s linear infinite; padding-left: 120px; }
-  .ticker-item { font-size: 12px; color: #c9d1d9; margin-right: 30px; font-weight: 500; }
-  .ticker-item span { color: #3fb950; font-weight: 700; margin-left: 5px; }
-  @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
+  .ticker-wrap { width: 100%; background: #161b22; border: 1px solid #30363d; height: 44px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 2rem; cursor: pointer; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-width: 1200px; margin-left: auto; margin-right: auto;}
+  .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 800; padding: 0 20px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 1px; box-shadow: 4px 0 10px rgba(0,0,0,0.3);}
+  .ticker-track { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; padding-left: 140px; }
+  .ticker-item { font-size: 13px; color: #c9d1d9; margin-right: 40px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .ticker-item span { color: #3fb950; font-weight: 800; }
+  @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-150%); } }
   
-  .deadline-banner { background: #238636; color: #fff; padding: 1rem 2rem; border-radius: 8px; margin: 0 auto 1rem auto; display: flex; justify-content: space-between; align-items: center; max-width: 1000px; box-sizing: border-box; }
+  .deadline-banner { background: #238636; color: #fff; padding: 1.2rem 2.5rem; border-radius: 16px; margin: 0 auto 1.5rem auto; display: flex; justify-content: space-between; align-items: center; max-width: 1200px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 24px rgba(35, 134, 54, 0.2); }
 </style>
 {% endblock %}
 
 {% block content %}
 {% if not request.user.is_authenticated %}
   <div class="hero">
-    <h1 style="font-size: 3rem; color: #fff; margin-bottom: 1rem;">Welcome to MatchDay</h1>
-    <p style="font-size: 1.2rem; color: #8b949e; max-width: 600px; margin: 0 auto 2rem auto;">Build your ultimate fantasy squad, compete in mini-leagues, and conquer the global leaderboard.</p>
-    <a href="/auth/register/" class="btn-primary" style="font-size: 1.2rem; padding: 12px 32px;">Start Playing Now</a>
+    <h1 style="font-size: 4rem; font-weight: 800; color: #fff; margin-bottom: 1.5rem; letter-spacing: -1px;">Win the League.</h1>
+    <p style="font-size: 1.4rem; color: #8b949e; max-width: 700px; margin: 0 auto 2.5rem auto; line-height: 1.6;">The most advanced fantasy simulator is here. Build your squad, track live results, and rise to the top.</p>
+    <a href="/auth/register/" class="btn-primary" style="font-size: 1.3rem; padding: 16px 40px; border-radius: 12px; box-shadow: 0 8px 20px rgba(35, 134, 54, 0.4);">Join the Simulation</a>
   </div>
 {% else %}
   
   {% if active_gameweek %}
-  <div class="deadline-banner" style="{% if is_deadline_passed %}background: #cf222e;{% endif %}">
-    <h2 style="font-size:20px;font-weight:700;color:#fff;margin:0;">GW{{ active_gameweek.number }} {% if is_deadline_passed %}Closed{% else %}Deadline{% endif %}</h2>
-    <div style="font-size: 1.1rem; font-weight: 600; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M Y, H:i" }}</div>
+  <div class="deadline-banner" style="{% if is_deadline_passed %}background: #cf222e; box-shadow: 0 8px 24px rgba(207, 34, 46, 0.2);{% endif %}">
+    <div>
+        <div style="font-size:12px; text-transform:uppercase; font-weight:800; opacity:0.8; letter-spacing:1px; margin-bottom:4px;">Current Period</div>
+        <h2 style="font-size:24px;font-weight:800;color:#fff;margin:0;">GW{{ active_gameweek.number }} {% if is_deadline_passed %}Closed{% else %}Deadline{% endif %}</h2>
+    </div>
+    <div style="text-align:right;">
+        <div style="font-size:12px; text-transform:uppercase; font-weight:800; opacity:0.8; letter-spacing:1px; margin-bottom:4px;">Remaining Time</div>
+        <div style="font-size: 1.3rem; font-weight: 800; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M, H:i" }}</div>
+    </div>
   </div>
   
   <div class="ticker-wrap" onclick="window.location.href='/leaderboard/?tab=totw'">
     <div class="ticker-label">DREAM TEAM</div>
-    <div class="ticker-track" id="totw-ticker"><div class="ticker-item">Loading latest results...</div></div>
-    <div class="ticker-arrow">View &rarr;</div>
+    <div class="ticker-track" id="totw-ticker"><div class="ticker-item">Loading latest performances...</div></div>
   </div>
   {% endif %}
 
@@ -67,15 +77,18 @@
       <div class="main-column">
           {% if picks %}
           <div class="pitch-panel">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                  <h3 style="color:#fff; font-size:18px; font-weight:800; margin:0;">Active Lineup</h3>
+                  <a href="/pick/" style="color:#3fb950; font-size:13px; font-weight:700; text-decoration:none;">Manage Squad &rarr;</a>
+              </div>
               <div class="pitch">
                 <div class="penalty-box-top"></div><div class="goal-area-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div><div class="goal-area-bottom"></div>
                 <div class="pitch-row">
                   {% for pick in picks %}{% if pick.player.position == 'GK' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
                       {{ pick.player.team.short_name }}
                       {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
                     </div>
                     <div class="slot-name">{{ pick.player.display_name }}</div>
                     <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
@@ -84,11 +97,10 @@
                 </div>
                 <div class="pitch-row">
                   {% for pick in picks %}{% if pick.player.position == 'DEF' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
                       {{ pick.player.team.short_name }}
                       {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
                     </div>
                     <div class="slot-name">{{ pick.player.display_name }}</div>
                     <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
@@ -97,11 +109,10 @@
                 </div>
                 <div class="pitch-row">
                   {% for pick in picks %}{% if pick.player.position == 'MID' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
                       {{ pick.player.team.short_name }}
                       {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
                     </div>
                     <div class="slot-name">{{ pick.player.display_name }}</div>
                     <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
@@ -110,11 +121,10 @@
                 </div>
                 <div class="pitch-row">
                   {% for pick in picks %}{% if pick.player.position == 'FWD' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
                       {{ pick.player.team.short_name }}
                       {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
                     </div>
                     <div class="slot-name">{{ pick.player.display_name }}</div>
                     <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
@@ -124,13 +134,12 @@
               </div>
 
               <div class="bench-area">
-                <div class="bench-title">Substitutes</div>
-                <div class="pitch-row" style="margin-bottom:0;">
+                <div class="bench-title">Bench</div>
+                <div class="pitch-row" style="margin-bottom:0; gap:20px;">
                   {% for pick in picks %}{% if pick.is_sub %}
-                  <div class="player-slot" style="opacity: 0.6;" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})" title="View Player">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }}; border-color:{{ pick.player.team.secondary_color }};">
+                  <div class="player-slot" style="opacity: 0.6;" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
+                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
                       {{ pick.player.team.short_name }}
-                      {% if pick.player.is_injured %}<div class="injury-badge">✚</div>{% endif %}
                     </div>
                     <div class="slot-name">{{ pick.player.display_name }}</div>
                     <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
@@ -140,10 +149,10 @@
               </div>
           </div>
           {% else %}
-          <div style="background:#161b22; border:1px solid #30363d; border-radius:12px; padding:3rem; text-align:center;">
-              <h3 style="color:#fff; margin-bottom:10px;">No Squad Found</h3>
-              <p style="color:#8b949e; margin-bottom:20px;">You haven't picked your team yet!</p>
-              <a href="/pick/" class="btn-primary" style="padding:10px 24px; font-size:16px;">Pick Team Now</a>
+          <div style="background:#161b22; border:1px solid #30363d; border-radius:16px; padding:4rem; text-align:center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+              <h3 style="color:#fff; font-size:24px; font-weight:800; margin-bottom:12px;">No Squad Registered</h3>
+              <p style="color:#8b949e; margin-bottom:24px; font-size:16px;">You haven't initialized your fantasy team for this season yet.</p>
+              <a href="/pick/" class="btn-primary" style="padding:14px 32px; font-size:16px; border-radius:10px;">Initialize Squad</a>
           </div>
           {% endif %}
       </div>
@@ -151,32 +160,45 @@
       <div class="side-column">
           <div class="stats-stack">
             <div class="stat-card">
-                <div style="color: #8b949e; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Current GW Points</div>
+                <div class="stat-label">GW Points</div>
                 <div class="stat-value">{% if user_team %}{{ user_team.total_points }}{% else %}0{% endif %}</div>
             </div>
             <div class="stat-card">
-                <div style="color: #8b949e; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Previous GW</div>
-                <div class="stat-value">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div>
+                <div class="stat-label">Previous</div>
+                <div class="stat-value" style="color:#8b949e;">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div>
             </div>
-            <div class="stat-card">
-                <div style="color: #8b949e; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Global Rank</div>
-                <div class="stat-value">1</div>
+            <div class="stat-card" style="grid-column: span 2;">
+                <div class="stat-label">Global Standing</div>
+                <div class="stat-value" style="color:#f6c90e;">#1</div>
             </div>
           </div>
 
-          <div class="section-title">Recent results</div>
+          <div class="section-title">Latest results</div>
           <div class="match-list">
             {% for match in recent_matches %}
             <div class="match-row">
-              <div>
-                  <div class="match-teams">{{ match.home_team.short_name }} vs {{ match.away_team.short_name }}</div>
-                  <div class="match-gw">GW{{ match.gameweek.number }}</div>
+              <div class="match-team-pair">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                      <div class="match-teams-text">
+                          {% if match.home_team.logo_filename %}
+                          <img src="{% static 'core/images/teams/' %}{{ match.home_team.logo_filename }}" class="team-logo-sm" style="vertical-align:middle; margin-right:4px;">
+                          {% endif %}
+                          {{ match.home_team.short_name }}
+                      </div>
+                      <div class="match-teams-text">
+                          {% if match.away_team.logo_filename %}
+                          <img src="{% static 'core/images/teams/' %}{{ match.away_team.logo_filename }}" class="team-logo-sm" style="vertical-align:middle; margin-right:4px;">
+                          {% endif %}
+                          {{ match.away_team.short_name }}
+                      </div>
+                  </div>
               </div>
               <div class="match-score">{{ match.home_score }} - {{ match.away_score }}</div>
             </div>
             {% empty %}
-            <div class="empty">No results yet.</div>
+            <div class="empty">No results recorded yet.</div>
             {% endfor %}
+            <a href="/fixtures/" style="display:block; text-align:center; padding:12px; background:#0d1117; color:#8b949e; font-size:12px; font-weight:700; text-decoration:none; text-transform:uppercase; letter-spacing:1px; border-top:1px solid #30363d;">View All Fixtures</a>
           </div>
       </div>
   </div>
@@ -190,7 +212,7 @@
 fetch('/api/totw/').then(r => r.json()).then(d => {
     if(d.error) return;
     let html = '';
-    d.players.forEach(p => { html += `<div class="ticker-item">${p.name} (${p.team}) <span>${p.pts} pts</span></div>`; });
+    d.players.forEach(p => { html += `<div class="ticker-item">${p.name} <span>${p.pts} pts</span></div>`; });
     document.getElementById('totw-ticker').innerHTML = html;
     document.querySelector('.ticker-label').textContent = `GW${d.gameweek} TOTW`;
 }).catch(e => console.log(e));

@@ -2,100 +2,123 @@
 {% block title %}Leaderboard — MatchDay{% endblock %}
 {% block content %}
 <style>
-  .lb-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
-  .lb-tab { padding: 10px 20px; color: #8b949e; font-size: 15px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: 0.2s; }
-  .lb-tab.active { background: #238636; color: #fff; }
-  .lb-tab:hover:not(.active) { background: #21262d; color: #c9d1d9; }
+  .lb-header { margin-bottom: 2rem; }
+  .lb-title { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+  .lb-subtitle { color: #8b949e; font-size: 14px; font-weight: 500; }
+
+  .lb-tabs { display: flex; gap: 8px; margin-bottom: 2rem; background: #161b22; padding: 6px; border-radius: 12px; border: 1px solid #30363d; width: fit-content; }
+  .lb-tab { padding: 10px 24px; color: #8b949e; font-size: 14px; font-weight: 700; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+  .lb-tab.active { background: #238636; color: #fff; box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3); }
+  .lb-tab:hover:not(.active) { background: #21262d; color: #fff; }
+  
   .lb-section { display: none; }
-  .lb-section.active { display: block; }
-  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
+  .lb-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-panel { background: #161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
   
   /* TOTW Dashboard styling */
-  .totw-dashboard { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; margin-bottom: 2rem; }
-  @media (max-width: 900px) { .totw-dashboard { grid-template-columns: 1fr; } }
-  .totw-sidebar-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; text-align: center; }
-  .totw-big-number { font-size: 3rem; font-weight: 800; color: #3fb950; line-height: 1; margin: 10px 0; }
-  .totw-label { font-size: 12px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .totw-dashboard { display: grid; grid-template-columns: 350px 1fr; gap: 2rem; align-items: start; margin-bottom: 2rem; }
+  @media (max-width: 950px) { .totw-dashboard { grid-template-columns: 1fr; } }
+  
+  .totw-sidebar-card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem; text-align: center; position: relative; }
+  .totw-big-number { font-size: 4rem; font-weight: 800; color: #3fb950; line-height: 1; margin: 15px 0; text-shadow: 0 0 20px rgba(63, 185, 80, 0.3); }
+  .totw-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
   
   /* Carousel Bento Box Styling */
-  .stat-carousel-wrap { position: relative; overflow: hidden; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem 0; text-align: left; }
-  .stat-carousel-track { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 300%; }
-  .stat-slide { width: 33.3333%; flex-shrink: 0; padding: 0 1.5rem; box-sizing: border-box; }
-  .carousel-dots { display: flex; gap: 6px; justify-content: center; margin-top: 15px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #30363d; cursor: pointer; transition: 0.3s; }
-  .dot.active { background: #3fb950; transform: scale(1.2); }
-  .stat-row { display:flex; justify-content:space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid #21262d; cursor: pointer; transition: background 0.2s; border-radius: 6px;}
-  .stat-row:hover { background: #21262d; }
+  .stat-carousel-wrap { position: relative; overflow: hidden; background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .stat-carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); width: 300%; }
+  .stat-slide { width: 33.3333%; flex-shrink: 0; padding: 0 2rem; box-sizing: border-box; }
+  .carousel-dots { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #30363d; cursor: pointer; transition: 0.3s; }
+  .dot.active { background: #3fb950; width: 18px; border-radius: 4px; }
+  
+  .stat-row { display:flex; justify-content:space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #21262d; cursor: pointer; transition: 0.2s; border-radius: 10px; margin-bottom: 4px; }
+  .stat-row:hover { background: #1c2128; transform: translateX(5px); }
   .stat-row:last-child { border-bottom: none; }
   
   /* Rankings Table Styling */
-  .rank-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; color: #e6e6e6; }
-  .rank-table th { padding: 12px 15px; color: #8b949e; font-weight: 600; border-bottom: 1px solid #30363d; background: #0d1117; }
-  .rank-table td { padding: 12px 15px; border-bottom: 1px solid #21262d; }
-  .rank-table tr:hover td { background: #21262d; }
-  .rank-table tr.highlight td { background: rgba(35, 134, 54, 0.1); font-weight: 600; border-left: 3px solid #3fb950; }
-  .t-rank { width: 50px; font-weight: 700; color: #8b949e; text-align: center; }
-  .t-pts { font-weight: 700; color: #3fb950; text-align: right; }
-  .btn-join { display: inline-block; background: #21262d; color: #e6e6e6; border: 1px solid #30363d; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; }
-  .btn-join:hover { background: #30363d; color: #fff; }
+  .rank-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+  .rank-table th { padding: 16px 20px; color: #8b949e; font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid #30363d; background: #0d1117; }
+  .rank-table td { padding: 16px 20px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  .rank-table tr:hover td { background: #1c2128; }
+  .rank-table tr.highlight td { background: rgba(35, 134, 54, 0.1); font-weight: 700; border-left: 4px solid #3fb950; color: #fff; }
+  .t-rank { width: 60px; font-weight: 800; color: #8b949e; text-align: center; font-size: 16px; }
+  .t-pts { font-weight: 800; color: #3fb950; text-align: right; font-size: 16px; }
+
+  .mini-league-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 16px; margin-bottom: 12px; transition: 0.2s; position: relative; overflow: hidden; }
+  .mini-league-card:hover { border-color: #8b949e; transform: translateY(-2px); }
+  .mini-league-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #238636; }
 </style>
 
-<div style="max-width: 1100px; margin: 0 auto;">
-  <h2 style="font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Global Center</h2>
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+  <div class="lb-header">
+      <h2 class="lb-title">Competition Central</h2>
+      <div class="lb-subtitle">Track global standings and the simulated Dream Team performance.</div>
+  </div>
+
   <div class="lb-tabs">
     <div class="lb-tab active" onclick="switchTab('global', event)">Global Rankings</div>
-    <div class="lb-tab" onclick="switchTab('totw', event)">Team of the Week</div>
+    <div class="lb-tab" onclick="switchTab('totw', event)">Dream Team</div>
   </div>
 
   <div id="tab-global" class="lb-section active">
-    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
+    <div style="display: grid; grid-template-columns: 1fr 380px; gap: 2.5rem; align-items: start;">
         
-        <div class="stat-card" style="padding: 0; overflow: hidden;">
-            <div style="padding: 15px 20px; font-size: 16px; font-weight: 700; color: #fff; border-bottom: 1px solid #30363d; background: #21262d;">Global Top 50 Managers</div>
+        <div class="card-panel">
+            <div style="padding: 20px 25px; font-size: 16px; font-weight: 800; color: #fff; border-bottom: 1px solid #30363d; background: #0d1117; display: flex; align-items: center; gap: 10px;">
+                <svg width="18" height="18" fill="#f6c90e" viewBox="0 0 16 16"><path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.094 2.138-.844 2.138-1.784 0-.933-.707-1.459-2.026-1.778l-.138-.034c-.991-.25-1.413-.439-1.413-.884 0-.466.427-.773 1.151-.773.822 0 1.226.423 1.296.834h.63c-.077-.733-.75-1.398-1.926-1.479V5h-.6v.714c-1.2.077-1.911.743-1.911 1.652 0 .845.7 1.361 1.932 1.67l.14.034c1.1.258 1.419.485 1.419.956 0 .456-.402.834-1.269.834-.81 0-1.273-.442-1.353-.948h-.63z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v.688C6.138 5.4 5.185 6.403 5.185 7.661c0 1.348 1.159 2.13 2.315 2.455l.139.039c1.07.284 1.348.455 1.348.788 0 .338-.289.572-.891.572-.662 0-.985-.314-1.047-.613H6.22c.053.732.61 1.393 1.28 1.607v.672a.5.5 0 0 0 1 0v-.699c.753-.132 1.567-.801 1.567-1.92 0-1.221-.964-1.944-2.19-2.3l-.14-.04c-1.135-.294-1.33-.44-1.33-.792 0-.306.27-.514.774-.514.497 0 .856.252.937.591h.829c-.079-.748-.621-1.356-1.33-1.611V4.5z"/></svg>
+                Top 50 Simulated Managers
+            </div>
             <table class="rank-table">
                 <thead>
                     <tr>
                         <th class="t-rank">Rank</th>
                         <th>Manager</th>
-                        <th class="t-pts">Total Points</th>
+                        <th class="t-pts">Total Season Points</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in global_rankings %}
                     <tr class="{% if row.user == request.user.username %}highlight{% endif %}">
                         <td class="t-rank">{{ row.rank }}</td>
-                        <td>{{ row.user }}{% if row.user == request.user.username %} (You){% endif %}</td>
+                        <td style="font-weight: 700;">{{ row.user }}{% if row.user == request.user.username %} <span style="font-weight: 500; opacity: 0.7; font-size: 11px; margin-left: 5px;">(YOU)</span>{% endif %}</td>
                         <td class="t-pts">{{ row.pts }}</td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="3" style="text-align:center; color:#8b949e; padding: 2rem;">No global rankings available yet.</td></tr>
+                    <tr><td colspan="3" style="text-align:center; color:#8b949e; padding: 4rem;">The simulation data is still populating.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
         <div>
-            <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
-                <h3 style="color:#fff; margin-bottom:15px; font-size:18px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Your Mini-Leagues</h3>
+            <div style="background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <h3 style="color:#fff; margin-bottom:1.5rem; font-size:20px; font-weight:800; display:flex; align-items:center; gap:10px;">
+                    <svg width="20" height="20" fill="#3fb950" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/><path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+                    My Leagues
+                </h3>
                 {% if user_leagues %}
-                    {% for l in user_leagues %}
-                    <a href="/leagues/{{ l.league.code }}/" style="text-decoration:none; display: block; margin-bottom: 10px;">
-                        <div style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px; transition: 0.2s;" onmouseover="this.style.borderColor='#8b949e'" onmouseout="this.style.borderColor='#30363d'">
-                            <div style="font-size:15px; font-weight:600; color:#fff; margin-bottom: 4px;">{{ l.league.name }}</div>
-                            <div style="font-size:12px; color:#8b949e;">Code: {{ l.league.code }}</div>
-                        </div>
-                    </a>
-                    {% endfor %}
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <a href="/leagues/join/" class="btn-join" style="flex: 1; text-align: center;">Join Another</a>
-                        <a href="/leagues/create/" class="btn-join" style="flex: 1; text-align: center; background: #238636; color: #fff; border-color: #2ea043;">Create</a>
+                    <div style="margin-bottom: 2rem;">
+                        {% for l in user_leagues %}
+                        <a href="/leagues/{{ l.league.code }}/" style="text-decoration:none; display: block;">
+                            <div class="mini-league-card">
+                                <div style="font-size:16px; font-weight:700; color:#fff; margin-bottom: 4px;">{{ l.league.name }}</div>
+                                <div style="font-size:12px; color:#8b949e; font-family:monospace; font-weight: 700;">CODE: {{ l.league.code }}</div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="/leagues/join/" class="btn-primary" style="text-align: center; background: #21262d; border-color: #30363d; color: #fff;">Join Another</a>
+                        <a href="/leagues/create/" class="btn-primary" style="text-align: center;">Create New League</a>
                     </div>
                 {% else %}
-                    <div style="text-align: center; padding: 1rem 0;">
-                        <div style="color:#8b949e; font-size:14px; margin-bottom:15px;">You aren't competing in any private leagues yet!</div>
-                        <div style="display: flex; gap: 10px; justify-content: center;">
-                            <a href="/leagues/join/" class="btn-join">Join League</a>
-                            <a href="/leagues/create/" class="btn-join" style="background: #238636; color: #fff; border-color: #2ea043;">Create League</a>
+                    <div style="text-align: center; padding: 1.5rem 0;">
+                        <p style="color:#8b949e; font-size:15px; margin-bottom:2rem; line-height:1.5;">Compete with friends by creating or joining a private league.</p>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="/leagues/join/" class="btn-primary" style="background: #21262d; border-color: #30363d; color: #fff;">Join a League</a>
+                            <a href="/leagues/create/" class="btn-primary">Create a League</a>
                         </div>
                     </div>
                 {% endif %}
@@ -105,48 +128,47 @@
   </div>
 
   <div id="tab-totw" class="lb-section">
-    
     <div class="totw-dashboard">
-        
         <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            
             <div class="totw-sidebar-card">
                 <div class="totw-label" id="totw-gw-label">Gameweek --</div>
                 <div class="totw-big-number" id="totw-total-pts">--</div>
-                <div style="font-size: 14px; color: #fff; font-weight: 600;">Total Dream Team Points</div>
+                <div style="font-size: 14px; color: #fff; font-weight: 700;">Squad Value: ★ Premium</div>
             </div>
             
-            <div class="totw-sidebar-card" style="text-align: left; padding: 20px;">
-                <div class="totw-label" style="margin-bottom: 15px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">Star Player</div>
-                <div id="totw-star-player"><div style="color: #8b949e; text-align: center;">Loading...</div></div>
+            <div class="totw-sidebar-card" style="text-align: left; padding: 1.5rem;">
+                <div class="totw-label" style="margin-bottom: 1.5rem; border-bottom: 1px solid #30363d; padding-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <span style="color:#f6c90e;">★</span> Star Performer
+                </div>
+                <div id="totw-star-player"><div style="color: #8b949e; text-align: center; padding: 20px;">Evaluating performance...</div></div>
             </div>
 
             <div class="stat-carousel-wrap" id="carousel-wrap" style="display: none;">
                 <div class="stat-carousel-track" id="stat-track">
                     <div class="stat-slide">
-                        <h3 style="color:#e6e6e6; margin:0 0 10px 0; font-size:15px; font-weight:700;">Top Scored Points</h3>
-                        {% for p in top_points %}
-                        <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
-                            <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
-                            <div style="color:#3fb950; font-weight:700; font-size:15px;">{{ p.total_pts }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="stat-slide">
-                        <h3 style="color:#e6e6e6; margin:0 0 10px 0; font-size:15px; font-weight:700;">Top Goalscorers</h3>
+                        <h3 style="color:#fff; margin:0 0 1.2rem 0; font-size:16px; font-weight:800; border-left: 3px solid #3fb950; padding-left: 10px;">Golden Boot Race</h3>
                         {% for p in top_scorers %}
                         <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
-                            <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
-                            <div style="color:#fff; font-weight:700; font-size:15px;">{{ p.total_goals }}</div>
+                            <div style="color:#f0f6fc; font-weight: 700;">{{ p.display_name }} <span style="font-size:11px; color:#8b949e; font-weight:500;">{{ p.team.short_name }}</span></div>
+                            <div style="color:#3fb950; font-weight:800; font-size:16px;">{{ p.total_goals }}</div>
                         </div>
                         {% endfor %}
                     </div>
                     <div class="stat-slide">
-                        <h3 style="color:#e6e6e6; margin:0 0 10px 0; font-size:15px; font-weight:700;">Top Playmakers</h3>
+                        <h3 style="color:#fff; margin:0 0 1.2rem 0; font-size:16px; font-weight:800; border-left: 3px solid #f6c90e; padding-left: 10px;">Assist Kings</h3>
                         {% for p in top_assists %}
                         <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
-                            <div style="color:#8b949e;">{{ p.display_name }} <span style="font-size:11px;">({{ p.team.short_name }})</span></div>
-                            <div style="color:#fff; font-weight:700; font-size:15px;">{{ p.total_assists }}</div>
+                            <div style="color:#f0f6fc; font-weight: 700;">{{ p.display_name }} <span style="font-size:11px; color:#8b949e; font-weight:500;">{{ p.team.short_name }}</span></div>
+                            <div style="color:#f6c90e; font-weight:800; font-size:16px;">{{ p.total_assists }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="stat-slide">
+                        <h3 style="color:#fff; margin:0 0 1.2rem 0; font-size:16px; font-weight:800; border-left: 3px solid #58a6ff; padding-left: 10px;">Season MVP Pts</h3>
+                        {% for p in top_points %}
+                        <div class="stat-row" onclick="window.openPlayerModal({{ p.id }})">
+                            <div style="color:#f0f6fc; font-weight: 700;">{{ p.display_name }} <span style="font-size:11px; color:#8b949e; font-weight:500;">{{ p.team.short_name }}</span></div>
+                            <div style="color:#58a6ff; font-weight:800; font-size:16px;">{{ p.total_pts }}</div>
                         </div>
                         {% endfor %}
                     </div>
@@ -158,19 +180,18 @@
                     <div class="dot" onclick="goToSlide(2)"></div>
                 </div>
             </div>
-
         </div>
         
-        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
-                <h3 style="color:#fff; font-size:20px; margin: 0;">Dream Team Formation</h3>
+        <div class="card-panel" style="padding: 1.5rem; background: #161b22;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                <h3 style="color:#fff; font-size:22px; font-weight:800; margin: 0;">Dream Team Formation</h3>
+                <div style="font-size: 11px; background: rgba(63, 185, 80, 0.1); color: #3fb950; padding: 4px 12px; border-radius: 20px; font-weight: 800; text-transform: uppercase;">Simulated XI</div>
             </div>
             <div id="totw-pitch-container" class="pitch">
                 <div class="penalty-box-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div>
-                <div id="totw-rows"><div style="text-align:center; color:#8b949e; margin-top: 40%;">Loading Dream Team...</div></div>
+                <div id="totw-rows"><div style="text-align:center; color:#8b949e; margin-top: 40%; font-weight: 600; letter-spacing: 1px;">OPTIMIZING LINEUP...</div></div>
             </div>
         </div>
-        
     </div>
   </div>
 </div>
@@ -178,23 +199,22 @@
 {% include 'core/components/player_modal.html' %}
 
 <script>
-// Tab Logic
 function switchTab(tabId, event) {
     document.querySelectorAll('.lb-section').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.lb-tab').forEach(el => el.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
-    if(event) event.target.classList.add('active');
+    if(event) (event.target || event).classList.add('active');
     if(tabId === 'totw' && !window.totwLoaded) loadTOTW();
 }
 
-// Carousel Logic
 let currentSlide = 0;
 const totalSlides = 3;
 let slideInterval;
 
 function goToSlide(index) {
     currentSlide = index;
-    document.getElementById('stat-track').style.transform = `translateX(-${currentSlide * 33.3333}%)`;
+    const track = document.getElementById('stat-track');
+    if(track) track.style.transform = `translateX(-${currentSlide * 33.3333}%)`;
     document.querySelectorAll('.dot').forEach((d, i) => {
         d.classList.toggle('active', i === currentSlide);
     });
@@ -205,25 +225,17 @@ function startCarousel() {
     slideInterval = setInterval(() => {
         currentSlide = (currentSlide + 1) % totalSlides;
         goToSlide(currentSlide);
-    }, 4500); // Transitions every 4.5 seconds
+    }, 5000);
 }
 
-// Hover interactions to pause carousel
-const carouselWrap = document.getElementById('carousel-wrap');
-if(carouselWrap) {
-    carouselWrap.addEventListener('mouseenter', () => clearInterval(slideInterval));
-    carouselWrap.addEventListener('mouseleave', startCarousel);
-}
-
-// Fetch TOTW
 function loadTOTW() {
     fetch('/api/totw/')
       .then(res => res.json())
-     .then(data => {
+      .then(data => {
          window.totwLoaded = true;
          const container = document.getElementById('totw-rows');
          if (data.error) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">${data.error}</div>`; return; }
-         if (!data.players || data.players.length === 0) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">No matches played in this gameweek yet.</div>`; return; }
+         if (!data.players || data.players.length === 0) { container.innerHTML = `<div style="text-align:center; color:#8b949e; margin-top:40%;">No matches played in this period.</div>`; return; }
          
          let totalPoints = data.players.reduce((sum, p) => sum + p.pts, 0);
          let starPlayer = data.players.reduce((prev, current) => (prev.pts > current.pts) ? prev : current);
@@ -232,11 +244,13 @@ function loadTOTW() {
          document.getElementById('totw-total-pts').textContent = totalPoints;
          
          document.getElementById('totw-star-player').innerHTML = `
-            <div style="display:flex; align-items:center; gap:15px; cursor:pointer;" onclick="window.openPlayerModal(${starPlayer.id || 0})">
-                <div style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: ${starPlayer.color2}; background: ${starPlayer.color}; border: 2px solid #fff;">${starPlayer.team}</div>
+            <div style="display:flex; align-items:center; gap:20px; cursor:pointer;" onclick="window.openPlayerModal(${starPlayer.id || 0})">
+                <div style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: ${starPlayer.color2}; background: ${starPlayer.color}; border: 3px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">${starPlayer.team}</div>
                 <div>
-                    <div style="font-size: 18px; font-weight: 700; color: #fff;">${starPlayer.name}</div>
-                    <div style="font-size: 14px; color: #3fb950; font-weight: 600;">★ ${starPlayer.pts} pts</div>
+                    <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 2px;">${starPlayer.name}</div>
+                    <div style="font-size: 14px; color: #3fb950; font-weight: 700; display:flex; align-items:center; gap:5px;">
+                        <span style="background:#3fb950; color:#fff; font-size:10px; padding:2px 6px; border-radius:4px;">★</span> ${starPlayer.pts} pts
+                    </div>
                 </div>
             </div>
          `;
@@ -261,18 +275,15 @@ function loadTOTW() {
              }
          });
          container.innerHTML = html;
-         
-         // Unhide and start carousel once TOTW loads
          document.getElementById('carousel-wrap').style.display = 'block';
          startCarousel();
-         
       }).catch(e => console.error(e));
 }
 
 const urlParams = new URLSearchParams(window.location.search);
 if(urlParams.get('tab') === 'totw') {
     const totwTab = document.querySelector('.lb-tab:nth-child(2)');
-    if(totwTab) switchTab('totw', {target: totwTab});
+    if(totwTab) switchTab('totw', totwTab);
 }
 </script>
 {% endblock %}

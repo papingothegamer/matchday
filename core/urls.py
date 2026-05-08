@@ -20,4 +20,6 @@ urlpatterns = [
     path('leagues/<str:code>/', views.league_detail, name='league_detail'),
     path('leagues/<str:code>/leave/', views.leave_league, name='leave_league'),
     path('leagues/<str:code>/delete/', views.delete_league, name='delete_league'),
+    path('players/', views.players, name='players'),
+    path('teams/<str:short_name>/', views.team_detail, name='team_detail'),
 ]

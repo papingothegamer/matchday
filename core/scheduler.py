@@ -23,19 +23,28 @@ def run_auto_engine():
                 if pending_matches.exists():
                     from core.simulation import simulate_match
                     for match in pending_matches:
-                        print(f"[AUTO-ENGINE] Simulating: {match}")
+                        print(f"[AUTO-ENGINE] KICKOFF: {match.home_team.short_name} vs {match.away_team.short_name}")
                         simulate_match(match)
+                        time.sleep(2) # Slight delay for immersion in logs
+                    
+                    # After matches are played, trigger a "partial" point calculation if needed
+                    # simulate_gameweek is heavy, but let's assume it runs in rollover mostly.
+                    # Or we can run it here to keep dashboard updated.
+                    from core.simulation import simulate_gameweek
+                    simulate_gameweek(active_gw)
 
                 # 2. Conditional Rollover: Only if deadline passed AND all matches played
                 if active_gw.deadline and timezone.now() >= active_gw.deadline:
                     unplayed_count = Match.objects.filter(gameweek=active_gw, is_played=False).count()
                     
                     if unplayed_count == 0:
-                        print(f"\n[AUTO-ENGINE] GW{active_gw.number} finished! All matches played. Initiating Rollover...")
+                        # Wait a buffer period (e.g. 1 hour) after last match before rollover
+                        # For demo purposes, we'll do it immediately
+                        print(f"\n[AUTO-ENGINE] GW{active_gw.number} complete. Initiating Rollover...")
                         call_command('process_gameweek')
                     else:
-                        # Optional: Log waiting status
-                        pass 
+                        if int(time.time()) % 300 < 60: # Log every ~5 mins
+                            print(f"[AUTO-ENGINE] GW{active_gw.number} in progress. Waiting for {unplayed_count} matches.")
 
         except Exception as e:
             print(f"[AUTO-ENGINE] Error: {e}")

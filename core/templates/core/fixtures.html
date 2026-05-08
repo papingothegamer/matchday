@@ -1,111 +1,170 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block title %}Fixtures & Standings — MatchDay{% endblock %}
-{% block content %}
+
+{% block extra_style %}
 <style>
-  .league-hub { display: grid; grid-template-columns: 1fr 450px; gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: start; }
-  @media (max-width: 950px) { .league-hub { grid-template-columns: 1fr; } }
+  .league-hub { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; max-width: 1300px; margin: 0 auto; align-items: start; }
+  @media (max-width: 1000px) { .league-hub { grid-template-columns: 1fr; } }
 
-  /* Fixtures Side */
-  .fx-gw-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; display: none; }
-  .fx-gw-card.active { display: block; }
-  .fx-match { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #21262d; }
-  .fx-match:last-child { border-bottom: none; }
-  .fx-team { flex: 1; font-size: 15px; font-weight: 500; color: #e6e6e6; }
-  .fx-team.away { text-align: right; }
-  .fx-score { font-size: 16px; font-weight: 700; background: #0d1117; color: #3fb950; padding: 6px 16px; border-radius: 6px; border: 1px solid #30363d; min-width: 60px; text-align: center; }
-  .fx-vs { font-size: 13px; color: #8b949e; background: #21262d; padding: 4px 10px; border-radius: 4px; font-weight: 600; }
-  
-  .gw-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: #161b22; padding: 12px 20px; border-radius: 12px; border: 1px solid #30363d; }
-  .btn-nav { background: #21262d; color: #e6e6e6; border: 1px solid #30363d; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
-  .btn-nav:hover:not(:disabled) { background: #3fb950; color: #fff; border-color: #3fb950; }
-  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-  .gw-title-main { font-size: 20px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 10px; }
-  .active-badge { font-size: 11px; background: #238636; color: #fff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  /* Premium Navigation */
+  .gw-nav-container { margin-bottom: 2rem; }
+  .gw-nav { display: flex; justify-content: space-between; align-items: center; background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); padding: 16px 24px; border-radius: 16px; border: 1px solid #30363d; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .btn-nav { background: #21262d; color: #fff; border: 1px solid #30363d; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+  .btn-nav:hover:not(:disabled) { background: #30363d; border-color: #8b949e; transform: translateY(-2px); }
+  .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+  .gw-title-main { font-size: 22px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 12px; }
+  .active-badge { font-size: 10px; background: #238636; color: #fff; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
 
-  /* Standings Side */
-  .table-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; }
-  .table-header { background: #21262d; padding: 15px 20px; font-size: 16px; font-weight: 700; color: #fff; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
-  .standings-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; color: #e6e6e6; }
-  .standings-table th { padding: 4px 5px; color: #8b949e; font-weight: 600; border-bottom: 1px solid #30363d; background: #0d1117; }
-  .standings-table td { padding: 4px 5px; border-bottom: 1px solid #21262d; }
-  .standings-table tr:hover td { background: #21262d; }
-  .standings-table tr:last-child td { border-bottom: none; }
-  .t-rank { width: 30px; font-weight: 700; color: #8b949e; }
-  .t-club { text-align: left; font-weight: 600; font-size: 13px; }
-  .t-pts { font-weight: 700; color: #3fb950; font-size: 13px; }
+  /* Modern Fixture Cards */
+  .fx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 1rem; display: none; }
+  .fx-grid.active { display: grid; }
+  .fx-card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 20px; display: flex; align-items: center; transition: 0.3s; position: relative; overflow: hidden; }
+  .fx-card:hover { border-color: #3fb950; transform: scale(1.01); background: #1c2128; }
   
-  /* Champions League & Relegation Highlighting */
-  .standings-table tr:nth-child(-n+4) .t-rank { color: #58a6ff; }
-  .standings-table tr:nth-last-child(-n+3) .t-rank { color: #f85149; }
+  .fx-team-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .fx-team-name { font-size: 16px; font-weight: 700; color: #f0f6fc; }
+  
+  .fx-center { flex: 0 0 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .fx-score-wrap { display: flex; align-items: center; gap: 15px; font-size: 28px; font-weight: 800; color: #fff; }
+  .fx-score-box { background: #0d1117; padding: 8px 16px; border-radius: 8px; border: 1px solid #30363d; min-width: 45px; text-align: center; }
+  .fx-time { font-size: 12px; color: #8b949e; font-weight: 600; text-transform: uppercase; }
+  .fx-vs { font-size: 14px; font-weight: 800; color: #3fb950; background: rgba(63, 185, 80, 0.1); padding: 6px 16px; border-radius: 20px; }
+  .fx-venue { font-size: 11px; color: #484f58; margin-top: 4px; }
+
+  /* Standings Panel */
+  .standings-panel { background: #161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; position: sticky; top: 20px; }
+  .st-header { background: #0d1117; padding: 20px; border-bottom: 1px solid #30363d; }
+  .st-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
+  .st-table { width: 100%; border-collapse: collapse; }
+  .st-table th { padding: 12px 8px; font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #30363d; text-align: center; }
+  .st-table td { padding: 12px 8px; font-size: 13px; color: #c9d1d9; border-bottom: 1px solid #21262d; text-align: center; }
+  .st-row:hover td { background: #1c2128; }
+  .st-club { text-align: left !important; display: flex; align-items: center; gap: 10px; font-weight: 700; color: #fff; }
+  .st-rank { font-weight: 800; color: #8b949e; width: 25px; }
+  .st-pts { font-weight: 800; color: #3fb950; font-size: 14px; }
+
+  /* UCL/Relegation Indicators */
+  .st-row:nth-child(-n+4) .st-rank { border-left: 3px solid #3fb950; padding-left: 8px; color: #3fb950; }
+  .st-row:nth-child(5) .st-rank { border-left: 3px solid #f6c90e; padding-left: 8px; color: #f6c90e; }
+  .st-row:nth-last-child(-n+3) .st-rank { border-left: 3px solid #f85149; padding-left: 8px; color: #f85149; }
 </style>
+{% endblock %}
 
+{% block content %}
 <div class="league-hub">
-  <div>
-      <div class="gw-nav">
-        <button id="btn-prev" class="btn-nav" onclick="changeGw(-1)">&larr; Previous</button>
-        <div id="gw-display" class="gw-title-main">Gameweek --</div>
-        <button id="btn-next" class="btn-nav" onclick="changeGw(1)">Next &rarr;</button>
+  <div class="fixtures-side">
+      <div class="gw-nav-container">
+          <div class="gw-nav">
+            <button id="btn-prev" class="btn-nav" onclick="changeGw(-1)">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+                Prev
+            </button>
+            <h2 id="gw-display" class="gw-title-main">Gameweek --</h2>
+            <button id="btn-next" class="btn-nav" onclick="changeGw(1)">
+                Next
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+            </button>
+          </div>
       </div>
 
       {% for gw in gameweeks %}
-      <div class="fx-gw-card" id="gw-card-{{ forloop.counter0 }}" data-gw="Gameweek {{ gw.number }}" data-is-active="{{ gw.is_active|yesno:'true,false' }}">
+      <div class="fx-grid" id="gw-card-{{ forloop.counter0 }}" data-gw="Gameweek {{ gw.number }}" data-is-active="{{ gw.is_active|yesno:'true,false' }}">
         {% for match in gw.matches.all %}
-        <div class="fx-match">
-            <div class="fx-team">{{ match.home_team.name }}</div>
-            {% if match.is_played %}
-            <div class="fx-score">{{ match.home_score }} - {{ match.away_score }}</div>
-            {% else %}
-            <div class="fx-vs">VS</div>
-            {% endif %}
-            <div class="fx-team away">{{ match.away_team.name }}</div>
+        <div class="fx-card">
+            <div class="fx-team-box">
+                {% if match.home_team.logo_filename %}
+                <img src="{% static 'core/images/teams/' %}{{ match.home_team.logo_filename }}" class="team-logo-md" alt="{{ match.home_team.name }}">
+                {% endif %}
+                <div class="fx-team-name">{{ match.home_team.name }}</div>
+            </div>
+
+            <div class="fx-center">
+                {% if match.is_played %}
+                <div class="fx-score-wrap">
+                    <div class="fx-score-box">{{ match.home_score }}</div>
+                    <div class="fx-score-box">{{ match.away_score }}</div>
+                </div>
+                <div class="fx-time">Full Time</div>
+                {% else %}
+                <div class="fx-vs">VS</div>
+                <div class="fx-time">{{ match.match_date|date:"H:i" }}</div>
+                {% endif %}
+                <div class="fx-venue">{{ match.home_team.stadium }}</div>
+            </div>
+
+            <div class="fx-team-box">
+                {% if match.away_team.logo_filename %}
+                <img src="{% static 'core/images/teams/' %}{{ match.away_team.logo_filename }}" class="team-logo-md" alt="{{ match.away_team.name }}">
+                {% endif %}
+                <div class="fx-team-name">{{ match.away_team.name }}</div>
+            </div>
         </div>
         {% empty %}
-        <div style="color: #8b949e; font-size: 14px; text-align: center; padding: 1rem;">No matches scheduled.</div>
+        <div style="color: #8b949e; font-size: 14px; text-align: center; padding: 3rem; background: #161b22; border-radius: 16px; border: 1px dashed #30363d;">
+            No matches scheduled for this period.
+        </div>
         {% endfor %}
       </div>
       {% endfor %}
   </div>
 
-  <div class="table-panel">
-      <div class="table-header">
-          <span>Premier League</span>
-          
+  <div class="standings-side">
+      <div class="standings-panel">
+          <div class="st-header">
+              <div class="st-title">
+                  <svg width="20" height="20" fill="#3fb950" viewBox="0 0 16 16"><path d="M2.5 7a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M2 1.333v13.334c0 .736.597 1.333 1.333 1.333h9.334c.736 0 1.333-.597 1.333-1.333V1.333C14 .597 13.403 0 12.667 0H3.333C2.597 0 2 .597 2 1.333zM13 1.333v13.334a.333.333 0 0 1-.333.333H3.333a.333.333 0 0 1-.333-.333V1.333a.333.333 0 0 1 .333-.333h9.334c.184 0 .333.149.333.333z"/><path d="M11 3.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-4 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-4 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/></svg>
+                  League Table
+              </div>
+          </div>
+          <table class="st-table">
+              <thead>
+                  <tr>
+                      <th>Pos</th>
+                      <th style="text-align: left;">Club</th>
+                      <th>P</th>
+                      <th>GD</th>
+                      <th>Pts</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for team in standings %}
+                  <tr class="st-row">
+                      <td class="st-rank">{{ forloop.counter }}</td>
+                      <td class="st-club">
+                          {% if team.logo %}
+                          <img src="{% static 'core/images/teams/' %}{{ team.logo }}" class="team-logo-sm" alt="">
+                          {% endif %}
+                          {{ team.name }}
+                      </td>
+                      <td>{{ team.played }}</td>
+                      <td style="color: {% if team.gd > 0 %}#3fb950{% elif team.gd < 0 %}#f85149{% else %}#8b949e{% endif %}; font-weight: 600;">
+                          {% if team.gd > 0 %}+{% endif %}{{ team.gd }}
+                      </td>
+                      <td class="st-pts">{{ team.pts }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          <div style="padding: 15px; font-size: 10px; color: #484f58; background: #0d1117;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom: 4px;">
+                  <span style="width:8px; height:8px; background:#3fb950; border-radius:2px;"></span> Champions League
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom: 4px;">
+                  <span style="width:8px; height:8px; background:#f6c90e; border-radius:2px;"></span> Europa League
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="width:8px; height:8px; background:#f85149; border-radius:2px;"></span> Relegation
+              </div>
+          </div>
       </div>
-      <table class="standings-table">
-          <thead>
-              <tr>
-                  <th class="t-rank">#</th>
-                  <th class="t-club">Club</th>
-                  <th title="Played">P</th>
-                  <th title="Won">W</th>
-                  <th title="Drawn">D</th>
-                  <th title="Lost">L</th>
-                  <th title="Goal Difference">GD</th>
-                  <th class="t-pts" title="Points">Pts</th>
-              </tr>
-          </thead>
-          <tbody>
-              {% for team in standings %}
-              <tr>
-                  <td class="t-rank">{{ forloop.counter }}</td>
-                  <td class="t-club">{{ team.short }}</td>
-                  <td>{{ team.played }}</td>
-                  <td>{{ team.w }}</td>
-                  <td>{{ team.d }}</td>
-                  <td>{{ team.l }}</td>
-                  <td>{% if team.gd > 0 %}+{% endif %}{{ team.gd }}</td>
-                  <td class="t-pts">{{ team.pts }}</td>
-              </tr>
-              {% endfor %}
-          </tbody>
-      </table>
   </div>
 </div>
 
 <script>
   let currentIndex = 0;
   const totalGw = {{ gameweeks|length }};
-  const cards = document.querySelectorAll('.fx-gw-card');
+  const cards = document.querySelectorAll('.fx-grid');
   const display = document.getElementById('gw-display');
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
@@ -123,9 +182,21 @@
       cards.forEach(c => c.classList.remove('active'));
       cards[index].classList.add('active');
       let titleHtml = cards[index].getAttribute('data-gw');
-      if (cards[index].getAttribute('data-is-active') === 'true') { titleHtml += ` <span class="active-badge">Active</span>`; }
+      if (cards[index].getAttribute('data-is-active') === 'true') { 
+          titleHtml += ` <span class="active-badge">Active</span>`; 
+      }
       display.innerHTML = titleHtml;
-      btnPrev.disabled = (index === 0); btnNext.disabled = (index === totalGw - 1);
+      btnPrev.disabled = (index === 0); 
+      btnNext.disabled = (index === totalGw - 1);
+      
+      // Animation entry
+      cards[index].style.opacity = 0;
+      cards[index].style.transform = 'translateY(10px)';
+      setTimeout(() => {
+          cards[index].style.transition = '0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+          cards[index].style.opacity = 1;
+          cards[index].style.transform = 'translateY(0)';
+      }, 50);
   }
 
   function changeGw(direction) {

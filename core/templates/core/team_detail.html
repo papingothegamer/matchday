@@ -1,130 +1,158 @@
 {% extends 'core/base.html' %}
 {% load static %}
-{% block title %}{{ team.name }} — MatchDay{% endblock %}
+{% block title %}{{ team.name }} — MatchDay Simulation{% endblock %}
 
 {% block extra_style %}
-.team-header { display: flex; align-items: center; gap: 1.5rem; background: linear-gradient(90deg, #161b22, {{ team.primary_color }}40); border: 1px solid #30363d; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
-.t-logo { width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
-.t-logo-fb { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: #fff; border: 2px solid rgba(255,255,255,0.2); }
-.t-info h1 { font-size: 28px; color: #fff; margin: 0 0 8px 0; }
-.t-info p { color: #8b949e; margin: 0; font-size: 14px; }
+<style>
+  .team-detail-header { display: flex; align-items: center; gap: 2.5rem; background: linear-gradient(135deg, #161b22 0%, {{ team.primary_color }}33 100%); border: 1px solid #30363d; border-radius: 20px; padding: 3rem; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+  .team-detail-header::after { content: ''; position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: {{ team.primary_color }}; filter: blur(120px); opacity: 0.15; z-index: 0; pointer-events: none; }
+  
+  .t-detail-logo { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 12px 16px rgba(0,0,0,0.4)); z-index: 1; position: relative; }
+  .t-detail-info { z-index: 1; position: relative; }
+  .t-detail-info h1 { font-size: 36px; font-weight: 800; color: #fff; margin: 0 0 10px 0; letter-spacing: -1px; }
+  .t-detail-info p { color: #8b949e; margin: 0; font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 15px; }
+  
+  .view-tabs { display: flex; gap: 8px; margin-bottom: 2rem; background: #161b22; padding: 6px; border-radius: 12px; border: 1px solid #30363d; width: fit-content; }
+  .tab-btn { padding: 10px 24px; color: #8b949e; font-size: 14px; font-weight: 700; cursor: pointer; border-radius: 8px; transition: 0.3s; border: none; background: transparent; }
+  .tab-btn.active { background: #238636; color: #fff; box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3); }
+  .tab-btn:hover:not(.active) { background: #21262d; color: #fff; }
 
-.view-tabs { display: flex; gap: 10px; margin-bottom: 1.5rem; }
-.tab-btn { background: #161b22; border: 1px solid #30363d; color: #8b949e; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-.tab-btn.active { background: #238636; border-color: #238636; color: #fff; }
+  /* Pitch & Squad UI */
+  .pitch-container-p { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2); margin-bottom: 2rem; }
+  .team-pitch-p { background: #1a4a1a; border-radius: 16px; padding: 2rem; position: relative; min-height: 600px; border: 2px solid #2ea043; box-shadow: inset 0 0 80px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .pitch-row-p { display: flex; justify-content: center; gap: 2rem; width: 100%; flex: 1; align-items: center; position: relative; z-index: 10; }
 
-.pitch { background: #1a4a1a; border-radius: 8px; padding: 2rem 1rem; position: relative; min-height: 500px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 20px; }
-.pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); }
-.pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; }
-.penalty-box-top { position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; }
-.penalty-box-bottom { position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
-.pitch-row { display: flex; justify-content: center; gap: 20px; position: relative; z-index: 10; width: 100%; }
-.player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; }
-.shirt { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
-.slot-name { font-size: 11px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 85px; background: rgba(13, 17, 23, 0.8); padding: 3px 6px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: 500;}
-.slot-price { font-size: 11px; color: #3fb950; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+  .player-slot-p { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100px; }
+  .shirt-p { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.5); border: 3px solid #fff; transition: 0.3s; cursor: pointer; }
+  .player-slot-p:hover .shirt-p { transform: scale(1.1) translateY(-10px); }
+  .slot-name-p { font-size: 11px; color: #fff; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(0, 0, 0, 0.7); padding: 4px 8px; border-radius: 20px; font-weight: 800; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .slot-price-p { font-size: 12px; color: #3fb950; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-.bench-section { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
-.bench-title { font-size: 16px; color: #fff; border-bottom: 1px solid #30363d; padding-bottom: 8px; margin-bottom: 12px; }
-.bench-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-.bench-item { display: flex; align-items: center; gap: 10px; background: #0d1117; padding: 8px 12px; border-radius: 6px; border: 1px solid #21262d; }
-.bench-pos { font-size: 10px; color: #8b949e; font-weight: bold; background: #21262d; padding: 2px 6px; border-radius: 4px; }
+  .bench-panel { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem; }
+  .bench-panel-title { font-size: 14px; font-weight: 800; color: #8b949e; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #21262d; padding-bottom: 12px; margin-bottom: 1.5rem; }
+  
+  .squad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .player-pill { display: flex; align-items: center; gap: 12px; background: #0d1117; padding: 12px 16px; border-radius: 10px; border: 1px solid #21262d; transition: 0.2s; }
+  .player-pill:hover { border-color: #8b949e; background: #161b22; }
+  .pill-pos { font-size: 10px; color: #fff; font-weight: 800; background: #30363d; padding: 3px 8px; border-radius: 5px; min-width: 30px; text-align: center; }
 
-.table-view { display: none; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; }
-.players-table { width: 100%; border-collapse: collapse; text-align: left; }
-.players-table th { color: #8b949e; font-size: 12px; padding: 10px; border-bottom: 1px solid #30363d; text-transform: uppercase; }
-.players-table td { padding: 12px 10px; border-bottom: 1px solid #21262d; color: #e6e6e6; font-size: 14px; }
+  .list-panel { display: none; background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .squad-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .squad-table th { color: #8b949e; font-size: 11px; padding: 15px; border-bottom: 1px solid #30363d; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+  .squad-table td { padding: 15px; border-bottom: 1px solid #21262d; color: #f0f6fc; font-size: 15px; }
+  .squad-table tr:hover td { background: #1c2128; }
+</style>
 {% endblock %}
 
 {% block content %}
-<a href="{% url 'players' %}" style="color: #8b949e; text-decoration: none; font-size: 13px; display: inline-block; margin-bottom: 1rem;">&larr; Back to Clubs</a>
+<a href="{% url 'players' %}" style="color: #8b949e; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 1.5rem;">
+    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+    Return to Clubs Hub
+</a>
 
-<div class="team-header">
+<div class="team-detail-header">
   {% if team.logo_filename %}
-    <img src="/static/core/images/teams/{{ team.logo_filename }}" class="t-logo" alt="{{ team.name }}">
+    <img src="{% static 'core/images/teams/' %}{{ team.logo_filename }}" class="t-detail-logo" alt="{{ team.name }}">
   {% else %}
     <div class="t-logo-fb" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }}; border-color: {{ team.secondary_color }};">{{ team.short_name }}</div>
   {% endif %}
-  <div class="t-info">
+  <div class="t-detail-info">
     <h1>{{ team.name }}</h1>
-    <p>Stadium: {{ team.stadium }} &middot; Founded: {{ team.founded_year }}</p>
+    <p>
+        <span><svg width="14" height="14" fill="#3fb950" viewBox="0 0 16 16" style="vertical-align:middle; margin-right:4px;"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> {{ team.stadium }}</span>
+        <span><svg width="14" height="14" fill="#f6c90e" viewBox="0 0 16 16" style="vertical-align:middle; margin-right:4px;"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 1A5 5 0 1 1 8 3a5 5 0 0 1 0 10z"/></svg> Est. {{ team.founded_year }}</span>
+    </p>
   </div>
 </div>
 
 <div class="view-tabs">
-  <button class="tab-btn active" id="btn-pitch" onclick="toggleView('pitch')">Starting XI</button>
-  <button class="tab-btn" id="btn-list" onclick="toggleView('list')">Squad List (A-Z)</button>
+  <button class="tab-btn active" id="btn-pitch" onclick="toggleView('pitch')">Tactical Lineup</button>
+  <button class="tab-btn" id="btn-list" onclick="toggleView('list')">Simulation Squad List</button>
 </div>
 
 <div id="view-pitch">
-  <div class="pitch">
-    <div class="penalty-box-top"></div>
-    <div class="pitch-lines"></div>
-    <div class="penalty-box-bottom"></div>
-    
-    <div class="pitch-row">
-      {% for p in starters %}{% if p.position == 'FWD' %}
-      <div class="player-slot"><div class="shirt" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
-      {% endif %}{% endfor %}
-    </div>
-    <div class="pitch-row">
-      {% for p in starters %}{% if p.position == 'MID' %}
-      <div class="player-slot"><div class="shirt" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
-      {% endif %}{% endfor %}
-    </div>
-    <div class="pitch-row">
-      {% for p in starters %}{% if p.position == 'DEF' %}
-      <div class="player-slot"><div class="shirt" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
-      {% endif %}{% endfor %}
-    </div>
-    <div class="pitch-row">
-      {% for p in starters %}{% if p.position == 'GK' %}
-      <div class="player-slot"><div class="shirt" style="background: #e3a92b; color: #000;">{{ team.short_name }}</div><div class="slot-name">{{ p.last_name }}</div><div class="slot-price">£{{ p.price|floatformat:1 }}m</div></div>
-      {% endif %}{% endfor %}
-    </div>
+  <div class="pitch-container-p">
+      <div class="team-pitch-p">
+        <div class="penalty-box-top"></div>
+        <div class="pitch-lines"></div>
+        <div class="penalty-box-bottom"></div>
+        
+        <div class="pitch-row-p">
+          {% for p in starters %}{% if p.position == 'FWD' %}
+          <div class="player-slot-p"><div class="shirt-p" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }}; border-color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name-p">{{ p.last_name }}</div><div class="slot-price-p">£{{ p.price|floatformat:1 }}m</div></div>
+          {% endif %}{% endfor %}
+        </div>
+        <div class="pitch-row-p">
+          {% for p in starters %}{% if p.position == 'MID' %}
+          <div class="player-slot-p"><div class="shirt-p" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }}; border-color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name-p">{{ p.last_name }}</div><div class="slot-price-p">£{{ p.price|floatformat:1 }}m</div></div>
+          {% endif %}{% endfor %}
+        </div>
+        <div class="pitch-row-p">
+          {% for p in starters %}{% if p.position == 'DEF' %}
+          <div class="player-slot-p"><div class="shirt-p" style="background: {{ team.primary_color }}; color: {{ team.secondary_color }}; border-color: {{ team.secondary_color }};">{{ team.short_name }}</div><div class="slot-name-p">{{ p.last_name }}</div><div class="slot-price-p">£{{ p.price|floatformat:1 }}m</div></div>
+          {% endif %}{% endfor %}
+        </div>
+        <div class="pitch-row-p">
+          {% for p in starters %}{% if p.position == 'GK' %}
+          <div class="player-slot-p"><div class="shirt-p" style="background: #e3a92b; color: #000; border-color: #fff;">{{ team.short_name }}</div><div class="slot-name-p">{{ p.last_name }}</div><div class="slot-price-p">£{{ p.price|floatformat:1 }}m</div></div>
+          {% endif %}{% endfor %}
+        </div>
+      </div>
   </div>
 
-  <div class="bench-section">
-    <div class="bench-title">Substitutes</div>
-    <div class="bench-grid">
-      {% for p in subs %}
-      <div class="bench-item">
-        <span class="bench-pos">{{ p.position }}</span>
-        <span style="color:#e6e6e6;font-size:13px;flex:1;">{{ p.first_name }} <strong>{{ p.last_name }}</strong></span>
-        <span style="color:#3fb950;font-size:12px;font-weight:600;">£{{ p.price|floatformat:1 }}m</span>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+      <div class="bench-panel">
+        <div class="bench-panel-title">Active Substitutes</div>
+        <div class="squad-grid">
+          {% for p in subs %}
+          <div class="player-pill">
+            <span class="pill-pos">{{ p.position }}</span>
+            <span style="color:#f0f6fc;font-size:14px;flex:1;font-weight:700;">{{ p.first_name }} {{ p.last_name }}</span>
+            <span style="color:#3fb950;font-size:13px;font-weight:800;">£{{ p.price|floatformat:1 }}m</span>
+          </div>
+          {% endfor %}
+        </div>
       </div>
-      {% endfor %}
-    </div>
-  </div>
-  
-  <div class="bench-section">
-    <div class="bench-title">Reserves</div>
-    <div class="bench-grid">
-      {% for p in reserves %}
-      <div class="bench-item">
-        <span class="bench-pos">{{ p.position }}</span>
-        <span style="color:#e6e6e6;font-size:13px;flex:1;">{{ p.first_name }} <strong>{{ p.last_name }}</strong></span>
+      
+      <div class="bench-panel">
+        <div class="bench-panel-title">Reserves & Youth</div>
+        <div class="squad-grid">
+          {% for p in reserves %}
+          <div class="player-pill" style="opacity: 0.6;">
+            <span class="pill-pos">{{ p.position }}</span>
+            <span style="color:#f0f6fc;font-size:14px;flex:1;">{{ p.first_name }} {{ p.last_name }}</span>
+          </div>
+          {% endfor %}
+        </div>
       </div>
-      {% endfor %}
-    </div>
   </div>
 </div>
 
-<div id="view-list" class="table-view">
-  <table class="players-table">
+<div id="view-list" class="list-panel">
+  <table class="squad-table">
     <thead>
       <tr>
-        <th>Player Name</th>
+        <th>Player</th>
         <th>Position</th>
         <th>Price</th>
+        <th style="text-align: right;">Status</th>
       </tr>
     </thead>
     <tbody>
       {% for p in all_players %}
       <tr>
-        <td>{{ p.first_name }} <strong style="color: #fff;">{{ p.last_name }}</strong></td>
-        <td><span style="font-size:11px;color:#8b949e;background:#21262d;padding:3px 6px;border-radius:6px;border:1px solid #30363d;">{{ p.position }}</span></td>
-        <td style="color:#38a169;font-weight:600;">£{{ p.price|floatformat:1 }}m</td>
+        <td><strong style="color: #fff;">{{ p.first_name }} {{ p.last_name }}</strong></td>
+        <td><span style="font-size:11px;color:#8b949e;background:#21262d;padding:4px 8px;border-radius:6px;border:1px solid #30363d;font-weight:800;">{{ p.position }}</span></td>
+        <td style="color:#3fb950;font-weight:800;">£{{ p.price|floatformat:1 }}m</td>
+        <td style="text-align: right;">
+            {% if p in starters %}
+                <span style="color:#3fb950;font-size:11px;font-weight:800;background:rgba(63,185,80,0.1);padding:4px 8px;border-radius:6px;border:1px solid rgba(63,185,80,0.2);">STARTER</span>
+            {% elif p in subs %}
+                <span style="color:#f6c90e;font-size:11px;font-weight:800;background:rgba(246,201,14,0.1);padding:4px 8px;border-radius:6px;border:1px solid rgba(246,201,14,0.2);">SUB</span>
+            {% else %}
+                <span style="color:#8b949e;font-size:11px;font-weight:800;background:rgba(139,148,158,0.1);padding:4px 8px;border-radius:6px;border:1px solid rgba(139,148,158,0.2);">RESERVE</span>
+            {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
