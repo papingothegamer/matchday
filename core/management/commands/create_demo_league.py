@@ -19,11 +19,11 @@ class Command(BaseCommand):
         if created:
             self.stdout.write(self.style.SUCCESS(f'Created League: {league.name} (Code: {league.code})'))
 
-        # 2. Identify Human User (optional)
-        human = User.objects.filter(is_superuser=False).exclude(username__startswith='bot_').first()
-        if human:
-            LeagueMember.objects.get_or_create(user=human, league=league)
-            self.stdout.write(f'Added human user {human.username} to the league.')
+        # 2. Identify Human Users
+        humans = list(User.objects.filter(is_superuser=False).exclude(username__startswith='bot_'))
+        for h in humans:
+            LeagueMember.objects.get_or_create(user=h, league=league)
+            self.stdout.write(f'Added human user {h.username} to the league.')
 
         # 3. Create 15 Bots
         bots = []
@@ -39,7 +39,10 @@ class Command(BaseCommand):
 
         self.stdout.write(f'Synced 15 bots to the league.')
 
-        # 4. Generate Teams and Picks for Bots
+        # 4. Include Human Users in squad generation
+        all_participants = bots + humans
+
+        # 5. Generate Teams and Picks
         all_gws = Gameweek.objects.filter(number__lte=36).order_by('number')
         players_by_pos = {
             'GK': list(Player.objects.filter(position='GK')),
@@ -48,44 +51,47 @@ class Command(BaseCommand):
             'FWD': list(Player.objects.filter(position='FWD')),
         }
 
-        for bot in bots:
-            self.stdout.write(f'Generating squad for {bot.username}...')
+        for user in all_participants:
+            is_bot = user.username.startswith('bot_')
             
-            # Simple Realistic Picker (One squad for the whole season for demo simplicity)
+            # If it's a human user, we ONLY create the team container if it doesn't exist
+            # We NEVER touch their picks or bank.
+            if not is_bot:
+                self.stdout.write(f'Checking human user {user.username}...')
+                for gw in all_gws:
+                    FantasyTeam.objects.get_or_create(
+                        user=user,
+                        gameweek=gw,
+                        defaults={'name': f"{user.username.capitalize()}'s XI"}
+                    )
+                continue # Skip the rest of the generation for humans
+
+            self.stdout.write(f'Generating squad for {user.username}...')
+            
+            # Elite Selection for Bots (top 40 players)
             squad = []
-            squad += random.sample(players_by_pos['GK'], 2)
-            squad += random.sample(players_by_pos['DEF'], 5)
-            squad += random.sample(players_by_pos['MID'], 5)
-            squad += random.sample(players_by_pos['FWD'], 3)
+            for pos, count in [('GK', 2), ('DEF', 5), ('MID', 5), ('FWD', 3)]:
+                available = sorted(players_by_pos[pos], key=lambda x: x.price, reverse=True)
+                squad.extend(random.sample(available[:40], count))
             
             for gw in all_gws:
                 fteam, ft_created = FantasyTeam.objects.get_or_create(
-                    user=bot,
+                    user=user,
                     gameweek=gw,
-                    defaults={'name': f"{bot.username.capitalize()}'s XI"}
+                    defaults={'name': f"{user.username.capitalize()}'s XI"}
                 )
                 
-                if ft_created:
-                    # Create Picks
-                    picks = []
-                    # Designate 1 GK as starter, 1 as sub
-                    # Designate 3 DEF as starters, 2 as subs (simplified)
-                    # Designate 4 MID as starters, 1 as sub
-                    # Designate 3 FWD as starters
-                    
+                if fteam.picks.count() == 0:
                     pos_counts = {'GK': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
-                    starters_count = {'GK': 1, 'DEF': 3, 'MID': 4, 'FWD': 3}
-                    
-                    random.shuffle(squad) # Randomize who is captain
+                    starters_count = {'GK': 1, 'DEF': 4, 'MID': 4, 'FWD': 2}
                     has_cap = False
                     has_vc = False
                     
-                    for i, player in enumerate(squad):
+                    for player in squad:
                         is_sub = False
-                        pos = player.position
-                        if pos_counts[pos] >= starters_count[pos]:
+                        if pos_counts[player.position] >= starters_count[player.position]:
                             is_sub = True
-                        pos_counts[pos] += 1
+                        pos_counts[player.position] += 1
                         
                         is_cap = False
                         is_vc = False
@@ -96,16 +102,14 @@ class Command(BaseCommand):
                             is_vc = True
                             has_vc = True
                             
-                        picks.append(FantasyPick(
+                        FantasyPick.objects.create(
                             fantasy_team=fteam,
                             player=player,
                             is_captain=is_cap,
                             is_vice_captain=is_vc,
                             is_sub=is_sub,
                             purchase_price=player.price
-                        ))
-                    
-                    FantasyPick.objects.bulk_create(picks)
+                        )
                     
                     # Calculate Points for this GW (if it's in the past)
                     if gw.number < 36:

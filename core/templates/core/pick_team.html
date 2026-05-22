@@ -192,7 +192,7 @@ function buildSlots(f, loadedPicks = savedPicks) {
   const rows = FORMATIONS[f];
   slots = [];
   rows.forEach(row => row.forEach(pos => slots.push({ pos, player: null, captain: false, vice_captain: false, is_sub: false, pur_price: 0 })));
-  ['GK', 'DEF', 'DEF', 'MID', 'FWD'].forEach(pos => slots.push({ pos, player: null, captain: false, vice_captain: false, is_sub: true, pur_price: 0 }));
+  ['GK', 'DEF', 'MID', 'FWD'].forEach(pos => slots.push({ pos, player: null, captain: false, vice_captain: false, is_sub: true, pur_price: 0 }));
 
   loadedPicks.forEach(sp => {
     const p = ALL_PLAYERS.find(pl => pl.id === sp.id);
@@ -275,7 +275,7 @@ function renderPitch() {
   const pc = document.getElementById('pitch-rows'); const bc = document.getElementById('bench-rows');
   pc.innerHTML = ''; bc.innerHTML = ''; let idx = 0;
   FORMATIONS[formation].forEach(row => { const div = document.createElement('div'); div.className = 'pitch-row'; row.forEach(() => { div.appendChild(createSlotEl(idx)); idx++; }); pc.appendChild(div); });
-  ['GK', 'DEF', 'DEF', 'MID', 'FWD'].forEach(() => { bc.appendChild(createSlotEl(idx)); idx++; });
+  ['GK', 'DEF', 'MID', 'FWD'].forEach(() => { bc.appendChild(createSlotEl(idx)); idx++; });
 }
 
 function renderTransferList() {
@@ -307,6 +307,7 @@ function sellPlayer(idx) {
     slots[idx].player = null; slots[idx].captain = false; slots[idx].vice_captain = false; activeSlot = idx;
     filterPos(slots[idx].pos, document.querySelector(`.pos-btn[onclick*="'${slots[idx].pos}'"]`));
     renderTransferList();
+    updateCaptainDropdown();
 }
 
 function filterPos(pos, btn) { filterPosition = pos; document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active')); if(btn) btn.classList.add('active'); renderList(); }
@@ -334,7 +335,9 @@ function selectPlayer(p) {
   let teamCount = 0; slots.forEach(s => { if (s.player && s.player.team === p.team && s.is_sub === slot.is_sub) teamCount++; });
   if (slot.is_sub && teamCount >= 2) { alert(`Max 2 substitutes from ${p.team}.`); return; }
   if (!slot.is_sub && teamCount >= 3) { alert(`Max 3 starters from ${p.team}.`); return; }
-  slot.player = p; slot.pur_price = p.price; activeSlot = null; isFirstDraft ? (renderPitch(), updateLedger()) : renderTransferList();
+  slot.player = p; slot.pur_price = p.price; activeSlot = null; 
+  if (isFirstDraft) { renderPitch(); updateLedger(); } else { renderTransferList(); }
+  updateCaptainDropdown();
 }
 
 function updateCaptainDropdown() {
@@ -366,7 +369,7 @@ function updateLedger() {
         let currentBank = 100.0; slots.forEach(s => { if (s.player) currentBank -= s.player.price; });
         const tBank = document.getElementById('top-bank');
         if(tBank) { tBank.textContent = '£' + currentBank.toFixed(1) + 'm'; tBank.style.color = currentBank < 0 ? '#f85149' : '#3fb950'; document.getElementById('top-ft').textContent = 'Unlimited'; document.getElementById('top-cost').textContent = '0 pts'; }
-        const confirmBtn = document.getElementById('top-confirm'); if (confirmBtn) confirmBtn.disabled = (filled < 16 || currentBank < 0 || !hasCaptain);
+        const confirmBtn = document.getElementById('top-confirm'); if (confirmBtn) confirmBtn.disabled = (filled < 15 || currentBank < 0 || !hasCaptain);
         return;
     }
     let currentBank = initialBank;
@@ -385,7 +388,7 @@ function updateLedger() {
         document.getElementById('top-ft').textContent = remainingFT; const cEl = document.getElementById('top-cost');
         cEl.textContent = pointsHit > 0 ? '-' + pointsHit + ' pts' : '0 pts'; cEl.style.color = pointsHit > 0 ? '#f85149' : '#fff';
     }
-    const confirmBtn = document.getElementById('top-confirm'); if (confirmBtn) confirmBtn.disabled = (filled < 16 || currentBank < 0);
+    const confirmBtn = document.getElementById('top-confirm'); if (confirmBtn) confirmBtn.disabled = (filled < 15 || currentBank < 0);
 }
 
 function submitTeam() {

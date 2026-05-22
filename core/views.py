@@ -410,3 +410,20 @@ def team_detail(request, short_name):
         'all_players': ordered_squad
     }
     return render(request, 'core/team_detail.html', context)
+
+from django.core.management import call_command
+from django.http import JsonResponse
+from io import StringIO
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def simulation_center(request):
+    if request.method == 'POST':
+        try:
+            out = StringIO()
+            call_command('process_gameweek', stdout=out)
+            return JsonResponse({'status': 'success', 'log': out.getvalue()})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'log': str(e)})
+    return render(request, 'core/simulation_center.html')
