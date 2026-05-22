@@ -1,220 +1,573 @@
 {% extends 'core/base.html' %}
-{% load static %}
-{% block title %}Dashboard — MatchDay{% endblock %}
+{% block title %}MatchDay — Dashboard{% endblock %}
 
 {% block extra_style %}
 <style>
-  .hero { background: radial-gradient(circle at top, rgba(35, 134, 54, 0.15) 0%, transparent 70%); padding: 4rem 0; text-align: center; border-bottom: 1px solid #30363d; margin-bottom: 2rem; border-radius: 0 0 40px 40px; }
-  
-  /* Responsive 2-Column Dashboard Layout */
-  .dashboard-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; max-width: 1200px; margin: 0 auto; align-items: start; }
-  @media (max-width: 1000px) { .dashboard-wrap { display: flex; flex-direction: column; } }
-  
-  /* Pitch Container UI */
-  .pitch-panel { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-  .bench-area { margin-top: 2rem; background: rgba(13, 17, 23, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px solid #30363d; }
-  .bench-title { font-size: 11px; font-weight: 800; color: #8b949e; text-align: center; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
-  
-  /* Sidebar Elements */
-  .stats-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
-  .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 1.5rem; text-align: center; transition: 0.3s; }
-  .stat-card:hover { border-color: #3fb950; transform: translateY(-3px); }
-  .stat-value { font-size: 2.5rem; font-weight: 800; color: #fff; margin-top: 8px; line-height: 1; }
-  .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+    /* ===== SCAFFOLD DASHBOARD CSS ===== */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-  .section-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 10px; }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: #30363d; }
+    .scaffold-wrap {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
 
-  .match-list { background: #161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-  .match-row { display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid #21262d; align-items: center; transition: 0.2s; }
-  .match-row:hover { background: #1c2128; }
-  .match-row:last-child { border-bottom: none; }
-  
-  .match-team-pair { display: flex; align-items: center; gap: 12px; }
-  .match-teams-text { font-weight: 700; color: #f0f6fc; font-size: 14px; }
-  .match-score { background: #0d1117; padding: 6px 12px; border-radius: 6px; font-family: monospace; font-size: 16px; color: #3fb950; font-weight: 800; border: 1px solid #30363d; min-width: 50px; text-align: center; }
-  
-  /* Ticker Styling */
-  .ticker-wrap { width: 100%; background: #161b22; border: 1px solid #30363d; height: 44px; display: flex; align-items: center; position: relative; overflow: hidden; margin-bottom: 2rem; cursor: pointer; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-width: 1200px; margin-left: auto; margin-right: auto;}
-  .ticker-label { background: #238636; color: #fff; font-size: 11px; font-weight: 800; padding: 0 20px; height: 100%; display: flex; align-items: center; position: absolute; left: 0; z-index: 2; text-transform: uppercase; letter-spacing: 1px; box-shadow: 4px 0 10px rgba(0,0,0,0.3);}
-  .ticker-track { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; padding-left: 140px; }
-  .ticker-item { font-size: 13px; color: #c9d1d9; margin-right: 40px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .ticker-item span { color: #3fb950; font-weight: 800; }
-  @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-150%); } }
-  
-  .deadline-banner { background: #238636; color: #fff; padding: 1.2rem 2.5rem; border-radius: 16px; margin: 0 auto 1.5rem auto; display: flex; justify-content: space-between; align-items: center; max-width: 1200px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 24px rgba(35, 134, 54, 0.2); }
+    /* ── Hero Header ── */
+    .dash-hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    .dash-hero h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0 0 0.5rem;
+        background: linear-gradient(135deg, #58a6ff, #3fb950);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .dash-hero .role-badge {
+        display: inline-block;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    .role-badge.admin  { background: rgba(246,201,14,0.15); color: #f6c90e; border: 1px solid rgba(246,201,14,0.3); }
+    .role-badge.player { background: rgba(63,185,80,0.15);  color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+
+    /* ── Glass Card ── */
+    .glass-card {
+        background: rgba(22, 27, 34, 0.8);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(48, 54, 61, 0.8);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .glass-card h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .glass-card h2 .icon { font-size: 1.4rem; }
+
+    /* ── Status Badges ── */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+    .status-pending {
+        background: rgba(246, 201, 14, 0.12);
+        color: #f6c90e;
+        border: 2px solid rgba(246, 201, 14, 0.35);
+        box-shadow: 0 0 20px rgba(246, 201, 14, 0.08);
+    }
+    .status-approved {
+        background: rgba(63, 185, 80, 0.12);
+        color: #3fb950;
+        border: 2px solid rgba(63, 185, 80, 0.35);
+        box-shadow: 0 0 20px rgba(63, 185, 80, 0.08);
+        animation: approvedPulse 2s ease-in-out infinite;
+    }
+    @keyframes approvedPulse {
+        0%, 100% { box-shadow: 0 0 20px rgba(63, 185, 80, 0.08); }
+        50%      { box-shadow: 0 0 30px rgba(63, 185, 80, 0.2);  }
+    }
+
+    .status-none {
+        background: rgba(139, 148, 158, 0.1);
+        color: #8b949e;
+        border: 2px solid rgba(139, 148, 158, 0.25);
+    }
+
+    /* ── Application Card (User View) ── */
+    .app-status-wrap {
+        text-align: center;
+        padding: 2rem 0;
+    }
+    .app-status-wrap .label {
+        font-size: 0.85rem;
+        color: #8b949e;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    .app-players-row {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .app-player-chip {
+        background: rgba(48, 54, 61, 0.6);
+        border: 1px solid #30363d;
+        border-radius: 10px;
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    .app-player-chip .team-tag {
+        font-size: 0.7rem;
+        color: #8b949e;
+        background: rgba(255,255,255,0.05);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    /* ── Form Styling ── */
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #8b949e;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(13, 17, 23, 0.8);
+        border: 1px solid #30363d;
+        border-radius: 10px;
+        color: #c9d1d9;
+        font-size: 0.95rem;
+        font-family: 'Inter', sans-serif;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+    .form-select:focus {
+        outline: none;
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+    }
+    .form-select option { background: #0d1117; }
+    .form-select optgroup { color: #58a6ff; font-weight: 700; }
+
+    /* ── Buttons ── */
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 36px;
+        background: linear-gradient(135deg, #238636, #2ea043);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        margin-top: 0.5rem;
+    }
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #2ea043, #3fb950);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(46, 160, 67, 0.3);
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-approve {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 24px;
+        background: linear-gradient(135deg, #238636, #2ea043);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+    .btn-approve:hover {
+        background: linear-gradient(135deg, #2ea043, #3fb950);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(46, 160, 67, 0.3);
+    }
+    .btn-approve:active { transform: translateY(0); }
+
+    /* ── Admin Table ── */
+    .app-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    .app-table thead th {
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #8b949e;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0 12px 8px;
+    }
+    .app-table tbody tr {
+        background: rgba(48, 54, 61, 0.25);
+        border-radius: 10px;
+        transition: background 0.15s;
+    }
+    .app-table tbody tr:hover {
+        background: rgba(48, 54, 61, 0.5);
+    }
+    .app-table td {
+        padding: 14px 12px;
+        font-size: 0.9rem;
+        vertical-align: middle;
+    }
+    .app-table td:first-child { border-radius: 10px 0 0 10px; }
+    .app-table td:last-child  { border-radius: 0 10px 10px 0; }
+
+    .user-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+    }
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #238636, #58a6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .player-cell {
+        font-weight: 500;
+    }
+    .player-cell .team-sm {
+        font-size: 0.7rem;
+        color: #8b949e;
+        margin-left: 4px;
+    }
+
+    .approved-row {
+        opacity: 0.5;
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #484f58;
+    }
+    .empty-state .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .empty-state p {
+        font-size: 1rem;
+        color: #8b949e;
+    }
+
+    /* ── Section Divider ── */
+    .section-divider {
+        border: none;
+        border-top: 1px solid rgba(48, 54, 61, 0.5);
+        margin: 2rem 0;
+    }
+
+    /* ── Validation Error ── */
+    .form-error {
+        color: #f85149;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        display: none;
+    }
+
+    /* ── Submitted info ── */
+    .submitted-info {
+        font-size: 0.8rem;
+        color: #484f58;
+        margin-top: 0.75rem;
+    }
+
+    /* ── Resubmit link ── */
+    .resubmit-link {
+        display: inline-block;
+        margin-top: 1.5rem;
+        color: #58a6ff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .resubmit-link:hover { color: #79c0ff; }
 </style>
 {% endblock %}
 
 {% block content %}
-{% if not request.user.is_authenticated %}
-  <div class="hero">
-    <h1 style="font-size: 4rem; font-weight: 800; color: #fff; margin-bottom: 1.5rem; letter-spacing: -1px;">Win the League.</h1>
-    <p style="font-size: 1.4rem; color: #8b949e; max-width: 700px; margin: 0 auto 2.5rem auto; line-height: 1.6;">The most advanced fantasy simulator is here. Build your squad, track live results, and rise to the top.</p>
-    <a href="/auth/register/" class="btn-primary" style="font-size: 1.3rem; padding: 16px 40px; border-radius: 12px; box-shadow: 0 8px 20px rgba(35, 134, 54, 0.4);">Join the Simulation</a>
-  </div>
-{% else %}
-  
-  {% if active_gameweek %}
-  <div class="deadline-banner" style="{% if is_deadline_passed %}background: #cf222e; box-shadow: 0 8px 24px rgba(207, 34, 46, 0.2);{% endif %}">
-    <div>
-        <div style="font-size:12px; text-transform:uppercase; font-weight:800; opacity:0.8; letter-spacing:1px; margin-bottom:4px;">Current Period</div>
-        <h2 style="font-size:24px;font-weight:800;color:#fff;margin:0;">GW{{ active_gameweek.number }} {% if is_deadline_passed %}Closed{% else %}Deadline{% endif %}</h2>
+<div class="scaffold-wrap">
+
+    <!-- ===== HERO ===== -->
+    <div class="dash-hero">
+        <h1>{% if is_admin %}Manager Dashboard{% else %}My Dashboard{% endif %}</h1>
+        {% if is_admin %}
+            <span class="role-badge admin">⚡ Admin / Manager</span>
+        {% else %}
+            <span class="role-badge player">👤 {{ request.user.username }}</span>
+        {% endif %}
     </div>
-    <div style="text-align:right;">
-        <div style="font-size:12px; text-transform:uppercase; font-weight:800; opacity:0.8; letter-spacing:1px; margin-bottom:4px;">Remaining Time</div>
-        <div style="font-size: 1.3rem; font-weight: 800; font-family: monospace;">{{ active_gameweek.deadline|date:"D d M, H:i" }}</div>
+
+    {% if is_admin %}
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ===== ADMIN VIEW: Pending Applications Table ===== -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+
+    <div class="glass-card">
+        <h2><span class="icon">📋</span> Pending Squad Applications</h2>
+
+        {% if pending %}
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Player 1</th>
+                    <th>Player 2</th>
+                    <th>Player 3</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in pending %}
+                <tr>
+                    <td>
+                        <span class="user-chip">
+                            <span class="user-avatar">{{ app.user.username|make_list|first|upper }}</span>
+                            {{ app.user.username }}
+                        </span>
+                    </td>
+                    <td class="player-cell">{{ app.player1.display_name }} <span class="team-sm">{{ app.player1.team.short_name }}</span></td>
+                    <td class="player-cell">{{ app.player2.display_name }} <span class="team-sm">{{ app.player2.team.short_name }}</span></td>
+                    <td class="player-cell">{{ app.player3.display_name }} <span class="team-sm">{{ app.player3.team.short_name }}</span></td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ app.submitted_at|date:"M d, H:i" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'approve_application' app.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-approve">✓ APPROVE</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No pending applications — all caught up!</p>
+        </div>
+        {% endif %}
     </div>
-  </div>
-  
-  <div class="ticker-wrap" onclick="window.location.href='/leaderboard/?tab=totw'">
-    <div class="ticker-label">DREAM TEAM</div>
-    <div class="ticker-track" id="totw-ticker"><div class="ticker-item">Loading latest performances...</div></div>
-  </div>
-  {% endif %}
 
-  <div class="dashboard-wrap">
-      <div class="main-column">
-          {% if picks %}
-          <div class="pitch-panel">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                  <h3 style="color:#fff; font-size:18px; font-weight:800; margin:0;">Active Lineup</h3>
-                  <a href="/pick/" style="color:#3fb950; font-size:13px; font-weight:700; text-decoration:none;">Manage Squad &rarr;</a>
-              </div>
-              <div class="pitch">
-                <div class="penalty-box-top"></div><div class="goal-area-top"></div><div class="pitch-lines"></div><div class="penalty-box-bottom"></div><div class="goal-area-bottom"></div>
-                <div class="pitch-row">
-                  {% for pick in picks %}{% if pick.player.position == 'GK' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
-                      {{ pick.player.team.short_name }}
-                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                    </div>
-                    <div class="slot-name">{{ pick.player.display_name }}</div>
-                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-                  </div>
-                  {% endif %}{% endfor %}
-                </div>
-                <div class="pitch-row">
-                  {% for pick in picks %}{% if pick.player.position == 'DEF' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
-                      {{ pick.player.team.short_name }}
-                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                    </div>
-                    <div class="slot-name">{{ pick.player.display_name }}</div>
-                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-                  </div>
-                  {% endif %}{% endfor %}
-                </div>
-                <div class="pitch-row">
-                  {% for pick in picks %}{% if pick.player.position == 'MID' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
-                      {{ pick.player.team.short_name }}
-                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                    </div>
-                    <div class="slot-name">{{ pick.player.display_name }}</div>
-                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-                  </div>
-                  {% endif %}{% endfor %}
-                </div>
-                <div class="pitch-row">
-                  {% for pick in picks %}{% if pick.player.position == 'FWD' and not pick.is_sub %}
-                  <div class="player-slot" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
-                      {{ pick.player.team.short_name }}
-                      {% if pick.is_captain %}<div class="captain-badge">C</div>{% elif pick.is_vice_captain %}<div class="captain-badge" style="background:#e6e6e6;">V</div>{% endif %}
-                    </div>
-                    <div class="slot-name">{{ pick.player.display_name }}</div>
-                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-                  </div>
-                  {% endif %}{% endfor %}
-                </div>
-              </div>
+    {% if approved %}
+    <div class="glass-card">
+        <h2><span class="icon">✅</span> Recently Approved</h2>
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Player 1</th>
+                    <th>Player 2</th>
+                    <th>Player 3</th>
+                    <th>Approved At</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in approved %}
+                <tr class="approved-row">
+                    <td>
+                        <span class="user-chip">
+                            <span class="user-avatar">{{ app.user.username|make_list|first|upper }}</span>
+                            {{ app.user.username }}
+                        </span>
+                    </td>
+                    <td class="player-cell">{{ app.player1.display_name }} <span class="team-sm">{{ app.player1.team.short_name }}</span></td>
+                    <td class="player-cell">{{ app.player2.display_name }} <span class="team-sm">{{ app.player2.team.short_name }}</span></td>
+                    <td class="player-cell">{{ app.player3.display_name }} <span class="team-sm">{{ app.player3.team.short_name }}</span></td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ app.reviewed_at|date:"M d, H:i" }}</td>
+                    <td><span class="status-badge status-approved" style="padding:6px 14px; font-size:0.75rem;">✓ APPROVED</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 
-              <div class="bench-area">
-                <div class="bench-title">Bench</div>
-                <div class="pitch-row" style="margin-bottom:0; gap:20px;">
-                  {% for pick in picks %}{% if pick.is_sub %}
-                  <div class="player-slot" style="opacity: 0.6;" onclick="window.openPlayerModal({{ pick.player.id|default:0 }})">
-                    <div class="shirt filled" style="background:{{ pick.player.team.primary_color }}; color:{{ pick.player.team.secondary_color }};">
-                      {{ pick.player.team.short_name }}
+    {% else %}
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ===== USER VIEW: Application Status + Submission Form ===== -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- Current Application Status -->
+    <div class="glass-card">
+        <h2><span class="icon">📊</span> Your Application Status</h2>
+
+        <div class="app-status-wrap">
+            {% if application %}
+                <div class="label">Current Status</div>
+                {% if application.status == 'APPROVED' %}
+                    <div class="status-badge status-approved">✓ APPROVED</div>
+                {% else %}
+                    <div class="status-badge status-pending">⏳ PENDING</div>
+                {% endif %}
+
+                <div class="app-players-row">
+                    <div class="app-player-chip">
+                        ⚽ {{ application.player1.display_name }}
+                        <span class="team-tag">{{ application.player1.team.short_name }}</span>
                     </div>
-                    <div class="slot-name">{{ pick.player.display_name }}</div>
-                    <div class="slot-price">{% if pick.points_scored is not None %}{{ pick.points_scored }} pts{% else %}£{{ pick.player.price|floatformat:1 }}m{% endif %}</div>
-                  </div>
-                  {% endif %}{% endfor %}
+                    <div class="app-player-chip">
+                        ⚽ {{ application.player2.display_name }}
+                        <span class="team-tag">{{ application.player2.team.short_name }}</span>
+                    </div>
+                    <div class="app-player-chip">
+                        ⚽ {{ application.player3.display_name }}
+                        <span class="team-tag">{{ application.player3.team.short_name }}</span>
+                    </div>
                 </div>
-              </div>
-          </div>
-          {% else %}
-          <div style="background:#161b22; border:1px solid #30363d; border-radius:16px; padding:4rem; text-align:center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
-              <h3 style="color:#fff; font-size:24px; font-weight:800; margin-bottom:12px;">No Squad Registered</h3>
-              <p style="color:#8b949e; margin-bottom:24px; font-size:16px;">You haven't initialized your fantasy team for this season yet.</p>
-              <a href="/pick/" class="btn-primary" style="padding:14px 32px; font-size:16px; border-radius:10px;">Initialize Squad</a>
-          </div>
-          {% endif %}
-      </div>
-      
-      <div class="side-column">
-          <div class="stats-stack">
-            <div class="stat-card">
-                <div class="stat-label">GW Points</div>
-                <div class="stat-value">{% if user_team %}{{ user_team.total_points }}{% else %}0{% endif %}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Previous</div>
-                <div class="stat-value" style="color:#8b949e;">{% if prev_points %}{{ prev_points }}{% else %}-{% endif %}</div>
-            </div>
-            <div class="stat-card" style="grid-column: span 2;">
-                <div class="stat-label">Global Standing</div>
-                <div class="stat-value" style="color:#f6c90e;">#1</div>
-            </div>
-          </div>
 
-          <div class="section-title">Latest results</div>
-          <div class="match-list">
-            {% for match in recent_matches %}
-            <div class="match-row">
-              <div class="match-team-pair">
-                  <div style="display:flex; flex-direction:column; gap:4px;">
-                      <div class="match-teams-text">
-                          {% if match.home_team.logo_filename %}
-                          <img src="{% static 'core/images/teams/' %}{{ match.home_team.logo_filename }}" class="team-logo-sm" style="vertical-align:middle; margin-right:4px;">
-                          {% endif %}
-                          {{ match.home_team.short_name }}
-                      </div>
-                      <div class="match-teams-text">
-                          {% if match.away_team.logo_filename %}
-                          <img src="{% static 'core/images/teams/' %}{{ match.away_team.logo_filename }}" class="team-logo-sm" style="vertical-align:middle; margin-right:4px;">
-                          {% endif %}
-                          {{ match.away_team.short_name }}
-                      </div>
-                  </div>
-              </div>
-              <div class="match-score">{{ match.home_score }} - {{ match.away_score }}</div>
-            </div>
-            {% empty %}
-            <div class="empty">No results recorded yet.</div>
-            {% endfor %}
-            <a href="/fixtures/" style="display:block; text-align:center; padding:12px; background:#0d1117; color:#8b949e; font-size:12px; font-weight:700; text-decoration:none; text-transform:uppercase; letter-spacing:1px; border-top:1px solid #30363d;">View All Fixtures</a>
-          </div>
-      </div>
-  </div>
-{% endif %}
+                <div class="submitted-info">
+                    Submitted {{ application.submitted_at|date:"M d, Y \a\t H:i" }}
+                    {% if application.reviewed_at %} · Reviewed {{ application.reviewed_at|date:"M d, Y \a\t H:i" }}{% endif %}
+                </div>
 
-{% include 'core/components/player_modal.html' %}
+                <a class="resubmit-link" onclick="document.getElementById('application-form').style.display='block'; this.style.display='none';">
+                    ↻ Submit a new application
+                </a>
+            {% else %}
+                <div class="label">Status</div>
+                <div class="status-badge status-none">— No Application Yet —</div>
+                <p style="color:#8b949e; margin-top:1rem; font-size:0.9rem;">Use the form below to submit your squad.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Submission Form -->
+    <div class="glass-card" id="application-form" {% if application %}style="display:none;"{% endif %}>
+        <h2><span class="icon">📝</span> Submit Squad Application</h2>
+        <p style="color:#8b949e; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1.5rem;">
+            Select 3 different players for your squad. Your application will be reviewed by a manager.
+        </p>
+
+        <form method="post" action="{% url 'submit_application' %}" id="squad-form" onsubmit="return validateForm()">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="player1">Player 1</label>
+                <select name="player1" id="player1" class="form-select" required>
+                    <option value="">— Select Player —</option>
+                    {% regroup players by team as team_list %}
+                    {% for team in team_list %}
+                    <optgroup label="{{ team.grouper.name }}">
+                        {% for p in team.list %}
+                        <option value="{{ p.id }}">{{ p.full_name }} — {{ p.position }} (£{{ p.price }}m)</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="player2">Player 2</label>
+                <select name="player2" id="player2" class="form-select" required>
+                    <option value="">— Select Player —</option>
+                    {% for team in team_list %}
+                    <optgroup label="{{ team.grouper.name }}">
+                        {% for p in team.list %}
+                        <option value="{{ p.id }}">{{ p.full_name }} — {{ p.position }} (£{{ p.price }}m)</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="player3">Player 3</label>
+                <select name="player3" id="player3" class="form-select" required>
+                    <option value="">— Select Player —</option>
+                    {% for team in team_list %}
+                    <optgroup label="{{ team.grouper.name }}">
+                        {% for p in team.list %}
+                        <option value="{{ p.id }}">{{ p.full_name }} — {{ p.position }} (£{{ p.price }}m)</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-error" id="form-error">⚠ Please select 3 different players.</div>
+
+            <button type="submit" class="btn-submit">📤 Submit Application</button>
+        </form>
+    </div>
+
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block extra_script %}
 <script>
-fetch('/api/totw/').then(r => r.json()).then(d => {
-    if(d.error) return;
-    let html = '';
-    d.players.forEach(p => { html += `<div class="ticker-item">${p.name} <span>${p.pts} pts</span></div>`; });
-    document.getElementById('totw-ticker').innerHTML = html;
-    document.querySelector('.ticker-label').textContent = `GW${d.gameweek} TOTW`;
-}).catch(e => console.log(e));
+    // ===== CLIENT-SIDE VALIDATION =====
+    // Prevents submitting if any two dropdowns have the same player selected.
+    function validateForm() {
+        const p1 = document.getElementById('player1').value;
+        const p2 = document.getElementById('player2').value;
+        const p3 = document.getElementById('player3').value;
+
+        if (!p1 || !p2 || !p3) {
+            document.getElementById('form-error').style.display = 'block';
+            document.getElementById('form-error').textContent = '⚠ Please select all 3 players.';
+            return false;
+        }
+
+        if (p1 === p2 || p1 === p3 || p2 === p3) {
+            document.getElementById('form-error').style.display = 'block';
+            document.getElementById('form-error').textContent = '⚠ Please select 3 different players.';
+            return false;
+        }
+
+        document.getElementById('form-error').style.display = 'none';
+        return true;
+    }
 </script>
 {% endblock %}

@@ -1,4 +1,4 @@
-﻿from django.apps import AppConfig
+from django.apps import AppConfig
 
 
 class CoreConfig(AppConfig):
@@ -6,7 +6,9 @@ class CoreConfig(AppConfig):
     name = 'core'
 
     def ready(self):
-        from core.scheduler import start_scheduler
-        import os
-        if os.environ.get('RUN_MAIN') == 'true':
-            start_scheduler()
+        # Disabled for presentation scaffold — scheduler.py is kept intact
+        # from core.scheduler import start_scheduler
+        # import os
+        # if os.environ.get('RUN_MAIN') == 'true':
+        #     start_scheduler()
+        pass

@@ -206,3 +206,29 @@ class Transfer(models.Model):
 
     def __str__(self):
         return f'{self.user.username}: {self.player_out} OUT -> {self.player_in} IN (GW{self.gameweek.number})'
+
+
+class SquadApplication(models.Model):
+    """
+    Simplified 'ticket' model for the presentation scaffold.
+    A user submits a 3-player squad application; an admin approves or rejects it.
+    Demonstrates a clear Create → Read → Update (CRUD) lifecycle.
+    """
+    STATUS_CHOICES = (
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='squad_applications')
+    player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
+    player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
+    player3 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-submitted_at']
+
+    def __str__(self):
+        return f'{self.user.username} — {self.status} ({self.submitted_at:%Y-%m-%d %H:%M})'

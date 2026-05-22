@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, Notification, League, LeagueMember
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, Notification, League, LeagueMember, SquadApplication
 
 @admin.register(Gameweek)
 class GameweekAdmin(admin.ModelAdmin):
@@ -42,3 +42,9 @@ admin.site.register(FantasyPick)
 admin.site.register(Notification)
 admin.site.register(League)
 admin.site.register(LeagueMember)
+
+@admin.register(SquadApplication)
+class SquadApplicationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'player1', 'player2', 'player3', 'status', 'submitted_at')
+    list_filter = ('status',)
+    list_editable = ('status',)

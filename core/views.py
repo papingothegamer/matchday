@@ -8,7 +8,7 @@ from django.db.models import Sum
 from django.utils import timezone
 import json
 import math
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification, SquadApplication
 
 player_only = user_passes_test(lambda u: not u.is_staff, login_url='/admin/')
 
@@ -45,38 +45,100 @@ def auth_logout(request):
     return redirect('/auth/login/')
 
 def index(request):
-    active_gw = Gameweek.objects.filter(is_active=True).first()
-    user_team = None
-    prev_points = None
-    picks = []
+    """
+    ===== SCAFFOLD DASHBOARD =====
+    Dual-purpose landing page:
+      - Staff/Superusers see a table of PENDING squad applications with APPROVE buttons
+      - Regular users see their own application status + a submission form
+    
+    This view demonstrates Django's ORM querying, filtering, and aggregation.
+    """
+    if not request.user.is_authenticated:
+        return redirect('login')
 
-    if request.user.is_authenticated and active_gw:
-        user_team = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
-        if not user_team:
-            user_team = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
-        if user_team:
-            picks = list(user_team.picks.select_related('player__team').all())
+    if request.user.is_staff:
+        # ── ADMIN/MANAGER VIEW ──────────────────────────────────────────────
+        # AGGREGATION: Filter applications by status, prefetch related Player
+        # and Team objects in a single query using select_related (JOIN).
+        pending = SquadApplication.objects.filter(
+            status='PENDING'
+        ).select_related(
+            'user', 'player1__team', 'player2__team', 'player3__team'
+        )
 
-        prev_gw = Gameweek.objects.filter(number=active_gw.number - 1).first()
-        if prev_gw:
-            prev_team = FantasyTeam.objects.filter(user=request.user, gameweek=prev_gw).first()
-            if prev_team: prev_points = prev_team.total_points
+        # AGGREGATION: Retrieve the 10 most recently approved applications
+        # ordered by review timestamp (descending).
+        approved = SquadApplication.objects.filter(
+            status='APPROVED'
+        ).select_related(
+            'user', 'player1__team', 'player2__team', 'player3__team'
+        ).order_by('-reviewed_at')[:10]
 
-    is_deadline_passed = False
-    if active_gw:
-        is_deadline_passed = timezone.now() > active_gw.deadline
+        return render(request, 'core/index.html', {
+            'pending': pending,
+            'approved': approved,
+            'is_admin': True,
+        })
+    else:
+        # ── EMPLOYEE/USER VIEW ──────────────────────────────────────────────
+        # QUERY: Fetch the user's most recent squad application (if any).
+        application = SquadApplication.objects.filter(
+            user=request.user
+        ).order_by('-submitted_at').first()
 
-    context = {
-        'num_teams': Team.objects.count(),
-        'num_players': Player.objects.count(),
-        'active_gameweek': active_gw,
-        'is_deadline_passed': is_deadline_passed,
-        'recent_matches': Match.objects.filter(is_played=True).order_by('-gameweek__number', '-match_date')[:5],
-        'user_team': user_team,
-        'picks': picks,
-        'prev_points': prev_points,
-    }
-    return render(request, 'core/index.html', context)
+        # QUERY: Load all active players grouped by team for the dropdown.
+        # select_related('team') performs a SQL JOIN to avoid N+1 queries.
+        players = Player.objects.filter(
+            is_active=True
+        ).select_related('team').order_by('team__name', 'last_name')
+
+        return render(request, 'core/index.html', {
+            'application': application,
+            'players': players,
+            'is_admin': False,
+        })
+
+
+@login_required
+def submit_application(request):
+    """
+    ===== CREATE (CRUD) =====
+    Handles POST from the squad application form.
+    VALIDATION: Ensures 3 distinct players are selected before creating the record.
+    """
+    if request.method == 'POST':
+        p1 = request.POST.get('player1')
+        p2 = request.POST.get('player2')
+        p3 = request.POST.get('player3')
+
+        # VALIDATION LOGIC: All three fields required + no duplicates allowed
+        if p1 and p2 and p3 and len({p1, p2, p3}) == 3:
+            # DATABASE WRITE: Creates a new SquadApplication row with status='PENDING'
+            SquadApplication.objects.create(
+                user=request.user,
+                player1_id=p1,
+                player2_id=p2,
+                player3_id=p3,
+            )
+    return redirect('index')
+
+
+@login_required
+def approve_application(request, pk):
+    """
+    ===== UPDATE (CRUD) =====
+    Admin clicks 'Approve' — updates the application status from PENDING to APPROVED.
+    AUTHORIZATION: Only staff/superusers can perform this action.
+    """
+    if request.method == 'POST' and request.user.is_staff:
+        app = get_object_or_404(SquadApplication, pk=pk)
+
+        # STATUS TRANSITION: PENDING → APPROVED with timestamp
+        app.status = 'APPROVED'
+        app.reviewed_at = timezone.now()
+        app.save()  # DATABASE WRITE: Persists the status change
+
+    return redirect('index')
 
 @login_required
 @player_only
