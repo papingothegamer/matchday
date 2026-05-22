@@ -427,3 +427,7 @@ def simulation_center(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'log': str(e)})
     return render(request, 'core/simulation_center.html')
+
+@login_required
+def architecture_view(request):
+    return render(request, 'core/architecture.html')

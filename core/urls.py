@@ -23,4 +23,5 @@ urlpatterns = [
     path('players/', views.players, name='players'),
     path('teams/<str:short_name>/', views.team_detail, name='team_detail'),
     path('simulate/', views.simulation_center, name='simulation_center'),
+    path('architecture/', views.architecture_view, name='architecture_view'),
 ]
