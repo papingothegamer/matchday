@@ -6,11 +6,16 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('apply/', views.submit_application, name='submit_application'),
     path('approve/<int:pk>/', views.approve_application, name='approve_application'),
+    path('delete/<int:pk>/', views.delete_application, name='delete_application'),
+    path('simulate_squad/<int:pk>/', views.simulate_squad, name='simulate_squad'),
 
     # ===== Authentication (kept intact) =====
     path('auth/login/', views.auth_login, name='login'),
     path('auth/register/', views.auth_register, name='register'),
     path('auth/logout/', views.auth_logout, name='logout'),
+
+    # ===== Global Leaderboard =====
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
 
     # ===== Original Feature Routes (preserved, commented for scaffold) =====
     # These routes power the full simulation engine and are kept intact

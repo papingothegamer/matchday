@@ -211,7 +211,7 @@ class Transfer(models.Model):
 class SquadApplication(models.Model):
     """
     Simplified 'ticket' model for the presentation scaffold.
-    A user submits a 3-player squad application; an admin approves or rejects it.
+    A user submits a 15-player squad application; an admin approves or rejects it.
     Demonstrates a clear Create → Read → Update (CRUD) lifecycle.
     """
     STATUS_CHOICES = (
@@ -220,10 +220,10 @@ class SquadApplication(models.Model):
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='squad_applications')
-    player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
-    player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
-    player3 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
+    team_name = models.CharField(max_length=100, default='My Squad')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    formation = models.CharField(max_length=10, default='442')
+    total_points = models.IntegerField(null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
 
@@ -232,3 +232,19 @@ class SquadApplication(models.Model):
 
     def __str__(self):
         return f'{self.user.username} — {self.status} ({self.submitted_at:%Y-%m-%d %H:%M})'
+
+
+class SquadPick(models.Model):
+    """
+    Represents a single player selection within a SquadApplication.
+    """
+    application = models.ForeignKey(SquadApplication, on_delete=models.CASCADE, related_name='picks')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
+    is_starter = models.BooleanField(default=True)
+    position_order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['-is_starter', 'player__position', 'position_order']
+
+    def __str__(self):
+        return f"{self.player.last_name} ({'Starter' if self.is_starter else 'Sub'})"

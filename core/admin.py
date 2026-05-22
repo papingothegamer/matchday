@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, Notification, League, LeagueMember, SquadApplication
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, Notification, League, LeagueMember, SquadApplication, SquadPick
 
 @admin.register(Gameweek)
 class GameweekAdmin(admin.ModelAdmin):
@@ -43,8 +43,13 @@ admin.site.register(Notification)
 admin.site.register(League)
 admin.site.register(LeagueMember)
 
+class SquadPickInline(admin.TabularInline):
+    model = SquadPick
+    extra = 0
+
 @admin.register(SquadApplication)
 class SquadApplicationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'player1', 'player2', 'player3', 'status', 'submitted_at')
+    list_display = ('user', 'team_name', 'status', 'submitted_at')
     list_filter = ('status',)
     list_editable = ('status',)
+    inlines = [SquadPickInline]

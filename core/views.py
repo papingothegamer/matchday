@@ -8,7 +8,8 @@ from django.db.models import Sum
 from django.utils import timezone
 import json
 import math
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification, SquadApplication
+import random
+from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification, SquadApplication, SquadPick
 
 player_only = user_passes_test(lambda u: not u.is_staff, login_url='/admin/')
 
@@ -50,29 +51,19 @@ def index(request):
     Dual-purpose landing page:
       - Staff/Superusers see a table of PENDING squad applications with APPROVE buttons
       - Regular users see their own application status + a submission form
-    
-    This view demonstrates Django's ORM querying, filtering, and aggregation.
     """
     if not request.user.is_authenticated:
         return redirect('login')
 
     if request.user.is_staff:
         # ── ADMIN/MANAGER VIEW ──────────────────────────────────────────────
-        # AGGREGATION: Filter applications by status, prefetch related Player
-        # and Team objects in a single query using select_related (JOIN).
         pending = SquadApplication.objects.filter(
             status='PENDING'
-        ).select_related(
-            'user', 'player1__team', 'player2__team', 'player3__team'
-        )
+        ).select_related('user').prefetch_related('picks__player__team')
 
-        # AGGREGATION: Retrieve the 10 most recently approved applications
-        # ordered by review timestamp (descending).
         approved = SquadApplication.objects.filter(
             status='APPROVED'
-        ).select_related(
-            'user', 'player1__team', 'player2__team', 'player3__team'
-        ).order_by('-reviewed_at')[:10]
+        ).select_related('user').prefetch_related('picks__player__team').order_by('-reviewed_at')[:10]
 
         return render(request, 'core/index.html', {
             'pending': pending,
@@ -81,46 +72,69 @@ def index(request):
         })
     else:
         # ── EMPLOYEE/USER VIEW ──────────────────────────────────────────────
-        # QUERY: Fetch the user's most recent squad application (if any).
         application = SquadApplication.objects.filter(
             user=request.user
-        ).order_by('-submitted_at').first()
+        ).prefetch_related('picks__player__team').order_by('-submitted_at').first()
 
-        # QUERY: Load all active players grouped by team for the dropdown.
-        # select_related('team') performs a SQL JOIN to avoid N+1 queries.
-        players = Player.objects.filter(
-            is_active=True
-        ).select_related('team').order_by('team__name', 'last_name')
+        gk_players = Player.objects.filter(is_active=True, position='GK').select_related('team').order_by('team__name', 'last_name')
+        def_players = Player.objects.filter(is_active=True, position='DEF').select_related('team').order_by('team__name', 'last_name')
+        mid_players = Player.objects.filter(is_active=True, position='MID').select_related('team').order_by('team__name', 'last_name')
+        fwd_players = Player.objects.filter(is_active=True, position='FWD').select_related('team').order_by('team__name', 'last_name')
 
         return render(request, 'core/index.html', {
             'application': application,
-            'players': players,
+            'gk_players': gk_players,
+            'def_players': def_players,
+            'mid_players': mid_players,
+            'fwd_players': fwd_players,
             'is_admin': False,
         })
 
 
+@csrf_exempt
 @login_required
 def submit_application(request):
     """
     ===== CREATE (CRUD) =====
-    Handles POST from the squad application form.
-    VALIDATION: Ensures 3 distinct players are selected before creating the record.
+    Handles POST from the squad application form via JSON payload.
+    VALIDATION: Ensures 15 distinct players are selected.
     """
     if request.method == 'POST':
-        p1 = request.POST.get('player1')
-        p2 = request.POST.get('player2')
-        p3 = request.POST.get('player3')
+        try:
+            data = json.loads(request.body)
+            picks_data = data.get('picks', [])
+            
+            if len(picks_data) == 15:
+                player_ids = set([int(p['player_id']) for p in picks_data])
+                if len(player_ids) == 15:
+                    
+                    # BUDGET VALIDATION (Max £100.0m)
+                    players_db = Player.objects.filter(id__in=player_ids)
+                    total_cost = sum(float(p.price) for p in players_db)
+                    
+                    if total_cost > 100.0:
+                        return JsonResponse({'error': f'Budget exceeded! Total cost is £{total_cost:.1f}m (Max: £100.0m)'})
 
-        # VALIDATION LOGIC: All three fields required + no duplicates allowed
-        if p1 and p2 and p3 and len({p1, p2, p3}) == 3:
-            # DATABASE WRITE: Creates a new SquadApplication row with status='PENDING'
-            SquadApplication.objects.create(
-                user=request.user,
-                player1_id=p1,
-                player2_id=p2,
-                player3_id=p3,
-            )
-    return redirect('index')
+                    app = SquadApplication.objects.create(
+                        user=request.user,
+                        team_name=data.get('team_name', 'My Squad'),
+                        formation='442',
+                    )
+                    
+                    for p in picks_data:
+                        SquadPick.objects.create(
+                            application=app,
+                            player_id=int(p['player_id']),
+                            is_starter=p.get('is_starter', True),
+                            position_order=int(p.get('position_order', 0))
+                        )
+                    return JsonResponse({'success': True, 'status': 'ok'})
+                else:
+                    return JsonResponse({'error': 'Duplicate players found'})
+            return JsonResponse({'error': 'Incomplete squad'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    return JsonResponse({'error': 'POST required'}, status=405)
 
 
 @login_required
@@ -128,16 +142,60 @@ def approve_application(request, pk):
     """
     ===== UPDATE (CRUD) =====
     Admin clicks 'Approve' — updates the application status from PENDING to APPROVED.
-    AUTHORIZATION: Only staff/superusers can perform this action.
     """
     if request.method == 'POST' and request.user.is_staff:
-        app = get_object_or_404(SquadApplication, pk=pk)
-
-        # STATUS TRANSITION: PENDING → APPROVED with timestamp
+        app = get_object_or_404(SquadApplication, pk=pk, status='PENDING')
         app.status = 'APPROVED'
         app.reviewed_at = timezone.now()
-        app.save()  # DATABASE WRITE: Persists the status change
+        app.save()
+    return redirect('index')
 
+
+@login_required
+def delete_application(request, pk):
+    """
+    ===== DELETE (CRUD) =====
+    Allows users to withdraw their pending application, or admins to reject/delete it.
+    """
+    if request.method == 'POST':
+        app = get_object_or_404(SquadApplication, pk=pk)
+        if app.user == request.user or request.user.is_staff:
+            app.delete()
+    return redirect('index')
+
+
+@login_required
+def simulate_squad(request, pk):
+    """
+    ===== THE 'MAGIC' BUTTON =====
+    Generates random realistic points for the approved squad.
+    """
+    if request.method == 'POST':
+        app = get_object_or_404(SquadApplication, pk=pk, status='APPROVED')
+        if app.user != request.user and not request.user.is_staff:
+            return redirect('index')
+            
+        total_points = 0
+        picks = app.picks.filter(is_starter=True)
+        for pick in picks:
+            pos = pick.player.position
+            if pos == 'GK':
+                pts = random.choice([2, 2, 2, 6, 6, 7, 10])
+            elif pos == 'DEF':
+                pts = random.choice([1, 2, 2, 2, 6, 6, 8, 12, 15])
+            elif pos == 'MID':
+                pts = random.choice([2, 2, 3, 5, 8, 10, 15])
+            else:
+                pts = random.choice([2, 2, 5, 9, 12, 17])
+            
+            if random.random() < 0.1:
+                pts = random.choice([0, 1, -1])
+                
+            total_points += pts
+            
+        app.total_points = total_points
+        app.save()
+        
     return redirect('index')
 
 @login_required
@@ -493,3 +551,24 @@ def simulation_center(request):
 @login_required
 def architecture_view(request):
     return render(request, 'core/architecture.html')
+
+
+@login_required
+def leaderboard(request):
+    """
+    ===== GLOBAL LEADERBOARD (Read/Query) =====
+    This view demonstrates querying, filtering, and ordering data from the database.
+    It fetches all APPROVED squad applications that have been simulated (total_points is not null).
+    It then orders them by total_points in descending order to create a leaderboard.
+    """
+    
+    # DATABASE QUERY: Select all approved squads with points, ordered highest to lowest
+    ranked_squads = SquadApplication.objects.filter(
+        status='APPROVED', 
+        total_points__isnull=False
+    ).select_related('user').order_by('-total_points')
+    
+    # We pass the queryset directly to the template
+    return render(request, 'core/leaderboard.html', {
+        'ranked_squads': ranked_squads
+    })
