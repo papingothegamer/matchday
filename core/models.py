@@ -1,15 +1,37 @@
+"""
+MatchDay — Tournament Registration & Management System
+=======================================================
+Models for managing tournaments, teams, players, matches, and standings.
+
+ROLES:
+  - Super Admin  (is_superuser=True)  → Full Django admin access
+  - Tournament Admin (is_staff=True)  → Creates tournaments, enters match stats
+  - Coach (regular User)              → Registers team/players, views standings
+"""
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TEAM & PLAYER — Core data entities
+# ─────────────────────────────────────────────────────────────────────────────
+
 class Team(models.Model):
+    """
+    A football team managed by a Coach (regular user).
+    Each team belongs to exactly one coach.
+    """
     name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=5)
-    stadium = models.CharField(max_length=100)
-    founded_year = models.IntegerField()
     primary_color = models.CharField(max_length=7, default='#333333')
     secondary_color = models.CharField(max_length=7, default='#FFFFFF')
-    logo_filename = models.CharField(max_length=255, null=True, blank=True)
+    coach = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='teams',
+        null=True, blank=True,
+        help_text='The coach (regular user) who owns this team.'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['name']
@@ -17,7 +39,11 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+
 class Player(models.Model):
+    """
+    A player belonging to a team. Players cannot appear in multiple teams.
+    """
     POSITION_CHOICES = (
         ('GK',  'Goalkeeper'),
         ('DEF', 'Defender'),
@@ -29,13 +55,11 @@ class Player(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100)
     position = models.CharField(max_length=3, choices=POSITION_CHOICES)
-    price = models.FloatField(help_text='Price in millions')
+    jersey_number = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
-    is_injured = models.BooleanField(default=False)
-    injury_weeks = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['last_name', 'first_name']
+        ordering = ['jersey_number', 'last_name']
 
     def __str__(self):
         name = f'{self.first_name} {self.last_name}'.strip()
@@ -49,202 +73,171 @@ class Player(models.Model):
     def display_name(self):
         return self.last_name if self.last_name else self.first_name
 
-class Gameweek(models.Model):
-    number = models.IntegerField(unique=True)
-    deadline = models.DateTimeField()
-    is_active = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = ['number']
+# ─────────────────────────────────────────────────────────────────────────────
+# TOURNAMENT — The central organizing entity
+# ─────────────────────────────────────────────────────────────────────────────
 
-    def __str__(self):
-        return f'Gameweek {self.number}'
+class Tournament(models.Model):
+    """
+    A tournament created by a Tournament Admin (is_staff=True).
+    Can be either LEAGUE (round-robin) or KNOCKOUT format.
+    """
+    FORMAT_CHOICES = (
+        ('LEAGUE', 'League'),
+        ('KNOCKOUT', 'Knockout'),
+    )
+    STATUS_CHOICES = (
+        ('DRAFT', 'Draft'),
+        ('ACTIVE', 'Active'),
+        ('COMPLETED', 'Completed'),
+    )
 
-class Match(models.Model):
-    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
-    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches')
-    gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE, related_name='matches')
-    home_score = models.IntegerField(null=True, blank=True)
-    away_score = models.IntegerField(null=True, blank=True)
-    match_date = models.DateTimeField()
-    is_played = models.BooleanField(default=False)
-
-    class Meta:
-        ordering = ['match_date']
-        verbose_name_plural = 'matches'
-
-    def __str__(self):
-        return f'{self.home_team.short_name} vs {self.away_team.short_name} (GW{self.gameweek.number})'
-
-class PlayerStat(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='stats')
-    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='player_stats')
-    goals = models.IntegerField(default=0)
-    assists = models.IntegerField(default=0)
-    minutes_played = models.IntegerField(default=0)
-    clean_sheet = models.BooleanField(default=False)
-    yellow_cards = models.IntegerField(default=0)
-    red_cards = models.IntegerField(default=0)
-    fantasy_points = models.IntegerField(default=0)
-
-    class Meta:
-        unique_together = ('player', 'match')
-
-    def save(self, *args, **kwargs):
-        self.fantasy_points = self._calculate_points()
-        super().save(*args, **kwargs)
-
-    def _calculate_points(self):
-        points = 0
-        if self.minutes_played >= 60:
-            points += 2
-        elif self.minutes_played > 0:
-            points += 1
-            
-        # Positional Scoring for Goals
-        if self.player.position in ('GK', 'DEF'):
-            points += self.goals * 6
-        elif self.player.position == 'MID':
-            points += self.goals * 5
-        elif self.player.position == 'FWD':
-            points += self.goals * 4
-            
-        points += self.assists * 3
-        if self.clean_sheet and self.player.position in ('GK', 'DEF'):
-            points += 4
-        elif self.clean_sheet and self.player.position == 'MID':
-            points += 1
-        points -= self.yellow_cards * 1
-        points -= self.red_cards * 3
-        return points
-
-    def __str__(self):
-        return f'{self.player} — {self.match} ({self.fantasy_points} pts)'
-
-class FantasyTeam(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fantasy_teams')
-    gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE, related_name='fantasy_teams')
-    name = models.CharField(max_length=100)
-    total_points = models.IntegerField(default=0)
-    formation = models.CharField(max_length=3, default='433')
-    bank = models.FloatField(default=100.0)
-    free_transfers = models.IntegerField(default=1)
-    points_hit = models.IntegerField(default=0)
-
-    class Meta:
-        unique_together = ('user', 'gameweek')
-
-    def __str__(self):
-        return f'{self.name} — {self.gameweek} ({self.user.username})'
-
-class FantasyPick(models.Model):
-    fantasy_team = models.ForeignKey(FantasyTeam, on_delete=models.CASCADE, related_name='picks')
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='fantasy_picks')
-    is_captain = models.BooleanField(default=False)
-    is_vice_captain = models.BooleanField(default=False)
-    is_sub = models.BooleanField(default=False)
-    points_scored = models.IntegerField(default=0)
-    purchase_price = models.FloatField(default=0.0)
-
-    class Meta:
-        unique_together = ('fantasy_team', 'player')
-
-    def __str__(self):
-        captain = ' (C)' if self.is_captain else ''
-        return f'{self.player}{captain} — {self.fantasy_team}'
-
-class League(models.Model):
-    name = models.CharField(max_length=100)
-    code = models.CharField(max_length=8, unique=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_leagues')
+    name = models.CharField(max_length=200)
+    format = models.CharField(max_length=10, choices=FORMAT_CHOICES, default='LEAGUE')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='DRAFT')
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='managed_tournaments',
+        help_text='The Tournament Admin who created this tournament.'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def save(self, *args, **kwargs):
-        if not self.code:
-            self.code = uuid.uuid4().hex[:8].upper()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
-
-class LeagueMember(models.Model):
-    league = models.ForeignKey(League, on_delete=models.CASCADE, related_name='members')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='league_memberships')
-    joined_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('league', 'user')
-
-    def __str__(self):
-        return f'{self.user.username} — {self.league.name}'
-
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    message = models.CharField(max_length=255)
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True, default='')
 
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"To {self.user.username}: {self.message}"
+        return f'{self.name} ({self.get_format_display()})'
 
 
-class Transfer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transfers')
-    gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE, related_name='transfers')
-    player_in = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='transfers_in')
-    player_out = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='transfers_out')
-    timestamp = models.DateTimeField(auto_now_add=True)
+class TournamentTeam(models.Model):
+    """
+    Many-to-many through table: which teams are registered in which tournament.
+    """
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='tournament_teams')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='tournament_entries')
+    registered_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-timestamp']
+        unique_together = ('tournament', 'team')
+        ordering = ['registered_at']
 
     def __str__(self):
-        return f'{self.user.username}: {self.player_out} OUT -> {self.player_in} IN (GW{self.gameweek.number})'
+        return f'{self.team.name} in {self.tournament.name}'
 
 
-class SquadApplication(models.Model):
+# ─────────────────────────────────────────────────────────────────────────────
+# MATCH & PLAYER STATS — Fixtures and per-player performance data
+# ─────────────────────────────────────────────────────────────────────────────
+
+class Match(models.Model):
     """
-    Simplified 'ticket' model for the presentation scaffold.
-    A user submits a 15-player squad application; an admin approves or rejects it.
-    Demonstrates a clear Create → Read → Update (CRUD) lifecycle.
+    A single match within a tournament.
+    round_label is flexible: "Matchday 1", "Quarter-Final", "Semi-Final", "Final", etc.
     """
-    STATUS_CHOICES = (
-        ('PENDING', 'Pending'),
-        ('APPROVED', 'Approved'),
-    )
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='squad_applications')
-    team_name = models.CharField(max_length=100, default='My Squad')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
-    formation = models.CharField(max_length=10, default='442')
-    total_points = models.IntegerField(null=True, blank=True)
-    submitted_at = models.DateTimeField(auto_now_add=True)
-    reviewed_at = models.DateTimeField(null=True, blank=True)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='matches')
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches')
+    round_label = models.CharField(max_length=50, default='Matchday 1')
+    match_date = models.DateTimeField(null=True, blank=True)
+    home_score = models.IntegerField(null=True, blank=True)
+    away_score = models.IntegerField(null=True, blank=True)
+    is_played = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-submitted_at']
+        ordering = ['round_label', 'match_date']
+        verbose_name_plural = 'matches'
 
     def __str__(self):
-        return f'{self.user.username} — {self.status} ({self.submitted_at:%Y-%m-%d %H:%M})'
+        return f'{self.home_team.short_name} vs {self.away_team.short_name} ({self.round_label})'
 
 
-class SquadPick(models.Model):
+class PlayerStat(models.Model):
     """
-    Represents a single player selection within a SquadApplication.
+    Per-player statistics for a single match.
+    Entered by the Tournament Admin after a match is played.
     """
-    application = models.ForeignKey(SquadApplication, on_delete=models.CASCADE, related_name='picks')
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='+')
-    is_starter = models.BooleanField(default=True)
-    position_order = models.IntegerField(default=0)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='stats')
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='player_stats')
+    goals = models.IntegerField(default=0)
+    assists = models.IntegerField(default=0)
+    yellow_cards = models.IntegerField(default=0)
+    red_cards = models.IntegerField(default=0)
+    minutes_played = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['-is_starter', 'player__position', 'position_order']
+        unique_together = ('player', 'match')
 
     def __str__(self):
-        return f"{self.player.last_name} ({'Starter' if self.is_starter else 'Sub'})"
+        return f'{self.player} — {self.match} (G:{self.goals} A:{self.assists})'
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STANDING — Denormalized league table (computed by backend)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class Standing(models.Model):
+    """
+    Denormalized league table row for a team within a tournament.
+    IMPORTANT: This table is COMPUTED, not manually edited.
+    The backend function `recompute_standings()` in standings.py recalculates
+    all rows whenever a Tournament Admin enters or updates a match result.
+
+    ═══ WHY DENORMALIZE? ═══
+    Computing standings on every page load would require iterating through
+    ALL matches every time. By saving pre-computed results, we trade a small
+    write cost for fast reads — a classic database optimization pattern.
+    """
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='standings')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='standings')
+    played = models.IntegerField(default=0)
+    won = models.IntegerField(default=0)
+    drawn = models.IntegerField(default=0)
+    lost = models.IntegerField(default=0)
+    goals_for = models.IntegerField(default=0)
+    goals_against = models.IntegerField(default=0)
+    goal_difference = models.IntegerField(default=0)
+    points = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('tournament', 'team')
+        ordering = ['-points', '-goal_difference', '-goals_for']
+
+    def __str__(self):
+        return f'{self.team.name} — {self.points} pts ({self.tournament.name})'
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# KNOCKOUT BRACKET — For KO-style tournaments
+# ─────────────────────────────────────────────────────────────────────────────
+
+class KnockoutRound(models.Model):
+    """
+    Represents a round in a knockout tournament (e.g., Quarter-Final, Semi-Final, Final).
+    """
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='knockout_rounds')
+    round_name = models.CharField(max_length=50)  # e.g., "Quarter-Final"
+    round_order = models.IntegerField(default=0)  # 1=QF, 2=SF, 3=Final
+
+    class Meta:
+        ordering = ['round_order']
+
+    def __str__(self):
+        return f'{self.round_name} — {self.tournament.name}'
+
+
+class KnockoutFixture(models.Model):
+    """
+    A single fixture within a knockout round.
+    The winner advances to the next round.
+    """
+    round = models.ForeignKey(KnockoutRound, on_delete=models.CASCADE, related_name='fixtures')
+    match = models.OneToOneField(Match, on_delete=models.CASCADE, related_name='knockout_fixture', null=True, blank=True)
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='ko_home', null=True, blank=True)
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='ko_away', null=True, blank=True)
+    winner = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True, related_name='ko_wins')
+
+    def __str__(self):
+        h = self.home_team.short_name if self.home_team else 'TBD'
+        a = self.away_team.short_name if self.away_team else 'TBD'
+        return f'{h} vs {a} ({self.round.round_name})'

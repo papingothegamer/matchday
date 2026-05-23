@@ -1,55 +1,74 @@
 from django.contrib import admin
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, Notification, League, LeagueMember, SquadApplication, SquadPick
+from .models import (
+    Team, Player, Tournament, TournamentTeam, Match, PlayerStat,
+    Standing, KnockoutRound, KnockoutFixture,
+)
 
-@admin.register(Gameweek)
-class GameweekAdmin(admin.ModelAdmin):
-    list_display = ('number', 'deadline', 'is_active', 'is_finished')
-    list_editable = ('is_active',)
-    
-    def is_finished(self, obj):
-        return obj.matches.filter(is_played=False).count() == 0
-    is_finished.boolean = True
 
-@admin.register(Match)
-class MatchAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'match_date', 'gameweek', 'home_score', 'away_score', 'is_played')
-    list_filter = ('gameweek', 'is_played')
-    actions = ['simulate_selected_matches']
+class PlayerInline(admin.TabularInline):
+    model = Player
+    extra = 0
 
-    def simulate_selected_matches(self, request, queryset):
-        from core.simulation import simulate_match
-        count = 0
-        for match in queryset.filter(is_played=False):
-            simulate_match(match)
-            count += 1
-        self.message_user(request, f"Successfully simulated {count} matches.")
-    simulate_selected_matches.short_description = "Simulate selected matches now"
+
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name', 'coach', 'primary_color')
+    list_filter = ('coach',)
+    inlines = [PlayerInline]
+
 
 @admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('display_name', 'team', 'position', 'price', 'is_injured')
-    list_filter = ('team', 'position', 'is_injured')
-    search_fields = ('display_name',)
+    list_display = ('display_name', 'team', 'position', 'jersey_number', 'is_active')
+    list_filter = ('team', 'position')
+    search_fields = ('first_name', 'last_name')
+
+
+class TournamentTeamInline(admin.TabularInline):
+    model = TournamentTeam
+    extra = 0
+
+
+@admin.register(Tournament)
+class TournamentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'format', 'status', 'created_by', 'created_at')
+    list_filter = ('format', 'status')
+    list_editable = ('status',)
+    inlines = [TournamentTeamInline]
+
+
+class PlayerStatInline(admin.TabularInline):
+    model = PlayerStat
+    extra = 0
+
+
+@admin.register(Match)
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'tournament', 'round_label', 'home_score', 'away_score', 'is_played')
+    list_filter = ('tournament', 'is_played', 'round_label')
+    inlines = [PlayerStatInline]
+
 
 @admin.register(PlayerStat)
 class PlayerStatAdmin(admin.ModelAdmin):
-    list_display = ('player', 'match', 'minutes_played', 'goals', 'assists', 'fantasy_points', 'clean_sheet')
-    list_filter = ('match__gameweek', 'clean_sheet')
+    list_display = ('player', 'match', 'goals', 'assists', 'yellow_cards', 'red_cards', 'minutes_played')
+    list_filter = ('match__tournament',)
 
-admin.site.register(Team)
-admin.site.register(FantasyTeam)
-admin.site.register(FantasyPick)
-admin.site.register(Notification)
-admin.site.register(League)
-admin.site.register(LeagueMember)
 
-class SquadPickInline(admin.TabularInline):
-    model = SquadPick
-    extra = 0
+@admin.register(Standing)
+class StandingAdmin(admin.ModelAdmin):
+    list_display = ('team', 'tournament', 'played', 'won', 'drawn', 'lost', 'goals_for', 'goals_against', 'goal_difference', 'points')
+    list_filter = ('tournament',)
+    ordering = ('-points', '-goal_difference')
 
-@admin.register(SquadApplication)
-class SquadApplicationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'team_name', 'status', 'submitted_at')
-    list_filter = ('status',)
-    list_editable = ('status',)
-    inlines = [SquadPickInline]
+
+@admin.register(KnockoutRound)
+class KnockoutRoundAdmin(admin.ModelAdmin):
+    list_display = ('round_name', 'tournament', 'round_order')
+    list_filter = ('tournament',)
+
+
+@admin.register(KnockoutFixture)
+class KnockoutFixtureAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'round', 'winner')
+    list_filter = ('round__tournament',)

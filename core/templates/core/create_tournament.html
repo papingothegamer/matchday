@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+{% block title %}{% if edit_mode %}Edit{% else %}Create{% endif %} Tournament — MatchDay{% endblock %}
+{% block content %}
+<div class="animate-in" style="max-width: 600px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1 class="section-title">{% if edit_mode %}✏️ Edit Tournament{% else %}🏆 Create Tournament{% endif %}</h1>
+        <p class="section-subtitle">{% if edit_mode %}Update your tournament details.{% else %}Set up a new tournament for teams to join.{% endif %}</p>
+    </div>
+
+    <div class="glass-card" style="padding: 2rem;">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Tournament Name</label>
+                <input type="text" name="name" class="form-input" placeholder="e.g. MatchDay Cup 2025" value="{{ tournament.name|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Format</label>
+                <select name="format" class="form-select">
+                    <option value="LEAGUE" {% if tournament.format == 'LEAGUE' %}selected{% endif %}>League (Round-Robin)</option>
+                    <option value="KNOCKOUT" {% if tournament.format == 'KNOCKOUT' %}selected{% endif %}>Knockout (Bracket)</option>
+                </select>
+            </div>
+
+            {% if edit_mode %}
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-select">
+                    <option value="DRAFT" {% if tournament.status == 'DRAFT' %}selected{% endif %}>Draft</option>
+                    <option value="ACTIVE" {% if tournament.status == 'ACTIVE' %}selected{% endif %}>Active</option>
+                    <option value="COMPLETED" {% if tournament.status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <textarea name="description" class="form-textarea" placeholder="A short description of the tournament...">{{ tournament.description|default:'' }}</textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 1rem;">
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">{% if edit_mode %}Save Changes{% else %}Create Tournament{% endif %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

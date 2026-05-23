@@ -1,574 +1,581 @@
+"""
+MatchDay — Views (Tournament Registration & Management System)
+===============================================================
+All request handlers grouped by role:
+  1. Authentication (login, register with role selection, logout)
+  2. Coach Views (dashboard, browse tournaments, register team, view standings)
+  3. Tournament Admin Views (admin dashboard, tournament CRUD, enter results)
+"""
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.utils import timezone
 import json
-import math
-import random
-from .models import Team, Player, Gameweek, Match, FantasyTeam, FantasyPick, PlayerStat, League, LeagueMember, Notification, SquadApplication, SquadPick
 
-player_only = user_passes_test(lambda u: not u.is_staff, login_url='/admin/')
+from .models import (
+    Team, Player, Tournament, TournamentTeam, Match, PlayerStat,
+    Standing, KnockoutRound, KnockoutFixture,
+)
+from .standings import (
+    recompute_standings, get_top_scorers, get_top_assists,
+    get_card_summary, generate_league_fixtures, generate_knockout_bracket,
+    advance_knockout_winner,
+)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# AUTHENTICATION
+# ═══════════════════════════════════════════════════════════════════════════════
 
 def auth_login(request):
-    if request.user.is_authenticated: return redirect('index')
+    """Login view. Redirects based on role after login."""
+    if request.user.is_authenticated:
+        return redirect('index')
     error = None
     if request.method == 'POST':
-        user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
+        user = authenticate(
+            request,
+            username=request.POST.get('username'),
+            password=request.POST.get('password'),
+        )
         if user:
-            if user.is_staff: error = 'Administrators must log in via /admin/.'
-            else:
-                login(request, user)
-                return redirect(request.GET.get('next', '/'))
-        else: error = 'Invalid credentials.'
+            login(request, user)
+            if user.is_staff and not user.is_superuser:
+                return redirect('admin_dashboard')
+            return redirect('index')
+        else:
+            error = 'Invalid username or password.'
     return render(request, 'core/auth/login.html', {'error': error})
 
+
 def auth_register(request):
-    if request.user.is_authenticated: return redirect('index')
+    """
+    Registration with ROLE SELECTION.
+    Users choose to register as a Coach or Tournament Admin.
+    """
+    if request.user.is_authenticated:
+        return redirect('index')
     error = None
     if request.method == 'POST':
-        u, p, c = request.POST.get('username', '').strip(), request.POST.get('password', ''), request.POST.get('confirm', '')
-        if not u or not p: error = 'All fields required.'
-        elif p != c: error = 'Passwords do not match.'
-        elif User.objects.filter(username=u).exists(): error = 'Username taken.'
-        elif len(p) < 8: error = 'Password must be 8+ characters.'
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        confirm = request.POST.get('confirm', '')
+        role = request.POST.get('role', 'coach')  # 'coach' or 'admin'
+
+        if not username or not password:
+            error = 'All fields are required.'
+        elif password != confirm:
+            error = 'Passwords do not match.'
+        elif User.objects.filter(username=username).exists():
+            error = 'Username is already taken.'
+        elif len(password) < 8:
+            error = 'Password must be at least 8 characters.'
         else:
-            user = User.objects.create_user(username=u, password=p)
+            user = User.objects.create_user(username=username, password=password)
+            if role == 'admin':
+                user.is_staff = True
+                user.save()
             login(request, user)
+            if role == 'admin':
+                return redirect('admin_dashboard')
             return redirect('index')
     return render(request, 'core/auth/register.html', {'error': error})
 
+
 def auth_logout(request):
     logout(request)
-    return redirect('/auth/login/')
+    return redirect('login')
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COACH VIEWS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@login_required
 def index(request):
     """
-    ===== SCAFFOLD DASHBOARD =====
-    Dual-purpose landing page:
-      - Staff/Superusers see a table of PENDING squad applications with APPROVE buttons
-      - Regular users see their own application status + a submission form
+    ===== COACH DASHBOARD =====
+    Shows the coach's team(s) and tournaments they've joined.
     """
-    if not request.user.is_authenticated:
-        return redirect('login')
+    my_teams = Team.objects.filter(coach=request.user)
+    my_tournament_ids = TournamentTeam.objects.filter(
+        team__coach=request.user
+    ).values_list('tournament_id', flat=True)
+    my_tournaments = Tournament.objects.filter(id__in=my_tournament_ids)
 
-    if request.user.is_staff:
-        # ── ADMIN/MANAGER VIEW ──────────────────────────────────────────────
-        pending = SquadApplication.objects.filter(
-            status='PENDING'
-        ).select_related('user').prefetch_related('picks__player__team')
-
-        approved = SquadApplication.objects.filter(
-            status='APPROVED'
-        ).select_related('user').prefetch_related('picks__player__team').order_by('-reviewed_at')[:10]
-
-        return render(request, 'core/index.html', {
-            'pending': pending,
-            'approved': approved,
-            'is_admin': True,
-        })
-    else:
-        # ── EMPLOYEE/USER VIEW ──────────────────────────────────────────────
-        application = SquadApplication.objects.filter(
-            user=request.user
-        ).prefetch_related('picks__player__team').order_by('-submitted_at').first()
-
-        gk_players = Player.objects.filter(is_active=True, position='GK').select_related('team').order_by('team__name', 'last_name')
-        def_players = Player.objects.filter(is_active=True, position='DEF').select_related('team').order_by('team__name', 'last_name')
-        mid_players = Player.objects.filter(is_active=True, position='MID').select_related('team').order_by('team__name', 'last_name')
-        fwd_players = Player.objects.filter(is_active=True, position='FWD').select_related('team').order_by('team__name', 'last_name')
-
-        return render(request, 'core/index.html', {
-            'application': application,
-            'gk_players': gk_players,
-            'def_players': def_players,
-            'mid_players': mid_players,
-            'fwd_players': fwd_players,
-            'is_admin': False,
-        })
-
-
-@csrf_exempt
-@login_required
-def submit_application(request):
-    """
-    ===== CREATE (CRUD) =====
-    Handles POST from the squad application form via JSON payload.
-    VALIDATION: Ensures 15 distinct players are selected.
-    """
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            picks_data = data.get('picks', [])
-            
-            if len(picks_data) == 15:
-                player_ids = set([int(p['player_id']) for p in picks_data])
-                if len(player_ids) == 15:
-                    
-                    # BUDGET VALIDATION (Max £100.0m)
-                    players_db = Player.objects.filter(id__in=player_ids)
-                    total_cost = sum(float(p.price) for p in players_db)
-                    
-                    if total_cost > 100.0:
-                        return JsonResponse({'error': f'Budget exceeded! Total cost is £{total_cost:.1f}m (Max: £100.0m)'})
-
-                    app = SquadApplication.objects.create(
-                        user=request.user,
-                        team_name=data.get('team_name', 'My Squad'),
-                        formation='442',
-                    )
-                    
-                    for p in picks_data:
-                        SquadPick.objects.create(
-                            application=app,
-                            player_id=int(p['player_id']),
-                            is_starter=p.get('is_starter', True),
-                            position_order=int(p.get('position_order', 0))
-                        )
-                    return JsonResponse({'success': True, 'status': 'ok'})
-                else:
-                    return JsonResponse({'error': 'Duplicate players found'})
-            return JsonResponse({'error': 'Incomplete squad'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-    return JsonResponse({'error': 'POST required'}, status=405)
-
-
-@login_required
-def approve_application(request, pk):
-    """
-    ===== UPDATE (CRUD) =====
-    Admin clicks 'Approve' — updates the application status from PENDING to APPROVED.
-    """
-    if request.method == 'POST' and request.user.is_staff:
-        app = get_object_or_404(SquadApplication, pk=pk, status='PENDING')
-        app.status = 'APPROVED'
-        app.reviewed_at = timezone.now()
-        app.save()
-    return redirect('index')
-
-
-@login_required
-def delete_application(request, pk):
-    """
-    ===== DELETE (CRUD) =====
-    Allows users to withdraw their pending application, or admins to reject/delete it.
-    """
-    if request.method == 'POST':
-        app = get_object_or_404(SquadApplication, pk=pk)
-        if app.user == request.user or request.user.is_staff:
-            app.delete()
-    return redirect('index')
-
-
-@login_required
-def simulate_squad(request, pk):
-    """
-    ===== THE 'MAGIC' BUTTON =====
-    Generates random realistic points for the approved squad.
-    """
-    if request.method == 'POST':
-        app = get_object_or_404(SquadApplication, pk=pk, status='APPROVED')
-        if app.user != request.user and not request.user.is_staff:
-            return redirect('index')
-            
-        total_points = 0
-        picks = app.picks.filter(is_starter=True)
-        for pick in picks:
-            pos = pick.player.position
-            if pos == 'GK':
-                pts = random.choice([2, 2, 2, 6, 6, 7, 10])
-            elif pos == 'DEF':
-                pts = random.choice([1, 2, 2, 2, 6, 6, 8, 12, 15])
-            elif pos == 'MID':
-                pts = random.choice([2, 2, 3, 5, 8, 10, 15])
-            else:
-                pts = random.choice([2, 2, 5, 9, 12, 17])
-            
-            if random.random() < 0.1:
-                pts = random.choice([0, 1, -1])
-                
-            total_points += pts
-            
-        app.total_points = total_points
-        app.save()
-        
-    return redirect('index')
-
-@login_required
-@player_only
-def pick_team(request):
-    players = Player.objects.filter(is_active=True).select_related('team').order_by('position', '-price')
-    active_gw = Gameweek.objects.filter(is_active=True).first()
-    existing_picks = []
-    saved_formation = '433'
-    bank = 100.0
-    free_transfers = 1
-    
-    if active_gw:
-        ft = FantasyTeam.objects.filter(user=request.user, gameweek=active_gw).first()
-        if not ft: ft = FantasyTeam.objects.filter(user=request.user).order_by("-gameweek__number").first()
-        if ft:
-            saved_formation = ft.formation
-            bank = ft.bank
-            free_transfers = ft.free_transfers
-            for pick in ft.picks.all():
-                existing_picks.append({
-                    'id': pick.player.id,
-                    'pos': pick.player.position,
-                    'is_sub': pick.is_sub,
-                    'purchase_price': pick.purchase_price or pick.player.price,
-                    'is_captain': pick.is_captain,
-                    'is_vice_captain': getattr(pick, 'is_vice_captain', False)
-                })
-                
-    return render(request, 'core/pick_team.html', {
-        'players': players, 'active_gameweek': active_gw, 'saved_picks_json': json.dumps(existing_picks),
-        'saved_formation': saved_formation, 'bank': bank, 'free_transfers': free_transfers,
+    return render(request, 'core/index.html', {
+        'my_teams': my_teams,
+        'my_tournaments': my_tournaments,
     })
 
-@csrf_exempt
-@login_required
-def league_detail(request, code):
-    league = get_object_or_404(League, code=code)
-    members = LeagueMember.objects.filter(league=league).select_related('user')
-    rankings = []
-    mvps = []
-    for member in members:
-        teams = FantasyTeam.objects.filter(user=member.user)
-        total = teams.aggregate(t=Sum('total_points'))['t'] or 0
-        gw_scores = list(teams.order_by('gameweek__number').values_list('total_points', flat=True))
-        rankings.append({'user': member.user, 'total': total, 'gw_scores': gw_scores[-5:]})
-        
-        # MVP Logic: Top player in their current squad
-        latest_team = teams.order_by('-gameweek__number').first()
-        if latest_team:
-            top_player = Player.objects.filter(fantasy_picks__fantasy_team=latest_team).annotate(total_pts=Sum('stats__fantasy_points')).order_by('-total_pts').first()
-            if top_player:
-                mvps.append({
-                    'manager': member.user.username,
-                    'player': top_player.display_name,
-                    'pts': top_player.total_pts or 0,
-                    'pos': top_player.position,
-                    'team': top_player.team.short_name,
-                    'color': top_player.team.primary_color,
-                    'color2': top_player.team.secondary_color
-                })
-
-    rankings.sort(key=lambda x: x['total'], reverse=True)
-    for i, r in enumerate(rankings): r['rank'] = i + 1
-    
-    context = {
-        'league': league, 
-        'rankings': rankings, 
-        'mvps': mvps,
-        'is_member': request.user.is_authenticated and members.filter(user=request.user).exists()
-    }
-    return render(request, 'core/league_detail.html', context)
 
 @login_required
-def get_notifications(request):
-    notifs = Notification.objects.filter(user=request.user).order_by('-created_at')[:15]
-    return JsonResponse({'notifications': [{'id': n.id, 'message': n.message, 'is_read': n.is_read, 'date': n.created_at.strftime("%b %d, %H:%M")} for n in notifs]})
+def tournament_list(request):
+    """
+    ===== READ (CRUD): Browse All Tournaments =====
+    Displays all active/draft tournaments for coaches to browse and join.
+    """
+    tournaments = Tournament.objects.all().annotate(
+        team_count=Sum('tournament_teams__id', default=0)  # Just to trigger the join
+    )
+    # Recalculate team_count properly
+    for t in tournaments:
+        t.num_teams = t.tournament_teams.count()
 
-@csrf_exempt
+    return render(request, 'core/tournament_list.html', {
+        'tournaments': tournaments,
+    })
+
+
 @login_required
-def mark_notifications_read(request):
+def tournament_detail(request, tournament_id):
+    """
+    ===== READ (CRUD): Tournament Overview =====
+    Shows standings, fixtures, top scorers, and registered teams.
+    Accessible by both Coaches and Tournament Admins.
+    """
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    standings = Standing.objects.filter(tournament=tournament).select_related('team')
+    matches = Match.objects.filter(tournament=tournament).select_related('home_team', 'away_team')
+    teams = TournamentTeam.objects.filter(tournament=tournament).select_related('team__coach')
+
+    top_scorers = get_top_scorers(tournament, limit=10)
+    top_assists_list = get_top_assists(tournament, limit=10)
+    cards = get_card_summary(tournament, limit=10)
+
+    # Check if current user's team is registered
+    user_registered = TournamentTeam.objects.filter(
+        tournament=tournament, team__coach=request.user
+    ).exists()
+
+    # Knockout rounds (if applicable)
+    ko_rounds = []
+    if tournament.format == 'KNOCKOUT':
+        for r in tournament.knockout_rounds.all().order_by('round_order'):
+            fixtures = r.fixtures.all().select_related('home_team', 'away_team', 'winner', 'match')
+            ko_rounds.append({'round': r, 'fixtures': fixtures})
+
+    return render(request, 'core/tournament_detail.html', {
+        'tournament': tournament,
+        'standings': standings,
+        'matches': matches,
+        'teams': teams,
+        'top_scorers': top_scorers,
+        'top_assists': top_assists_list,
+        'cards': cards,
+        'user_registered': user_registered,
+        'ko_rounds': ko_rounds,
+    })
+
+
+@login_required
+def register_team(request, tournament_id):
+    """
+    ===== CREATE (CRUD): Register Team + Players into a Tournament =====
+    Coach fills out a form with team name and player details.
+    Creates a Team, Player objects, and a TournamentTeam entry.
+    """
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+
+    # Check if coach already has a team in this tournament
+    existing = TournamentTeam.objects.filter(
+        tournament=tournament, team__coach=request.user
+    ).exists()
+    if existing:
+        return redirect('tournament_detail', tournament_id=tournament.pk)
+
     if request.method == 'POST':
-        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
-        return JsonResponse({'ok': True})
-    return JsonResponse({'error': 'POST required'}, status=405)
+        team_name = request.POST.get('team_name', '').strip()
+        short_name = request.POST.get('short_name', '').strip().upper()[:5]
+        primary_color = request.POST.get('primary_color', '#333333')
+        secondary_color = request.POST.get('secondary_color', '#FFFFFF')
 
-@login_required
-def get_team_of_the_week(request):
-    latest_match = Match.objects.filter(is_played=True).order_by('-gameweek__number').first()
-    if not latest_match: return JsonResponse({'error': 'No matches played yet'})
-    
-    gw = latest_match.gameweek
-    totw_players = []
-    
-    def get_top_players(pos, count):
-        stats = PlayerStat.objects.filter(match__gameweek=gw, player__position=pos).order_by('-fantasy_points')[:count]
-        for s in stats:
-            totw_players.append({
-                'id': s.player.id,  # RESTORED ID: Fixes the bug where clicking TOTW throws a 404 or loads wrong player
-                'name': s.player.display_name,
-                'team': s.player.team.short_name,
-                'pos': s.player.position,
-                'color': s.player.team.primary_color,
-                'color2': s.player.team.secondary_color,
-                'pts': s.fantasy_points,
-                'is_captain': False
+        if not team_name or not short_name:
+            return render(request, 'core/register_team.html', {
+                'tournament': tournament,
+                'error': 'Team name and short name are required.',
             })
 
-    get_top_players('GK', 1)
-    get_top_players('DEF', 3)
-    get_top_players('MID', 4)
-    get_top_players('FWD', 3)
+        # CREATE the team
+        team = Team.objects.create(
+            name=team_name,
+            short_name=short_name,
+            primary_color=primary_color,
+            secondary_color=secondary_color,
+            coach=request.user,
+        )
 
-    if totw_players:
-        top_scorer = max(totw_players, key=lambda p: p['pts'])
-        top_scorer['is_captain'] = True
+        # CREATE players from form data
+        player_count = int(request.POST.get('player_count', 0))
+        for i in range(player_count):
+            fname = request.POST.get(f'player_{i}_first_name', '').strip()
+            lname = request.POST.get(f'player_{i}_last_name', '').strip()
+            pos = request.POST.get(f'player_{i}_position', 'MID')
+            jersey = request.POST.get(f'player_{i}_jersey', 0)
+            if lname:  # Only create if at least last name is provided
+                Player.objects.create(
+                    team=team,
+                    first_name=fname,
+                    last_name=lname,
+                    position=pos,
+                    jersey_number=int(jersey) if jersey else 0,
+                )
 
-    return JsonResponse({'gameweek': gw.number, 'players': totw_players})
+        # Register team into tournament
+        TournamentTeam.objects.create(tournament=tournament, team=team)
 
-@login_required
-def create_league(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        if name:
-            league = League.objects.create(name=name, created_by=request.user)
-            LeagueMember.objects.create(league=league, user=request.user)
-            return redirect('league_detail', code=league.code)
-    return render(request, 'core/create_league.html')
+        # Initialize standing row
+        Standing.objects.get_or_create(tournament=tournament, team=team)
 
-@login_required
-def join_league(request):
-    if request.method == 'POST':
-        code = request.POST.get('code')
-        if code:
-            league = get_object_or_404(League, code=code)
-            LeagueMember.objects.get_or_create(league=league, user=request.user)
-            return redirect('league_detail', code=league.code)
-    return render(request, 'core/join_league.html')
+        return redirect('tournament_detail', tournament_id=tournament.pk)
 
-@login_required
-def leave_league(request, code):
-    league = get_object_or_404(League, code=code)
-    LeagueMember.objects.filter(league=league, user=request.user).delete()
-    return redirect('leaderboard')
-
-@login_required
-def delete_league(request, code):
-    league = get_object_or_404(League, code=code)
-    if league.created_by == request.user:
-        league.delete()
-    return redirect('leaderboard')
-
-@login_required
-def leaderboard(request):
-    from django.contrib.auth.models import User
-    from django.db.models import Sum
-    
-    user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
-    
-    # Calculate Global Rankings
-    users = User.objects.annotate(total_pts=Sum('fantasy_teams__total_points')).exclude(total_pts__isnull=True).order_by('-total_pts')[:50]
-    global_rankings = [{'rank': i + 1, 'user': u.username, 'pts': u.total_pts} for i, u in enumerate(users)]
-    
-    # Top Player Stats
-    top_scorers = Player.objects.annotate(total_goals=Sum('stats__goals')).filter(total_goals__gt=0).order_by('-total_goals')[:5]
-    top_assists = Player.objects.annotate(total_assists=Sum('stats__assists')).filter(total_assists__gt=0).order_by('-total_assists')[:5]
-    top_points = Player.objects.annotate(total_pts=Sum('stats__fantasy_points')).filter(total_pts__gt=0).order_by('-total_pts')[:5]
-
-    return render(request, 'core/leaderboard.html', {
-        'user_leagues': user_leagues, 'top_scorers': top_scorers, 'top_assists': top_assists, 
-        'top_points': top_points, 'global_rankings': global_rankings,
+    return render(request, 'core/register_team.html', {
+        'tournament': tournament,
     })
 
-@login_required
-def user_profile(request):
-    active_gw = Gameweek.objects.filter(is_active=True).first()
-    active_num = active_gw.number if active_gw else 99
-    
-    # Only show teams from completed gameweeks in the history chart
-    teams = FantasyTeam.objects.filter(user=request.user, gameweek__number__lt=active_num).order_by('gameweek__number')
-    
-    total_points = sum(t.total_points for t in teams)
-    history_data = [{'gw': t.gameweek.number, 'pts': t.total_points} for t in teams]
-    user_leagues = LeagueMember.objects.filter(user=request.user).select_related('league')
-    return render(request, 'core/profile.html', {'total_points': total_points, 'history_data': history_data, 'user_leagues': user_leagues})
 
 @login_required
-def fixtures(request):
-    from .models import Gameweek, Team, Match
-    gameweeks = Gameweek.objects.prefetch_related('matches__home_team', 'matches__away_team').order_by('number')
-    
-    # Dynamically calculate the simulated Premier League Table
-    teams_data = {t.id: {'name': t.name, 'logo': t.logo_filename, 'short': t.short_name, 'played': 0, 'w': 0, 'd': 0, 'l': 0, 'gf': 0, 'ga': 0, 'gd': 0, 'pts': 0} for t in Team.objects.all()}
-    
-    played_matches = Match.objects.filter(is_played=True)
-    for m in played_matches:
-        h, a = m.home_team.id, m.away_team.id
-        teams_data[h]['played'] += 1
-        teams_data[a]['played'] += 1
-        teams_data[h]['gf'] += m.home_score
-        teams_data[h]['ga'] += m.away_score
-        teams_data[a]['gf'] += m.away_score
-        teams_data[a]['ga'] += m.home_score
-        
-        if m.home_score > m.away_score:
-            teams_data[h]['w'] += 1
-            teams_data[h]['pts'] += 3
-            teams_data[a]['l'] += 1
-        elif m.home_score < m.away_score:
-            teams_data[a]['w'] += 1
-            teams_data[a]['pts'] += 3
-            teams_data[h]['l'] += 1
-        else:
-            teams_data[h]['d'] += 1
-            teams_data[a]['d'] += 1
-            teams_data[h]['pts'] += 1
-            teams_data[a]['pts'] += 1
-            
-    for t in teams_data.values():
-        t['gd'] = t['gf'] - t['ga']
-        
-    # Sort by Points, then Goal Difference, then Goals Scored
-    standings = sorted(teams_data.values(), key=lambda x: (x['pts'], x['gd'], x['gf']), reverse=True)
-    
-    return render(request, 'core/fixtures.html', {'gameweeks': gameweeks, 'standings': standings})
+def team_detail(request, tournament_id, team_id):
+    """
+    ===== READ (CRUD): View Team Roster & Last Lineup =====
+    Any coach can view any team's registered players and their stats.
+    This is the "suggested lineup" feature (Option A: actual registered squad).
+    """
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    team = get_object_or_404(Team, pk=team_id)
+    players = Player.objects.filter(team=team).order_by('position', 'jersey_number')
 
-@login_required
-def get_player_detail(request, player_id):
-    player = get_object_or_404(Player, id=player_id)
-    stats = PlayerStat.objects.filter(player=player).select_related('match__gameweek', 'match__home_team', 'match__away_team').order_by('match__gameweek__number')
-    
-    history = []
-    total_pts = 0
-    for s in stats:
-        opp = s.match.away_team.short_name if s.match.home_team == player.team else s.match.home_team.short_name
-        history.append({'gw': s.match.gameweek.number, 'opp': opp, 'mins': s.minutes_played, 'pts': s.fantasy_points, 'goals': s.goals, 'assists': s.assists})
-        total_pts += s.fantasy_points
-        
-    data = {'id': player.id, 'name': player.full_name, 'team': player.team.name, 'pos': player.position, 'price': float(player.price), 'total_pts': total_pts, 'history': history}
-    return JsonResponse(data)
+    # Aggregate player stats within this tournament
+    player_stats = []
+    for p in players:
+        stats = PlayerStat.objects.filter(
+            player=p, match__tournament=tournament
+        ).aggregate(
+            total_goals=Sum('goals'),
+            total_assists=Sum('assists'),
+            total_yellows=Sum('yellow_cards'),
+            total_reds=Sum('red_cards'),
+            total_minutes=Sum('minutes_played'),
+        )
+        player_stats.append({
+            'player': p,
+            'goals': stats['total_goals'] or 0,
+            'assists': stats['total_assists'] or 0,
+            'yellows': stats['total_yellows'] or 0,
+            'reds': stats['total_reds'] or 0,
+            'minutes': stats['total_minutes'] or 0,
+        })
 
-@csrf_exempt
-@login_required
-def save_picks(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            picks_data = data.get('picks', [])
-            formation = data.get('formation', '433')
-            
-            active_gw = Gameweek.objects.filter(is_active=True).first()
-            if not active_gw: return JsonResponse({'error': 'No active gameweek'})
-                
-            ft, created = FantasyTeam.objects.get_or_create(user=request.user, gameweek=active_gw)
-            
-            old_picks = {p.player.id: p for p in ft.picks.all()}
-            new_ids = [int(p['player_id']) for p in picks_data]
-            
-            players_out = [p for pid, p in old_picks.items() if pid not in new_ids]
-            players_in_data = [p for p in picks_data if int(p['player_id']) not in old_picks]
-            
-            if ft.picks.exists() and players_in_data:
-                revenue = 0; cost = 0
-                for old_pick in players_out:
-                    pur_price = old_pick.purchase_price or old_pick.player.price
-                    diff = float(old_pick.player.price) - float(pur_price)
-                    sell_price = float(pur_price) + (math.floor(diff * 10) / 20.0) if diff > 0 else float(old_pick.player.price)
-                    revenue += sell_price
-                    
-                for new_pick in players_in_data:
-                    player = Player.objects.get(id=new_pick['player_id'])
-                    cost += float(player.price)
-                    
-                net_cost = cost - revenue
-                if float(ft.bank) - net_cost < -0.01: return JsonResponse({'error': f'Insufficient funds. You are short £{abs(float(ft.bank) - net_cost):.1f}m'})
-                    
-                transfers_made = len(players_in_data)
-                if transfers_made > ft.free_transfers:
-                    ft.points_hit += ((transfers_made - ft.free_transfers) * 4)
-                    ft.free_transfers = 0
-                else: ft.free_transfers -= transfers_made
-                    
-                ft.bank = float(ft.bank) - net_cost
-            
-            elif not ft.picks.exists():
-                cost = sum(float(Player.objects.get(id=p['player_id']).price) for p in picks_data)
-                if 100.0 - cost < -0.01: return JsonResponse({'error': 'Budget exceeded.'})
-                ft.bank = 100.0 - cost
-
-            ft.formation = formation; ft.save()
-            ft.picks.all().delete()
-            for p_data in picks_data:
-                player = Player.objects.get(id=p_data['player_id'])
-                old_pur = old_picks[player.id].purchase_price if player.id in old_picks else None
-                FantasyPick.objects.create(fantasy_team=ft, player=player, is_captain=p_data.get('is_captain', False), is_vice_captain=p_data.get('is_vice_captain', False), is_sub=p_data.get('is_sub', False), purchase_price=old_pur or player.price)
-                    
-            return JsonResponse({'success': True, 'status': 'ok'})
-        except Exception as e: return JsonResponse({'error': str(e)})
-    return JsonResponse({'error': 'POST required'}, status=405)
-
-@login_required
-def players(request):
-    teams = Team.objects.all().order_by('name')
-    return render(request, 'core/players.html', {'teams': teams})
-
-@login_required
-def team_detail(request, short_name):
-    team = get_object_or_404(Team, short_name=short_name)
-    
-    # Get top players for each position
-    gk = Player.objects.filter(team=team, position='GK').order_by('-price')[:1]
-    defenders = Player.objects.filter(team=team, position='DEF').order_by('-price')[:4]
-    midfielders = Player.objects.filter(team=team, position='MID').order_by('-price')[:3]
-    forwards = Player.objects.filter(team=team, position='FWD').order_by('-price')[:3]
-    
-    starters = list(gk) + list(defenders) + list(midfielders) + list(forwards)
-    starter_ids = [p.id for p in starters]
-    
-    # Rest of the squad
-    subs = Player.objects.filter(team=team).exclude(id__in=starter_ids).order_by('-price')[:7]
-    sub_ids = [p.id for p in subs]
-    reserves = Player.objects.filter(team=team).exclude(id__in=starter_ids + sub_ids).order_by('position', '-price')
-    
-    # Combined list for the "Simulation Squad List" table
-    ordered_squad = list(starters) + list(subs) + list(reserves)
-    
-    context = {
-        'team': team,
-        'starters': starters,
-        'subs': subs,
-        'reserves': reserves,
-        'all_players': ordered_squad
+    # Build suggested lineup: best XI by position (GK:1, DEF:4, MID:4, FWD:2)
+    lineup = {
+        'GK': [p for p in players if p.position == 'GK'][:1],
+        'DEF': [p for p in players if p.position == 'DEF'][:4],
+        'MID': [p for p in players if p.position == 'MID'][:4],
+        'FWD': [p for p in players if p.position == 'FWD'][:2],
     }
-    return render(request, 'core/team_detail.html', context)
 
-from django.core.management import call_command
-from django.http import JsonResponse
-from io import StringIO
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
-@login_required
-def simulation_center(request):
-    if request.method == 'POST':
-        try:
-            out = StringIO()
-            call_command('process_gameweek', stdout=out)
-            return JsonResponse({'status': 'success', 'log': out.getvalue()})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'log': str(e)})
-    return render(request, 'core/simulation_center.html')
-
-@login_required
-def architecture_view(request):
-    return render(request, 'core/architecture.html')
-
-
-@login_required
-def leaderboard(request):
-    """
-    ===== GLOBAL LEADERBOARD (Read/Query) =====
-    This view demonstrates querying, filtering, and ordering data from the database.
-    It fetches all APPROVED squad applications that have been simulated (total_points is not null).
-    It then orders them by total_points in descending order to create a leaderboard.
-    """
-    
-    # DATABASE QUERY: Select all approved squads with points, ordered highest to lowest
-    ranked_squads = SquadApplication.objects.filter(
-        status='APPROVED', 
-        total_points__isnull=False
-    ).select_related('user').order_by('-total_points')
-    
-    # We pass the queryset directly to the template
-    return render(request, 'core/leaderboard.html', {
-        'ranked_squads': ranked_squads
+    return render(request, 'core/team_detail.html', {
+        'tournament': tournament,
+        'team': team,
+        'player_stats': player_stats,
+        'lineup': lineup,
     })
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TOURNAMENT ADMIN VIEWS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@login_required
+def admin_dashboard(request):
+    """
+    ===== TOURNAMENT ADMIN DASHBOARD =====
+    Shows all tournaments managed by this admin.
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    my_tournaments = Tournament.objects.filter(created_by=request.user)
+    for t in my_tournaments:
+        t.num_teams = t.tournament_teams.count()
+        t.num_matches_played = t.matches.filter(is_played=True).count()
+        t.num_matches_total = t.matches.count()
+
+    return render(request, 'core/admin_dashboard.html', {
+        'tournaments': my_tournaments,
+    })
+
+
+@login_required
+def create_tournament(request):
+    """
+    ===== CREATE (CRUD): Create a New Tournament =====
+    Tournament Admin creates a tournament with a name, format, and description.
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        fmt = request.POST.get('format', 'LEAGUE')
+        description = request.POST.get('description', '').strip()
+
+        if name:
+            Tournament.objects.create(
+                name=name,
+                format=fmt,
+                description=description,
+                created_by=request.user,
+            )
+            return redirect('admin_dashboard')
+
+    return render(request, 'core/create_tournament.html')
+
+
+@login_required
+def edit_tournament(request, tournament_id):
+    """
+    ===== UPDATE (CRUD): Edit Tournament Details =====
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    tournament = get_object_or_404(Tournament, pk=tournament_id, created_by=request.user)
+
+    if request.method == 'POST':
+        tournament.name = request.POST.get('name', tournament.name).strip()
+        tournament.format = request.POST.get('format', tournament.format)
+        tournament.status = request.POST.get('status', tournament.status)
+        tournament.description = request.POST.get('description', tournament.description).strip()
+        tournament.save()
+        return redirect('admin_dashboard')
+
+    return render(request, 'core/create_tournament.html', {
+        'tournament': tournament,
+        'edit_mode': True,
+    })
+
+
+@login_required
+def delete_tournament(request, tournament_id):
+    """
+    ===== DELETE (CRUD): Delete a Tournament =====
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    tournament = get_object_or_404(Tournament, pk=tournament_id, created_by=request.user)
+    if request.method == 'POST':
+        tournament.delete()
+    return redirect('admin_dashboard')
+
+
+@login_required
+def manage_fixtures(request, tournament_id):
+    """
+    ===== Tournament Admin: Generate & View Fixtures =====
+    If no fixtures exist, generates them based on the tournament format.
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    tournament = get_object_or_404(Tournament, pk=tournament_id, created_by=request.user)
+
+    if request.method == 'POST' and 'generate' in request.POST:
+        # Generate fixtures
+        if tournament.format == 'LEAGUE':
+            generate_league_fixtures(tournament)
+        else:
+            generate_knockout_bracket(tournament)
+        tournament.status = 'ACTIVE'
+        tournament.save()
+        return redirect('manage_fixtures', tournament_id=tournament.pk)
+
+    matches = Match.objects.filter(tournament=tournament).select_related('home_team', 'away_team')
+
+    # Group matches by round_label
+    rounds = {}
+    for m in matches:
+        if m.round_label not in rounds:
+            rounds[m.round_label] = []
+        rounds[m.round_label].append(m)
+
+    return render(request, 'core/manage_fixtures.html', {
+        'tournament': tournament,
+        'rounds': rounds,
+        'has_fixtures': matches.exists(),
+    })
+
+
+@login_required
+def enter_match_result(request, match_id):
+    """
+    ===== UPDATE (CRUD): Enter Match Result + Player Stats =====
+
+    This is the KEY view that triggers the standings computation.
+    The Tournament Admin enters:
+      1. The final score (home_score, away_score)
+      2. Per-player stats (goals, assists, cards, minutes)
+
+    After saving, it calls recompute_standings() to update the league table.
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    match = get_object_or_404(Match, pk=match_id)
+    tournament = match.tournament
+
+    # Get players from both teams
+    home_players = Player.objects.filter(team=match.home_team).order_by('position', 'jersey_number')
+    away_players = Player.objects.filter(team=match.away_team).order_by('position', 'jersey_number')
+
+    if request.method == 'POST':
+        # Save match score
+        match.home_score = int(request.POST.get('home_score', 0))
+        match.away_score = int(request.POST.get('away_score', 0))
+        match.is_played = True
+        match.save()
+
+        # Save player stats
+        all_players = list(home_players) + list(away_players)
+        for player in all_players:
+            goals = int(request.POST.get(f'goals_{player.id}', 0))
+            assists = int(request.POST.get(f'assists_{player.id}', 0))
+            yellows = int(request.POST.get(f'yellows_{player.id}', 0))
+            reds = int(request.POST.get(f'reds_{player.id}', 0))
+            minutes = int(request.POST.get(f'minutes_{player.id}', 0))
+
+            PlayerStat.objects.update_or_create(
+                player=player, match=match,
+                defaults={
+                    'goals': goals,
+                    'assists': assists,
+                    'yellow_cards': yellows,
+                    'red_cards': reds,
+                    'minutes_played': minutes,
+                }
+            )
+
+        # ===== TRIGGER STANDINGS RECOMPUTATION =====
+        # This is the core backend logic that the evaluator should see.
+        recompute_standings(tournament)
+
+        # If knockout match, advance winner
+        if hasattr(match, 'knockout_fixture'):
+            advance_knockout_winner(match.knockout_fixture)
+
+        return redirect('tournament_detail', tournament_id=tournament.pk)
+
+    # Load existing stats if editing
+    existing_stats = {}
+    for ps in PlayerStat.objects.filter(match=match):
+        existing_stats[ps.player_id] = ps
+
+    return render(request, 'core/enter_result.html', {
+        'match': match,
+        'tournament': tournament,
+        'home_players': home_players,
+        'away_players': away_players,
+        'existing_stats': existing_stats,
+    })
+
+
+@login_required
+def auto_simulate_match(request, match_id):
+    """
+    ===== Tournament Admin: Auto-Simulate Match =====
+    Generates realistic random match stats and score for the fixture.
+    Runs standings recomputation automatically.
+    """
+    if not request.user.is_staff:
+        return redirect('index')
+
+    import random
+    match = get_object_or_404(Match, pk=match_id)
+    tournament = match.tournament
+
+    # Delete any existing player stats for this match first (for clean re-playability)
+    PlayerStat.objects.filter(match=match).delete()
+
+    # Random realistic scores
+    match.home_score = random.choices([0, 1, 2, 3, 4], weights=[25, 35, 20, 12, 8])[0]
+    match.away_score = random.choices([0, 1, 2, 3, 4], weights=[30, 30, 22, 12, 6])[0]
+    match.is_played = True
+    match.save()
+
+    # Generate player stats for both teams
+    for team_obj in [match.home_team, match.away_team]:
+        is_home = (team_obj == match.home_team)
+        goals = match.home_score if is_home else match.away_score
+
+        players = list(Player.objects.filter(team=team_obj))
+        scorers = [p for p in players if p.position in ('FWD', 'MID')]
+        goal_assignments = random.choices(scorers, k=goals) if goals > 0 and scorers else []
+
+        for player in players:
+            g = goal_assignments.count(player)
+            a = 1 if random.random() < 0.15 and g == 0 else 0
+            yc = 1 if random.random() < 0.08 else 0
+            rc = 1 if random.random() < 0.02 else 0
+            mins = random.randint(60, 90) if random.random() < 0.85 else random.randint(0, 59)
+
+            PlayerStat.objects.create(
+                player=player, match=match,
+                goals=g, assists=a,
+                yellow_cards=yc, red_cards=rc,
+                minutes_played=mins,
+            )
+
+    # ===== TRIGGER STANDINGS RECOMPUTATION =====
+    recompute_standings(tournament)
+
+    # If knockout match, advance winner
+    if hasattr(match, 'knockout_fixture'):
+        advance_knockout_winner(match.knockout_fixture)
+
+    # Redirect to referer or tournament detail
+    referer = request.META.get('HTTP_REFERER')
+    if referer and ('/fixtures/' in referer or '/tournaments/' in referer):
+        return redirect(referer)
+    return redirect('tournament_detail', tournament_id=tournament.pk)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# JSON API ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@login_required
+def api_standings(request, tournament_id):
+    """JSON endpoint for standings data (used by frontend if needed)."""
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    standings = Standing.objects.filter(tournament=tournament).select_related('team')
+    data = [{
+        'team': s.team.name,
+        'short': s.team.short_name,
+        'played': s.played,
+        'won': s.won,
+        'drawn': s.drawn,
+        'lost': s.lost,
+        'gf': s.goals_for,
+        'ga': s.goals_against,
+        'gd': s.goal_difference,
+        'pts': s.points,
+    } for s in standings]
+    return JsonResponse({'standings': data})
+
+
+@login_required
+def api_top_scorers(request, tournament_id):
+    """JSON endpoint for top scorers (used by frontend if needed)."""
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    scorers = get_top_scorers(tournament, limit=10)
+    data = [{
+        'name': f"{s['player__first_name']} {s['player__last_name']}".strip(),
+        'team': s['player__team__short_name'],
+        'goals': s['total_goals'],
+    } for s in scorers]
+    return JsonResponse({'scorers': data})

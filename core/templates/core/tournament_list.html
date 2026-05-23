@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+{% block title %}Tournaments — MatchDay{% endblock %}
+{% block content %}
+<div class="animate-in">
+    <div style="margin-bottom: 2rem;">
+        <h1 class="section-title">🏆 All Tournaments</h1>
+        <p class="section-subtitle">Browse available tournaments and register your team.</p>
+    </div>
+
+    {% if tournaments %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem;">
+        {% for t in tournaments %}
+        <a href="{% url 'tournament_detail' t.pk %}" style="display: block;">
+            <div class="glass-card" style="transition: all 0.25s; position: relative; overflow: hidden; margin-bottom: 0;">
+                <!-- Top accent bar -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: {% if t.format == 'LEAGUE' %}linear-gradient(90deg, #58a6ff, #a371f7){% else %}linear-gradient(90deg, #f6c90e, #ff9a44){% endif %};"></div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #f0f6fc; margin-bottom: 0.3rem;">{{ t.name }}</h3>
+                        <div style="font-size: 0.8rem; color: #8b949e;">by {{ t.created_by.username }}</div>
+                    </div>
+                    <span class="badge {% if t.format == 'LEAGUE' %}badge-blue{% else %}badge-purple{% endif %}">{{ t.get_format_display }}</span>
+                </div>
+
+                {% if t.description %}
+                <p style="font-size: 0.85rem; color: #8b949e; margin-bottom: 1rem; line-height: 1.5;">{{ t.description|truncatechars:100 }}</p>
+                {% endif %}
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 16px;">
+                        <div style="font-size: 0.8rem;">
+                            <span style="font-weight: 800; color: #f0f6fc;">{{ t.num_teams }}</span>
+                            <span style="color: #8b949e;"> teams</span>
+                        </div>
+                    </div>
+                    <span class="badge {% if t.status == 'ACTIVE' %}badge-green{% elif t.status == 'DRAFT' %}badge-yellow{% else %}badge-red{% endif %}">{{ t.get_status_display }}</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-card">
+        <div class="empty-state">
+            <div class="icon">📭</div>
+            <p>No tournaments available yet.<br>Ask a League Admin to create one!</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

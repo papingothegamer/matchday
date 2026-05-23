@@ -1,0 +1,114 @@
+{% extends 'core/base.html' %}
+{% block title %}Enter Result — MatchDay{% endblock %}
+{% block content %}
+<div class="animate-in" style="max-width: 900px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1 class="section-title">📝 Enter Match Result</h1>
+        <p class="section-subtitle">{{ match.round_label }} · {{ tournament.name }}</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Score -->
+        <div class="glass-card" style="text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 2rem;">
+                <div style="text-align: center;">
+                    <div style="width: 56px; height: 56px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; margin: 0 auto 8px;">{{ match.home_team.short_name }}</div>
+                    <div style="font-weight: 800; color: #f0f6fc; font-size: 1.1rem;">{{ match.home_team.name }}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <input type="number" name="home_score" class="form-input" value="{{ match.home_score|default:0 }}" min="0" max="99" style="width: 70px; text-align: center; font-size: 1.5rem; font-weight: 900; padding: 12px;">
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #8b949e;">-</span>
+                    <input type="number" name="away_score" class="form-input" value="{{ match.away_score|default:0 }}" min="0" max="99" style="width: 70px; text-align: center; font-size: 1.5rem; font-weight: 900; padding: 12px;">
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 56px; height: 56px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; margin: 0 auto 8px;">{{ match.away_team.short_name }}</div>
+                    <div style="font-weight: 800; color: #f0f6fc; font-size: 1.1rem;">{{ match.away_team.name }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Stats: Home Team -->
+        <div class="glass-card">
+            <h2 style="font-size: 1.1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                <div style="width: 24px; height: 24px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800;">{{ match.home_team.short_name }}</div>
+                {{ match.home_team.name }} — Player Stats
+            </h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>Pos</th>
+                            <th style="text-align:center;">⚽ Goals</th>
+                            <th style="text-align:center;">🎯 Assists</th>
+                            <th style="text-align:center;">🟨</th>
+                            <th style="text-align:center;">🟥</th>
+                            <th style="text-align:center;">Mins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in home_players %}
+                        <tr>
+                            <td style="font-weight: 700; color: #8b949e;">{{ p.jersey_number }}</td>
+                            <td style="font-weight: 700; color: #f0f6fc;">{{ p.full_name }}</td>
+                            <td><span class="badge badge-blue" style="font-size: 0.6rem;">{{ p.position }}</span></td>
+                            <td><input type="number" name="goals_{{ p.id }}" class="form-input" value="{% if p.id in existing_stats %}{{ existing_stats|dictsort:'player_id' }}{% endif %}{{ existing_stats.goals|default:0 }}" min="0" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="assists_{{ p.id }}" class="form-input" min="0" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="yellows_{{ p.id }}" class="form-input" min="0" max="2" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="reds_{{ p.id }}" class="form-input" min="0" max="1" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="minutes_{{ p.id }}" class="form-input" min="0" max="120" style="width: 70px; text-align: center; padding: 6px;" value="90"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Player Stats: Away Team -->
+        <div class="glass-card">
+            <h2 style="font-size: 1.1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                <div style="width: 24px; height: 24px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800;">{{ match.away_team.short_name }}</div>
+                {{ match.away_team.name }} — Player Stats
+            </h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>Pos</th>
+                            <th style="text-align:center;">⚽ Goals</th>
+                            <th style="text-align:center;">🎯 Assists</th>
+                            <th style="text-align:center;">🟨</th>
+                            <th style="text-align:center;">🟥</th>
+                            <th style="text-align:center;">Mins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in away_players %}
+                        <tr>
+                            <td style="font-weight: 700; color: #8b949e;">{{ p.jersey_number }}</td>
+                            <td style="font-weight: 700; color: #f0f6fc;">{{ p.full_name }}</td>
+                            <td><span class="badge badge-blue" style="font-size: 0.6rem;">{{ p.position }}</span></td>
+                            <td><input type="number" name="goals_{{ p.id }}" class="form-input" min="0" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="assists_{{ p.id }}" class="form-input" min="0" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="yellows_{{ p.id }}" class="form-input" min="0" max="2" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="reds_{{ p.id }}" class="form-input" min="0" max="1" style="width: 60px; text-align: center; padding: 6px;" value="0"></td>
+                            <td><input type="number" name="minutes_{{ p.id }}" class="form-input" min="0" max="120" style="width: 70px; text-align: center; padding: 6px;" value="90"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <a href="{% url 'tournament_detail' tournament.pk %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">💾 Save Result & Update Standings</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

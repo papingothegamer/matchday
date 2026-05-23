@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+{% block title %}Admin Dashboard — MatchDay{% endblock %}
+{% block content %}
+<div class="animate-in">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <h1 class="section-title">⚡ League Admin Dashboard</h1>
+            <p class="section-subtitle">Create and manage your tournaments.</p>
+        </div>
+        <a href="{% url 'create_tournament' %}" class="btn btn-primary">+ Create Tournament</a>
+    </div>
+
+    {% if tournaments %}
+    <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tournament</th>
+                    <th>Format</th>
+                    <th>Status</th>
+                    <th>Teams</th>
+                    <th>Matches</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tournaments %}
+                <tr>
+                    <td>
+                        <a href="{% url 'tournament_detail' t.pk %}" style="font-weight: 700; color: #f0f6fc;">{{ t.name }}</a>
+                        {% if t.description %}<div style="font-size: 0.75rem; color: #8b949e; margin-top: 2px;">{{ t.description|truncatechars:60 }}</div>{% endif %}
+                    </td>
+                    <td><span class="badge {% if t.format == 'LEAGUE' %}badge-blue{% else %}badge-purple{% endif %}">{{ t.get_format_display }}</span></td>
+                    <td><span class="badge {% if t.status == 'ACTIVE' %}badge-green{% elif t.status == 'DRAFT' %}badge-yellow{% else %}badge-red{% endif %}">{{ t.get_status_display }}</span></td>
+                    <td style="font-weight: 700;">{{ t.num_teams }}</td>
+                    <td style="font-size: 0.85rem; color: #8b949e;">{{ t.num_matches_played }} / {{ t.num_matches_total }}</td>
+                    <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <a href="{% url 'manage_fixtures' t.pk %}" class="btn btn-secondary btn-sm">Fixtures</a>
+                            <a href="{% url 'edit_tournament' t.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                            <form method="post" action="{% url 'delete_tournament' t.pk %}" style="display: inline;" onsubmit="return confirm('Delete this tournament and all its data?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="glass-card">
+        <div class="empty-state">
+            <div class="icon">🏆</div>
+            <p>You haven't created any tournaments yet.<br>Click the button above to get started!</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

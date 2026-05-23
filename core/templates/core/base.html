@@ -5,74 +5,298 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MatchDay{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #0d1117; color: #c9d1d9; }
-        .navbar { background-color: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .nav-brand { font-size: 1.5rem; font-weight: 700; color: #fff; text-decoration: none; }
-        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-        .nav-link { color: #c9d1d9; text-decoration: none; font-weight: 600; transition: color 0.2s; }
-        .nav-link:hover { color: #fff; }
-    .nav-link.active { color: #fff; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0d1117; color: #c9d1d9; min-height: 100vh; }
+        a { color: inherit; text-decoration: none; }
+
+        /* ── Navbar ── */
+        .navbar { background: #161b22; border-bottom: 1px solid #30363d; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; height: 64px; position: sticky; top: 0; z-index: 1000; }
+        .nav-brand { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+        .nav-brand span { color: #3fb950; }
+        .nav-links { display: flex; gap: 6px; align-items: center; }
+        .nav-link { color: #8b949e; font-size: 0.875rem; font-weight: 600; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; }
+        .nav-link:hover { color: #f0f6fc; background: rgba(255,255,255,0.04); }
+        .nav-link.active { color: #f0f6fc; background: rgba(255,255,255,0.08); }
+        .nav-divider { width: 1px; height: 24px; background: #30363d; margin: 0 4px; }
+        .nav-user { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 600; color: #c9d1d9; }
+        .nav-avatar { width: 28px; height: 28px; background: #238636; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #fff; }
+        .role-pill { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .role-pill.admin { background: rgba(246,201,14,0.15); color: #f6c90e; }
+        .role-pill.coach { background: rgba(63,185,80,0.15); color: #3fb950; }
+        .role-pill.super { background: rgba(248,81,73,0.15); color: #f85149; }
+        .nav-logout { color: #f85149; opacity: 0.7; font-size: 0.85rem; font-weight: 600; padding: 8px 12px; border-radius: 8px; transition: 0.2s; }
+        .nav-logout:hover { opacity: 1; background: rgba(248,81,73,0.1); }
+
+        /* ── Container ── */
         .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .btn-primary { background-color: #238636; color: #fff; border: 1px solid #2ea043; padding: 5px 16px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; text-decoration: none; }
-        .btn-primary:hover { background-color: #2ea043; border-color: #3fb950; }
-        
-        /* Universal Pitch Engine CSS */
-        .pitch { background: #1a4a1a; border-radius: 8px; padding: 1.5rem 0.5rem; position: relative; min-height: 480px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; min-width: 350px; }
-        .pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.25); pointer-events: none; }
-        .pitch-lines::before { content: ''; position: absolute; top: -60px; left: 35%; right: 35%; height: 120px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; pointer-events: none;}
-        .penalty-box-top { position: absolute; top: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-top: none; pointer-events: none;}
-        .penalty-box-bottom { position: absolute; bottom: 0; left: 22%; right: 22%; height: 16%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; pointer-events: none;}
-        .goal-area-top { position: absolute; top: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-top: none; pointer-events: none;}
-        .goal-area-bottom { position: absolute; bottom: 0; left: 36%; right: 36%; height: 6%; border: 1px solid rgba(255,255,255,0.25); border-bottom: none; pointer-events: none;}
-        .pitch-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; position: relative; z-index: 10; pointer-events: auto;}
-        
-        /* Select-None applied here to prevent text highlighting on clicks */
-        .player-slot { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 65px; position: relative; z-index: 100; pointer-events: auto; user-select: none; -webkit-user-select: none; }
-        .shirt { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; transition: transform 0.15s; position: relative; cursor: pointer; user-select: none; -webkit-user-select: none; }
-        .player-slot:hover .shirt { transform: scale(1.08); }
-        .shirt.empty { background: rgba(13, 17, 23, 0.6); border: 2px dashed #484f58; color: #8b949e; }
-        .shirt.filled { color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 2px solid #ffffff; }
-        .slot-name { font-size: 10px; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(13, 17, 23, 0.9); padding: 3px 4px; border-radius: 4px; border: 1px solid #30363d; user-select: none; -webkit-user-select: none;}
-        .slot-price { font-size: 10px; color: #3fb950; font-weight: 600; user-select: none; -webkit-user-select: none;}
-        
-        .captain-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #f6c90e; border-radius: 50%; font-size: 9px; font-weight: 700; color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 150;}
-        .injury-badge { position: absolute; bottom: -4px; right: -4px; width: 16px; height: 16px; background: #d73a49; border-radius: 50%; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 150;}
-        
-        /* Team Logo Utilities */
-        .team-logo-sm { width: 24px; height: 24px; object-fit: contain; }
-        .team-logo-md { width: 48px; height: 48px; object-fit: contain; }
-        .team-logo-lg { width: 64px; height: 64px; object-fit: contain; }
+
+        /* ── Common Components ── */
+        .glass-card { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; font-size: 0.875rem; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: linear-gradient(135deg, #238636, #2ea043); color: #fff; }
+        .btn-primary:hover { box-shadow: 0 4px 16px rgba(46, 160, 67, 0.3); }
+        .btn-secondary { background: rgba(48, 54, 61, 0.6); color: #c9d1d9; border: 1px solid #30363d; }
+        .btn-secondary:hover { background: rgba(48, 54, 61, 0.9); }
+        .btn-danger { background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+        .btn-danger:hover { background: rgba(248, 81, 73, 0.25); }
+        .btn-sm { padding: 6px 14px; font-size: 0.8rem; border-radius: 8px; }
+
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-green { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+        .badge-yellow { background: rgba(246,201,14,0.15); color: #f6c90e; border: 1px solid rgba(246,201,14,0.3); }
+        .badge-blue { background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
+        .badge-purple { background: rgba(163,113,247,0.15); color: #a371f7; border: 1px solid rgba(163,113,247,0.3); }
+        .badge-red { background: rgba(248,81,73,0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+
+        .section-title { font-size: 1.5rem; font-weight: 800; color: #f0f6fc; margin-bottom: 0.5rem; }
+        .section-subtitle { color: #8b949e; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        /* ── Data Table ── */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th { text-align: left; font-size: 0.7rem; font-weight: 800; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; padding: 12px 16px; border-bottom: 1px solid #30363d; }
+        .data-table td { padding: 14px 16px; border-bottom: 1px solid #21262d; font-size: 0.9rem; vertical-align: middle; }
+        .data-table tr:hover td { background: rgba(48,54,61,0.25); }
+        .data-table .rank { width: 50px; font-weight: 800; color: #8b949e; text-align: center; }
+        .data-table .pts { font-weight: 800; color: #3fb950; text-align: center; }
+
+        /* ── Form Inputs ── */
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+        .form-group label { font-size: 0.8rem; font-weight: 700; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; background: rgba(13, 17, 23, 0.8); border: 1px solid #30363d; border-radius: 10px; color: #f0f6fc; font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #58a6ff; box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1); }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; cursor: pointer; }
+        .form-select option { background: #0d1117; }
+        .form-textarea { min-height: 80px; resize: vertical; }
+
+        /* ── Pitch (for lineup view) ── */
+        .pitch { background: linear-gradient(180deg, #1a5a1a 0%, #1a4a1a 50%, #1a5a1a 100%); border-radius: 12px; padding: 1.5rem 0.5rem; position: relative; min-height: 420px; border: 2px solid #2ea043; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); overflow: hidden; }
+        .pitch-lines { position: absolute; top: 50%; left: -2px; right: -2px; height: 1px; background: rgba(255,255,255,0.2); pointer-events: none; }
+        .pitch-lines::before { content: ''; position: absolute; top: -50px; left: 35%; right: 35%; height: 100px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; }
+        .pitch-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; position: relative; z-index: 10; }
+        .player-chip { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 70px; }
+        .player-shirt { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fff; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        .player-label { font-size: 0.65rem; color: #e6e6e6; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; background: rgba(13, 17, 23, 0.85); padding: 3px 4px; border-radius: 4px; }
+
+        /* ── Empty State ── */
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #8b949e; }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state p { font-size: 0.95rem; line-height: 1.5; }
+
+        /* ── Animations ── */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeInUp 0.4s ease-out; }
+
+        /* ── Evaluator Info Box Styles ── */
+        .evaluator-info-box {
+            background: rgba(88, 166, 255, 0.05);
+            border: 1px solid rgba(88, 166, 255, 0.15);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .evaluator-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 700;
+            color: #58a6ff;
+            user-select: none;
+        }
+        .evaluator-info-toggle {
+            background: none;
+            border: none;
+            color: #58a6ff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .evaluator-info-toggle:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+        .evaluator-info-content {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            border-top: 1px solid rgba(88, 166, 255, 0.1);
+            padding-top: 1rem;
+        }
+        .info-section h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #f0f6fc;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .info-section p, .info-section li {
+            font-size: 0.8rem;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+        .info-section ul {
+            padding-left: 1.2rem;
+            margin-top: 0.25rem;
+        }
     </style>
     {% block extra_style %}{% endblock %}
 </head>
 <body>
     <nav class="navbar">
         <a href="/" class="nav-brand">
-            <span style="color:#3fb950;">MATCH</span>DAY
-            <span style="font-size:10px; font-weight:800; background:#238636; color:#fff; padding:2px 6px; border-radius:4px; margin-left:5px; vertical-align:middle; letter-spacing:1px;">PRO</span>
+            <span>MATCH</span>DAY
         </a>
         <div class="nav-links">
             {% if request.user.is_authenticated %}
-                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
-                <a href="/leaderboard/" class="nav-link {% if request.path == '/leaderboard/' %}active{% endif %}">Leaderboard</a>
-                <div style="width:1px; height:20px; background:#30363d; margin: 0 5px;"></div>
-                <a href="/" class="nav-link" style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:24px; height:24px; background:#238636; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800;">{{ request.user.username|make_list|first|upper }}</div>
+                {% if request.user.is_staff and not request.user.is_superuser %}
+                    {# Tournament Admin Nav #}
+                    <a href="{% url 'admin_dashboard' %}" class="nav-link {% if request.path == '/admin-dashboard/' %}active{% endif %}">Admin Dashboard</a>
+                    <a href="{% url 'tournament_list' %}" class="nav-link {% if '/tournaments' in request.path and '/create' not in request.path %}active{% endif %}">Tournaments</a>
+                {% elif not request.user.is_superuser %}
+                    {# Coach Nav #}
+                    <a href="{% url 'index' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
+                    <a href="{% url 'tournament_list' %}" class="nav-link {% if '/tournaments' in request.path %}active{% endif %}">Tournaments</a>
+                {% else %}
+                    {# Super Admin Nav #}
+                    <a href="{% url 'index' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
+                    <a href="/admin/" class="nav-link">Django Admin</a>
+                {% endif %}
+
+                <div class="nav-divider"></div>
+                <div class="nav-user">
+                    <div class="nav-avatar">{{ request.user.username|make_list|first|upper }}</div>
                     {{ request.user.username }}
-                    {% if request.user.is_staff %}<span style="font-size:9px; background:rgba(246,201,14,0.2); color:#f6c90e; padding:2px 6px; border-radius:4px; font-weight:700;">ADMIN</span>{% endif %}
-                </a>
-                <a href="/auth/logout/" class="nav-link" style="color:#f85149; opacity:0.8;">Logout</a>
+                    {% if request.user.is_superuser %}
+                        <span class="role-pill super">Super Admin</span>
+                    {% elif request.user.is_staff %}
+                        <span class="role-pill admin">League Admin</span>
+                    {% else %}
+                        <span class="role-pill coach">Coach</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'logout' %}" class="nav-logout">Logout</a>
             {% else %}
-                <a href="/auth/login/" class="nav-link">Login</a>
-                <a href="/auth/register/" class="btn-primary" style="padding: 8px 20px; border-radius: 8px;">Register</a>
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Register</a>
             {% endif %}
         </div>
     </nav>
     <div class="container">
+        {% if request.user.is_authenticated %}
+        <!-- Evaluator Presentation Info Panel -->
+        <div class="evaluator-info-box" id="infoBox" style="margin-bottom: 2rem;">
+            <div class="evaluator-info-header" id="infoBoxToggle">
+                <span style="display: flex; align-items: center; gap: 8px;">🎓 Presentation Helper</span>
+                <button class="evaluator-info-toggle" title="Toggle presentation guide">
+                    <span id="eyeIcon">👁️</span>
+                </button>
+            </div>
+            
+            <div class="evaluator-info-content" id="infoBoxContent">
+                <!-- Architecture -->
+                <div class="info-section">
+                    <h4>🔒 Role-Based Authorization</h4>
+                    <p>Access control is securely handled via Django views using `@login_required` and `is_staff` restrictions:</p>
+                    <ul style="margin-top: 4px;">
+                        <li><strong>Super Admin</strong>: Standard Django administration panel at `/admin/`.</li>
+                        <li><strong>League Admin</strong> (staff): Creates tournaments, generates fixtures, enters match results, and auto-simulates.</li>
+                        <li><strong>Coach</strong> (regular): Registers their team/players, views opponents' squads, stats, and live standings.</li>
+                    </ul>
+                </div>
+                
+                <!-- CRUD Operations -->
+                <div class="info-section">
+                    <h4>🔄 CRUD Life Cycle</h4>
+                    <p>Demonstrates full relational data CRUD operations across different user roles:</p>
+                    <ul style="margin-top: 4px;">
+                        <li><strong>Create</strong>: Coach registers a team & players; League Admin creates a tournament.</li>
+                        <li><strong>Read</strong>: Browse tournaments, view computed standings, top scorers, and team lineups.</li>
+                        <li><strong>Update</strong>: Admin enters exact match scores/player stats or edits tournament details.</li>
+                        <li><strong>Delete</strong>: League Admin can delete a tournament.</li>
+                    </ul>
+                </div>
+                
+                <!-- Database Optimization -->
+                <div class="info-section">
+                    <h4>⚡ Standings Aggregation & Optimization</h4>
+                    <p><strong>Optimization Pattern</strong>: Recalculating league standings on every read page load is computationally heavy. Instead, the application uses a <strong>denormalized pre-computed</strong> `Standing` table.</p>
+                    <p style="margin-top: 4px;">Whenever an admin enters/updates a match result, the backend recalculates and saves rows to the `Standing` table instantly. This keeps read page loads extremely fast.</p>
+                </div>
+                
+                <!-- Play Engine -->
+                <div class="info-section">
+                    <h4>🎮 Play & Simulation Engine</h4>
+                    <p><strong>Presentation Helper</strong>: League admins have two options to update a fixture:</p>
+                    <ul style="margin-top: 4px;">
+                        <li>Manually type exact match scores and per-player stats (goals, assists, cards, minutes) for all 22 players on the <em>Enter Result</em> form.</li>
+                        <li>Use the <strong>⚡ Auto-Simulate</strong> button to let the backend play the match automatically using realistic random distributions and immediately update standings!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-{% block content %}
-{% endblock %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toggleBtn = document.getElementById('infoBoxToggle');
+                const content = document.getElementById('infoBoxContent');
+                const box = document.getElementById('infoBox');
+                const eyeIcon = document.getElementById('eyeIcon');
+                
+                if (toggleBtn && content && box) {
+                    const isCollapsed = localStorage.getItem('evaluatorInfoCollapsed') === 'true';
+                    
+                    if (isCollapsed) {
+                        content.style.display = 'none';
+                        eyeIcon.textContent = '👁️‍🗨️';
+                        box.style.padding = '0.75rem 1.25rem';
+                        box.style.opacity = '0.75';
+                        box.style.marginBottom = '1rem';
+                    } else {
+                        content.style.display = 'grid';
+                        eyeIcon.textContent = '👁️';
+                        box.style.padding = '1.25rem';
+                        box.style.opacity = '1';
+                        box.style.marginBottom = '2rem';
+                    }
+                    
+                    toggleBtn.addEventListener('click', function() {
+                        const nowCollapsed = content.style.display !== 'none';
+                        if (nowCollapsed) {
+                            content.style.display = 'none';
+                            eyeIcon.textContent = '👁️‍🗨️';
+                            box.style.padding = '0.75rem 1.25rem';
+                            box.style.opacity = '0.75';
+                            box.style.marginBottom = '1rem';
+                            localStorage.setItem('evaluatorInfoCollapsed', 'true');
+                        } else {
+                            content.style.display = 'grid';
+                            eyeIcon.textContent = '👁️';
+                            box.style.padding = '1.25rem';
+                            box.style.opacity = '1';
+                            box.style.marginBottom = '2rem';
+                            localStorage.setItem('evaluatorInfoCollapsed', 'false');
+                        }
+                    });
+                }
+            });
+        </script>
+        {% endif %}
+
+        {% block content %}{% endblock %}
     </div>
     {% block extra_script %}{% endblock %}
 </body>

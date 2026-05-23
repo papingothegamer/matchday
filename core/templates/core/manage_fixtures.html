@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+{% block title %}Manage Fixtures — MatchDay{% endblock %}
+{% block content %}
+<div class="animate-in">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <h1 class="section-title">📅 Fixtures</h1>
+            <p class="section-subtitle">{{ tournament.name }} · {{ tournament.get_format_display }}</p>
+        </div>
+        {% if not has_fixtures %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="generate" value="1">
+            <button type="submit" class="btn btn-primary" onclick="return confirm('Generate fixtures for all registered teams?')">⚡ Generate Fixtures</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if has_fixtures %}
+        {% for round_label, match_list in rounds.items %}
+        <div class="glass-card">
+            <h3 style="font-size: 1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                <span style="color: #58a6ff;">📋</span> {{ round_label }}
+            </h3>
+            {% for match in match_list %}
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #21262d; {% if forloop.last %}border-bottom: none;{% endif %}">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end;">
+                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.home_team.name }}</span>
+                    <div style="width: 28px; height: 28px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.home_team.short_name }}</div>
+                </div>
+
+                <div style="min-width: 80px; text-align: center; padding: 0 16px;">
+                    {% if match.is_played %}
+                    <div style="font-size: 1.2rem; font-weight: 900; color: #f0f6fc;">{{ match.home_score }} - {{ match.away_score }}</div>
+                    <div style="font-size: 0.65rem; color: #3fb950; font-weight: 700;">FT</div>
+                    {% else %}
+                    <div style="font-size: 0.8rem; color: #8b949e; font-weight: 600;">vs</div>
+                    {% endif %}
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                    <div style="width: 28px; height: 28px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.away_team.short_name }}</div>
+                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.away_team.name }}</span>
+                </div>
+
+                <div style="display: flex; gap: 8px; align-items: center; margin-left: 12px;">
+                    <a href="{% url 'enter_match_result' match.pk %}" class="btn btn-secondary btn-sm">
+                        {% if match.is_played %}Edit{% else %}Enter Result{% endif %}
+                    </a>
+                    <form method="post" action="{% url 'auto_simulate_match' match.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #1f6feb, #58a6ff);">
+                            ⚡ {% if match.is_played %}Re-Simulate{% else %}Auto-Simulate{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="glass-card">
+        <div class="empty-state">
+            <div class="icon">📅</div>
+            <p>No fixtures generated yet.<br>Make sure teams are registered, then click "Generate Fixtures" above.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

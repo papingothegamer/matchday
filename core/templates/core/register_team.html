@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+{% block title %}Register Team — MatchDay{% endblock %}
+{% block extra_style %}
+<style>
+    .player-row { display: grid; grid-template-columns: 1fr 1fr 120px 80px 40px; gap: 8px; align-items: end; margin-bottom: 8px; padding: 10px; background: rgba(13,17,23,0.5); border: 1px solid #21262d; border-radius: 10px; }
+    .player-row .form-input, .player-row .form-select { padding: 8px 12px; font-size: 0.85rem; margin-bottom: 0; }
+    .remove-btn { width: 32px; height: 32px; background: rgba(248,81,73,0.1); color: #f85149; border: 1px solid rgba(248,81,73,0.2); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; transition: 0.2s; }
+    .remove-btn:hover { background: rgba(248,81,73,0.25); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="animate-in" style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1 class="section-title">📋 Register Your Team</h1>
+        <p class="section-subtitle">for <strong style="color: #f0f6fc;">{{ tournament.name }}</strong></p>
+    </div>
+
+    {% if error %}
+    <div style="background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); border-radius: 10px; padding: 12px 16px; margin-bottom: 1.5rem; color: #f85149; font-size: 0.85rem; font-weight: 600;">⚠ {{ error }}</div>
+    {% endif %}
+
+    <form method="post" id="register-form">
+        {% csrf_token %}
+        <!-- Team Info -->
+        <div class="glass-card">
+            <h2 style="font-size: 1.1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1.25rem;">Team Details</h2>
+            <div style="display: grid; grid-template-columns: 1fr 120px; gap: 1rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Team Name</label>
+                    <input type="text" name="team_name" class="form-input" placeholder="e.g. FC Thunderbolts" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Short Name</label>
+                    <input type="text" name="short_name" class="form-input" placeholder="e.g. THU" maxlength="5" required style="text-transform: uppercase;">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Primary Color</label>
+                    <input type="color" name="primary_color" value="#238636" class="form-input" style="height: 42px; padding: 4px; cursor: pointer;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Secondary Color</label>
+                    <input type="color" name="secondary_color" value="#FFFFFF" class="form-input" style="height: 42px; padding: 4px; cursor: pointer;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Players -->
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2 style="font-size: 1.1rem; font-weight: 800; color: #f0f6fc; margin: 0;">Squad</h2>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="addPlayer()">+ Add Player</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 120px 80px 40px; gap: 8px; padding: 0 10px; margin-bottom: 8px;">
+                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">First Name</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">Last Name</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">Position</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">Jersey #</span>
+                <span></span>
+            </div>
+
+            <div id="players-container"></div>
+
+            <input type="hidden" name="player_count" id="player-count" value="0">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <a href="{% url 'tournament_detail' tournament.pk %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Register Team</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block extra_script %}
+<script>
+let playerIndex = 0;
+
+function addPlayer() {
+    const container = document.getElementById('players-container');
+    const row = document.createElement('div');
+    row.className = 'player-row';
+    row.id = `player-row-${playerIndex}`;
+    row.innerHTML = `
+        <input type="text" name="player_${playerIndex}_first_name" class="form-input" placeholder="First name">
+        <input type="text" name="player_${playerIndex}_last_name" class="form-input" placeholder="Last name" required>
+        <select name="player_${playerIndex}_position" class="form-select">
+            <option value="GK">GK</option>
+            <option value="DEF">DEF</option>
+            <option value="MID" selected>MID</option>
+            <option value="FWD">FWD</option>
+        </select>
+        <input type="number" name="player_${playerIndex}_jersey" class="form-input" placeholder="#" min="1" max="99" value="${playerIndex + 1}">
+        <button type="button" class="remove-btn" onclick="removePlayer(${playerIndex})">×</button>
+    `;
+    container.appendChild(row);
+    playerIndex++;
+    document.getElementById('player-count').value = playerIndex;
+}
+
+function removePlayer(idx) {
+    const row = document.getElementById(`player-row-${idx}`);
+    if (row) row.remove();
+}
+
+// Start with 11 players
+for (let i = 0; i < 11; i++) addPlayer();
+</script>
+{% endblock %}
