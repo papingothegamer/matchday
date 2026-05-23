@@ -179,17 +179,6 @@ def get_card_summary(tournament, limit=10):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def generate_league_fixtures(tournament):
-    """
-    ===== ALGORITHM: Round-Robin Fixture Generation =====
-
-    Given N teams, generates N-1 matchdays where each team plays
-    every other team exactly once (single round-robin).
-    Total matches = N × (N-1) / 2
-
-    Uses the "circle method" algorithm:
-      - Fix one team, rotate the rest around a circle.
-      - Each rotation produces one matchday of pairings.
-    """
     from .models import Match as MatchModel
 
     teams = list(
@@ -202,35 +191,41 @@ def generate_league_fixtures(tournament):
     if n < 2:
         return []
 
-    # If odd number of teams, add a "bye" placeholder
     if n % 2 == 1:
         teams.append(None)
         n += 1
 
     matches_created = []
     half = n // 2
+    
+    legs = getattr(tournament, 'league_legs', 1)
 
-    for matchday in range(n - 1):
-        round_label = f'Matchday {matchday + 1}'
+    for leg in range(legs):
+        for matchday in range(n - 1):
+            if legs > 1:
+                round_label = f'Leg {leg + 1} - Matchday {matchday + 1}'
+            else:
+                round_label = f'Matchday {matchday + 1}'
 
-        for i in range(half):
-            home_id = teams[i]
-            away_id = teams[n - 1 - i]
+            for i in range(half):
+                home_id = teams[i]
+                away_id = teams[n - 1 - i]
 
-            # Skip "bye" matches
-            if home_id is None or away_id is None:
-                continue
+                if home_id is None or away_id is None:
+                    continue
+                    
+                if leg % 2 == 1:
+                    home_id, away_id = away_id, home_id
 
-            match = MatchModel.objects.create(
-                tournament=tournament,
-                home_team_id=home_id,
-                away_team_id=away_id,
-                round_label=round_label,
-            )
-            matches_created.append(match)
+                match = MatchModel.objects.create(
+                    tournament=tournament,
+                    home_team_id=home_id,
+                    away_team_id=away_id,
+                    round_label=round_label,
+                )
+                matches_created.append(match)
 
-        # Rotate: keep teams[0] fixed, rotate the rest
-        teams.insert(1, teams.pop())
+            teams.insert(1, teams.pop())
 
     return matches_created
 
@@ -309,44 +304,45 @@ def generate_knockout_bracket(tournament):
 
 
 def advance_knockout_winner(fixture):
-    """
-    ===== LOGIC: Advance Winner to Next Round =====
-
-    After a knockout match result is entered, this function
-    determines the winner and places them into the correct
-    slot of the next round's fixture.
-    """
-    from .models import KnockoutFixture
+    from .models import KnockoutFixture, Match as MatchModel
 
     if not fixture.match or not fixture.match.is_played:
         return
+        
+    if getattr(fixture, 'match_leg2', None) and not fixture.match_leg2.is_played:
+        return
 
-    match = fixture.match
-    if match.home_score > match.away_score:
+    is_golden_goal = getattr(fixture.round.tournament, 'ko_progression', 'SINGLE') == 'GOLDEN_GOAL'
+    is_aggregate = getattr(fixture.round.tournament, 'ko_progression', 'SINGLE') == 'AGGREGATE'
+    
+    h_score = fixture.match.home_score
+    a_score = fixture.match.away_score
+    
+    if is_aggregate and fixture.match_leg2:
+        h_score += fixture.match_leg2.away_score
+        a_score += fixture.match_leg2.home_score
+        
+    if h_score > a_score:
         winner = fixture.home_team
-    elif match.away_score > match.home_score:
+    elif a_score > h_score:
         winner = fixture.away_team
     else:
-        # In a real app, you'd handle penalties. For simplicity, home team advances on draw.
         winner = fixture.home_team
 
     fixture.winner = winner
     fixture.save()
 
-    # Find next round
-    current_round = fixture.round
-    next_rounds = current_round.tournament.knockout_rounds.filter(
-        round_order=current_round.round_order + 1
+    next_rounds = fixture.round.tournament.knockout_rounds.filter(
+        round_order=fixture.round.round_order + 1
     )
 
     if not next_rounds.exists():
-        return  # This was the final
+        return
 
     next_round = next_rounds.first()
     next_fixtures = list(next_round.fixtures.all().order_by('id'))
 
-    # Determine which slot in the next round
-    current_fixtures = list(current_round.fixtures.all().order_by('id'))
+    current_fixtures = list(fixture.round.fixtures.all().order_by('id'))
     fixture_index = current_fixtures.index(fixture)
     next_fixture_index = fixture_index // 2
 
@@ -357,3 +353,20 @@ def advance_knockout_winner(fixture):
         else:
             nf.away_team = winner
         nf.save()
+        
+        if nf.home_team and nf.away_team and not nf.match:
+            is_agg = getattr(fixture.round.tournament, 'ko_progression', 'SINGLE') == 'AGGREGATE'
+            nf.match = MatchModel.objects.create(
+                tournament=fixture.round.tournament,
+                home_team_id=nf.home_team.id,
+                away_team_id=nf.away_team.id,
+                round_label=f"{nf.round.round_name} (Leg 1)" if (is_agg and nf.round.round_name != 'Final') else nf.round.round_name,
+            )
+            if is_agg and nf.round.round_name != 'Final':
+                nf.match_leg2 = MatchModel.objects.create(
+                    tournament=fixture.round.tournament,
+                    home_team_id=nf.away_team.id,
+                    away_team_id=nf.home_team.id,
+                    round_label=f"{nf.round.round_name} (Leg 2)",
+                )
+            nf.save()

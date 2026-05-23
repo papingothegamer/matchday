@@ -92,10 +92,20 @@ class Tournament(models.Model):
         ('ACTIVE', 'Active'),
         ('COMPLETED', 'Completed'),
     )
+    KO_PROGRESSION_CHOICES = (
+        ('SINGLE', 'Single Leg KO'),
+        ('AGGREGATE', 'Two Legs Aggregate'),
+        ('GOLDEN_GOAL', 'Golden Goal (Single Leg)'),
+    )
 
     name = models.CharField(max_length=200)
     format = models.CharField(max_length=10, choices=FORMAT_CHOICES, default='LEAGUE')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='DRAFT')
+    
+    # New Config Fields
+    league_legs = models.IntegerField(default=1, help_text="Number of times each team plays each other (for League format).")
+    ko_progression = models.CharField(max_length=15, choices=KO_PROGRESSION_CHOICES, default='SINGLE', help_text="Progression rule for Knockout matches.")
+    
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='managed_tournaments',
         help_text='The Tournament Admin who created this tournament.'
@@ -233,6 +243,7 @@ class KnockoutFixture(models.Model):
     """
     round = models.ForeignKey(KnockoutRound, on_delete=models.CASCADE, related_name='fixtures')
     match = models.OneToOneField(Match, on_delete=models.CASCADE, related_name='knockout_fixture', null=True, blank=True)
+    match_leg2 = models.OneToOneField(Match, on_delete=models.CASCADE, related_name='ko_fixture_leg2', null=True, blank=True)
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='ko_home', null=True, blank=True)
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='ko_away', null=True, blank=True)
     winner = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True, related_name='ko_wins')
@@ -241,3 +252,22 @@ class KnockoutFixture(models.Model):
         h = self.home_team.short_name if self.home_team else 'TBD'
         a = self.away_team.short_name if self.away_team else 'TBD'
         return f'{h} vs {a} ({self.round.round_name})'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTIFICATIONS — Simulated email reminders for coaches
+# ─────────────────────────────────────────────────────────────────────────────
+
+class Notification(models.Model):
+    """
+    A simulated reminder for coaches when a match date is set.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'To {self.user.username}: {self.message[:20]}...'

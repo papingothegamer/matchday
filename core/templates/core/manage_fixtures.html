@@ -17,6 +17,13 @@
     </div>
 
     {% if has_fixtures %}
+        <div style="margin-bottom: 2rem; display: flex; justify-content: flex-end;">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="auto_schedule" value="1">
+                <button type="submit" class="btn btn-primary" onclick="return confirm('This will assign sequential Saturday dates to all unplayed matches without a date. Proceed?')">🗓️ Auto-Schedule All Dates</button>
+            </form>
+        </div>
         {% for round_label, match_list in rounds.items %}
         <div class="glass-card">
             <h3 style="font-size: 1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
@@ -25,8 +32,8 @@
             {% for match in match_list %}
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #21262d; {% if forloop.last %}border-bottom: none;{% endif %}">
                 <div style="display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end;">
-                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.home_team.name }}</span>
-                    <div style="width: 28px; height: 28px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.home_team.short_name }}</div>
+                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.home_team.name|default:"TBD" }}</span>
+                    <div style="width: 28px; height: 28px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.home_team.short_name|default:"?" }}</div>
                 </div>
 
                 <div style="min-width: 80px; text-align: center; padding: 0 16px;">
@@ -39,13 +46,28 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
-                    <div style="width: 28px; height: 28px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.away_team.short_name }}</div>
-                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.away_team.name }}</span>
+                    <div style="width: 28px; height: 28px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.away_team.short_name|default:"?" }}</div>
+                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.away_team.name|default:"TBD" }}</span>
                 </div>
 
-                <a href="{% url 'enter_match_result' match.pk %}" class="btn btn-secondary btn-sm" style="margin-left: 12px;">
-                    {% if match.is_played %}Edit{% else %}Enter Result{% endif %}
-                </a>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-left: 12px;">
+                    {% if match.home_team and match.away_team %}
+                        <a href="{% url 'enter_match_result' match.pk %}" class="btn btn-secondary btn-sm">
+                            {% if match.is_played %}Edit Result{% else %}Enter Result{% endif %}
+                        </a>
+                        {% if not match.is_played %}
+                        <form method="post" style="display: flex; align-items: center; gap: 4px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="set_match_date" value="1">
+                            <input type="hidden" name="match_id" value="{{ match.pk }}">
+                            <input type="datetime-local" name="match_date" class="form-input" style="padding: 4px; font-size: 0.75rem; height: auto;" value="{{ match.match_date|date:'Y-m-d\\TH:i' }}" required>
+                            <button type="submit" class="btn btn-primary btn-sm" style="padding: 4px 8px;">Set</button>
+                        </form>
+                        {% endif %}
+                    {% else %}
+                        <span style="color: #8b949e; font-size: 0.8rem;">Awaiting Teams</span>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         </div>

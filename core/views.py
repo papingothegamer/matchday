@@ -101,15 +101,26 @@ def index(request):
     ===== COACH DASHBOARD =====
     Shows the coach's team(s) and tournaments they've joined.
     """
+    if request.method == 'POST' and 'dismiss_notifications' in request.POST:
+        from .models import Notification
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return redirect('index')
+
     my_teams = Team.objects.filter(coach=request.user)
     my_tournament_ids = TournamentTeam.objects.filter(
         team__coach=request.user
     ).values_list('tournament_id', flat=True)
     my_tournaments = Tournament.objects.filter(id__in=my_tournament_ids)
+    available_tournaments = Tournament.objects.filter(status='DRAFT').exclude(id__in=my_tournament_ids)
+    
+    from .models import Notification
+    notifications = Notification.objects.filter(user=request.user, is_read=False)
 
     return render(request, 'core/index.html', {
         'my_teams': my_teams,
         'my_tournaments': my_tournaments,
+        'available_tournaments': available_tournaments,
+        'notifications': notifications,
     })
 
 
@@ -323,12 +334,16 @@ def create_tournament(request):
         name = request.POST.get('name', '').strip()
         fmt = request.POST.get('format', 'LEAGUE')
         description = request.POST.get('description', '').strip()
+        league_legs = int(request.POST.get('league_legs', 1))
+        ko_progression = request.POST.get('ko_progression', 'SINGLE')
 
         if name:
             Tournament.objects.create(
                 name=name,
                 format=fmt,
                 description=description,
+                league_legs=league_legs,
+                ko_progression=ko_progression,
                 created_by=request.user,
             )
             return redirect('admin_dashboard')
@@ -351,6 +366,8 @@ def edit_tournament(request, tournament_id):
         tournament.format = request.POST.get('format', tournament.format)
         tournament.status = request.POST.get('status', tournament.status)
         tournament.description = request.POST.get('description', tournament.description).strip()
+        tournament.league_legs = int(request.POST.get('league_legs', tournament.league_legs))
+        tournament.ko_progression = request.POST.get('ko_progression', tournament.ko_progression)
         tournament.save()
         return redirect('admin_dashboard')
 
@@ -385,15 +402,62 @@ def manage_fixtures(request, tournament_id):
 
     tournament = get_object_or_404(Tournament, pk=tournament_id, created_by=request.user)
 
-    if request.method == 'POST' and 'generate' in request.POST:
-        # Generate fixtures
-        if tournament.format == 'LEAGUE':
-            generate_league_fixtures(tournament)
-        else:
-            generate_knockout_bracket(tournament)
-        tournament.status = 'ACTIVE'
-        tournament.save()
-        return redirect('manage_fixtures', tournament_id=tournament.pk)
+    if request.method == 'POST':
+        if 'generate' in request.POST:
+            # Generate fixtures
+            if tournament.format == 'LEAGUE':
+                generate_league_fixtures(tournament)
+            else:
+                generate_knockout_bracket(tournament)
+            tournament.status = 'ACTIVE'
+            tournament.save()
+            return redirect('manage_fixtures', tournament_id=tournament.pk)
+            
+        elif 'auto_schedule' in request.POST:
+            from datetime import timedelta
+            from django.utils import timezone
+            unplayed = Match.objects.filter(tournament=tournament, is_played=False, match_date__isnull=True).order_by('id')
+            if unplayed.exists():
+                start_date = timezone.now().replace(hour=15, minute=0, second=0, microsecond=0)
+                days_ahead = 5 - start_date.weekday()
+                if days_ahead <= 0:
+                    days_ahead += 7
+                next_saturday = start_date + timedelta(days=days_ahead)
+                
+                round_dates = {}
+                current_date = next_saturday
+                
+                for m in unplayed:
+                    if m.round_label not in round_dates:
+                        round_dates[m.round_label] = current_date
+                        current_date += timedelta(days=7)
+                        
+                    m.match_date = round_dates[m.round_label]
+                    m.save()
+                    
+                    if m.home_team and m.home_team.coach:
+                        Notification.objects.create(user=m.home_team.coach, message=f"Your team {m.home_team.name} has a match scheduled on {m.match_date.strftime('%b %d, %Y')} against {m.away_team.name if m.away_team else 'TBD'}.")
+                    if m.away_team and m.away_team.coach:
+                        Notification.objects.create(user=m.away_team.coach, message=f"Your team {m.away_team.name} has a match scheduled on {m.match_date.strftime('%b %d, %Y')} against {m.home_team.name if m.home_team else 'TBD'}.")
+
+            return redirect('manage_fixtures', tournament_id=tournament.pk)
+
+        elif 'set_match_date' in request.POST:
+            match_id = request.POST.get('match_id')
+            match_date_str = request.POST.get('match_date')
+            if match_id and match_date_str:
+                from django.utils.dateparse import parse_datetime
+                m = get_object_or_404(Match, pk=match_id, tournament=tournament)
+                parsed_date = parse_datetime(match_date_str)
+                if parsed_date:
+                    m.match_date = parsed_date
+                    m.save()
+                    if m.home_team and m.home_team.coach:
+                        Notification.objects.create(user=m.home_team.coach, message=f"Date updated: {m.home_team.name} vs {m.away_team.name if m.away_team else 'TBD'} is now scheduled for {m.match_date.strftime('%b %d, %Y %H:%M')}.")
+                    if m.away_team and m.away_team.coach:
+                        Notification.objects.create(user=m.away_team.coach, message=f"Date updated: {m.away_team.name} vs {m.home_team.name if m.home_team else 'TBD'} is now scheduled for {m.match_date.strftime('%b %d, %Y %H:%M')}.")
+
+            return redirect('manage_fixtures', tournament_id=tournament.pk)
 
     matches = Match.objects.filter(tournament=tournament).select_related('home_team', 'away_team')
 

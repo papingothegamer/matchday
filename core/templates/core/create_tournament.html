@@ -23,6 +23,22 @@
                 </select>
             </div>
 
+            <div class="form-group" id="league_legs_group">
+                <label>League Legs</label>
+                <input type="number" name="league_legs" class="form-input" min="1" max="4" value="{{ tournament.league_legs|default:1 }}">
+                <small style="color: #8b949e; font-size: 0.75rem; margin-top: 4px;">Number of times each team plays each other.</small>
+            </div>
+
+            <div class="form-group" id="ko_progression_group" style="display: none;">
+                <label>Knockout Progression</label>
+                <select name="ko_progression" class="form-select">
+                    <option value="SINGLE" {% if tournament.ko_progression == 'SINGLE' %}selected{% endif %}>Single Leg KO</option>
+                    <option value="AGGREGATE" {% if tournament.ko_progression == 'AGGREGATE' %}selected{% endif %}>Two Legs (Aggregate)</option>
+                    <option value="GOLDEN_GOAL" {% if tournament.ko_progression == 'GOLDEN_GOAL' %}selected{% endif %}>Golden Goal (Single Leg)</option>
+                </select>
+                <small style="color: #8b949e; font-size: 0.75rem; margin-top: 4px;">Note: The Final is always a single leg match.</small>
+            </div>
+
             {% if edit_mode %}
             <div class="form-group">
                 <label>Status</label>
@@ -46,4 +62,25 @@
         </form>
     </div>
 </div>
+{% endblock %}
+{% block extra_script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formatSelect = document.querySelector('select[name="format"]');
+        const leagueGroup = document.getElementById('league_legs_group');
+        const koGroup = document.getElementById('ko_progression_group');
+
+        function toggleFields() {
+            if (formatSelect.value === 'LEAGUE') {
+                leagueGroup.style.display = 'block';
+                koGroup.style.display = 'none';
+            } else {
+                leagueGroup.style.display = 'none';
+                koGroup.style.display = 'block';
+            }
+        }
+        formatSelect.addEventListener('change', toggleFields);
+        toggleFields();
+    });
+</script>
 {% endblock %}
