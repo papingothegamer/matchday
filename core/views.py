@@ -484,66 +484,6 @@ def enter_match_result(request, match_id):
     })
 
 
-@login_required
-def auto_simulate_match(request, match_id):
-    """
-    ===== Tournament Admin: Auto-Simulate Match =====
-    Generates realistic random match stats and score for the fixture.
-    Runs standings recomputation automatically.
-    """
-    if not request.user.is_staff:
-        return redirect('index')
-
-    import random
-    match = get_object_or_404(Match, pk=match_id)
-    tournament = match.tournament
-
-    # Delete any existing player stats for this match first (for clean re-playability)
-    PlayerStat.objects.filter(match=match).delete()
-
-    # Random realistic scores
-    match.home_score = random.choices([0, 1, 2, 3, 4], weights=[25, 35, 20, 12, 8])[0]
-    match.away_score = random.choices([0, 1, 2, 3, 4], weights=[30, 30, 22, 12, 6])[0]
-    match.is_played = True
-    match.save()
-
-    # Generate player stats for both teams
-    for team_obj in [match.home_team, match.away_team]:
-        is_home = (team_obj == match.home_team)
-        goals = match.home_score if is_home else match.away_score
-
-        players = list(Player.objects.filter(team=team_obj))
-        scorers = [p for p in players if p.position in ('FWD', 'MID')]
-        goal_assignments = random.choices(scorers, k=goals) if goals > 0 and scorers else []
-
-        for player in players:
-            g = goal_assignments.count(player)
-            a = 1 if random.random() < 0.15 and g == 0 else 0
-            yc = 1 if random.random() < 0.08 else 0
-            rc = 1 if random.random() < 0.02 else 0
-            mins = random.randint(60, 90) if random.random() < 0.85 else random.randint(0, 59)
-
-            PlayerStat.objects.create(
-                player=player, match=match,
-                goals=g, assists=a,
-                yellow_cards=yc, red_cards=rc,
-                minutes_played=mins,
-            )
-
-    # ===== TRIGGER STANDINGS RECOMPUTATION =====
-    recompute_standings(tournament)
-
-    # If knockout match, advance winner
-    if hasattr(match, 'knockout_fixture'):
-        advance_knockout_winner(match.knockout_fixture)
-
-    # Redirect to referer or tournament detail
-    referer = request.META.get('HTTP_REFERER')
-    if referer and ('/fixtures/' in referer or '/tournaments/' in referer):
-        return redirect(referer)
-    return redirect('tournament_detail', tournament_id=tournament.pk)
-
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # JSON API ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════════════════

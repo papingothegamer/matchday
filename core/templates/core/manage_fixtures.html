@@ -43,17 +43,9 @@
                     <span style="font-weight: 700; color: #f0f6fc;">{{ match.away_team.name }}</span>
                 </div>
 
-                <div style="display: flex; gap: 8px; align-items: center; margin-left: 12px;">
-                    <a href="{% url 'enter_match_result' match.pk %}" class="btn btn-secondary btn-sm">
-                        {% if match.is_played %}Edit{% else %}Enter Result{% endif %}
-                    </a>
-                    <form method="post" action="{% url 'auto_simulate_match' match.pk %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #1f6feb, #58a6ff);">
-                            ⚡ {% if match.is_played %}Re-Simulate{% else %}Auto-Simulate{% endif %}
-                        </button>
-                    </form>
-                </div>
+                <a href="{% url 'enter_match_result' match.pk %}" class="btn btn-secondary btn-sm" style="margin-left: 12px;">
+                    {% if match.is_played %}Edit{% else %}Enter Result{% endif %}
+                </a>
             </div>
             {% endfor %}
         </div>

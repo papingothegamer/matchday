@@ -21,7 +21,6 @@ urlpatterns = [
     path('tournaments/<int:tournament_id>/delete/', views.delete_tournament, name='delete_tournament'),
     path('tournaments/<int:tournament_id>/fixtures/', views.manage_fixtures, name='manage_fixtures'),
     path('matches/<int:match_id>/result/', views.enter_match_result, name='enter_match_result'),
-    path('matches/<int:match_id>/auto-simulate/', views.auto_simulate_match, name='auto_simulate_match'),
 
     # ===== JSON APIs =====
     path('api/tournaments/<int:tournament_id>/standings/', views.api_standings, name='api_standings'),
