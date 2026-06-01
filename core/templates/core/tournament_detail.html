@@ -2,10 +2,10 @@
 {% block title %}{{ tournament.name }} — MatchDay{% endblock %}
 {% block extra_style %}
 <style>
-    .tabs { display: flex; gap: 4px; background: #161b22; padding: 4px; border-radius: 12px; border: 1px solid #30363d; width: fit-content; margin-bottom: 2rem; }
-    .tab { padding: 10px 24px; color: #8b949e; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+    .tabs { display: flex; gap: 4px; background: #f8f9fa; padding: 4px; border-radius: 12px; border: 1px solid #dee2e6; width: fit-content; margin-bottom: 2rem; }
+    .tab { padding: 10px 24px; color: #6c757d; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 8px; transition: 0.2s; }
     .tab.active { background: #238636; color: #fff; box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3); }
-    .tab:hover:not(.active) { background: #21262d; color: #fff; }
+    .tab:hover:not(.active) { background: #e9ecef; color: #fff; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; animation: fadeInUp 0.3s ease-out; }
 </style>
@@ -61,7 +61,7 @@
                         <td>
                             <a href="{% url 'team_detail' tournament.pk s.team.pk %}" style="display: flex; align-items: center; gap: 10px;">
                                 <div style="width: 28px; height: 28px; background: {{ s.team.primary_color }}; color: {{ s.team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; flex-shrink: 0;">{{ s.team.short_name }}</div>
-                                <span style="font-weight: 700; color: #f0f6fc;">{{ s.team.name }}</span>
+                                <span style="font-weight: 700; color: #212529;">{{ s.team.name }}</span>
                             </a>
                         </td>
                         <td style="text-align:center;">{{ s.played }}</td>
@@ -70,7 +70,7 @@
                         <td style="text-align:center;">{{ s.lost }}</td>
                         <td style="text-align:center;">{{ s.goals_for }}</td>
                         <td style="text-align:center;">{{ s.goals_against }}</td>
-                        <td style="text-align:center; font-weight: 700; color: {% if s.goal_difference > 0 %}#3fb950{% elif s.goal_difference < 0 %}#f85149{% else %}#8b949e{% endif %};">{% if s.goal_difference > 0 %}+{% endif %}{{ s.goal_difference }}</td>
+                        <td style="text-align:center; font-weight: 700; color: {% if s.goal_difference > 0 %}#3fb950{% elif s.goal_difference < 0 %}#f85149{% else %}#6c757d{% endif %};">{% if s.goal_difference > 0 %}+{% endif %}{{ s.goal_difference }}</td>
                         <td class="pts">{{ s.points }}</td>
                     </tr>
                     {% endfor %}
@@ -88,28 +88,28 @@
             {% regroup matches by round_label as rounds %}
             {% for round in rounds %}
             <div class="glass-card">
-                <h3 style="font-size: 1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                <h3 style="font-size: 1rem; font-weight: 800; color: #212529; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
                     <span style="color: #58a6ff;">📅</span> {{ round.grouper }}
                 </h3>
                 {% for match in round.list %}
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #21262d; {% if forloop.last %}border-bottom: none;{% endif %}">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e9ecef; {% if forloop.last %}border-bottom: none;{% endif %}">
                     <div style="display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end;">
-                        <span style="font-weight: 700; color: #f0f6fc;">{{ match.home_team.name }}</span>
+                        <span style="font-weight: 700; color: #212529;">{{ match.home_team.name }}</span>
                         <div style="width: 28px; height: 28px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.home_team.short_name }}</div>
                     </div>
 
                     <div style="min-width: 80px; text-align: center; padding: 0 16px;">
                         {% if match.is_played %}
-                        <div style="font-size: 1.2rem; font-weight: 900; color: #f0f6fc;">{{ match.home_score }} - {{ match.away_score }}</div>
+                        <div style="font-size: 1.2rem; font-weight: 900; color: #212529;">{{ match.home_score }} - {{ match.away_score }}</div>
                         <div style="font-size: 0.65rem; color: #3fb950; font-weight: 700;">FT</div>
                         {% else %}
-                        <div style="font-size: 0.8rem; color: #8b949e; font-weight: 600;">vs</div>
+                        <div style="font-size: 0.8rem; color: #6c757d; font-weight: 600;">vs</div>
                         {% endif %}
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
                         <div style="width: 28px; height: 28px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.away_team.short_name }}</div>
-                        <span style="font-weight: 700; color: #f0f6fc;">{{ match.away_team.name }}</span>
+                        <span style="font-weight: 700; color: #212529;">{{ match.away_team.name }}</span>
                     </div>
 
                     {% if request.user.is_staff %}
@@ -131,19 +131,19 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <!-- Goals -->
             <div class="glass-card" style="padding: 0; overflow: hidden;">
-                <div style="padding: 16px 20px; font-weight: 800; color: #f0f6fc; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 8px;">⚽ Top Scorers</div>
+                <div style="padding: 16px 20px; font-weight: 800; color: #212529; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; gap: 8px;">⚽ Top Scorers</div>
                 <table class="data-table">
                     <thead><tr><th class="rank">#</th><th>Player</th><th>Team</th><th class="pts">Goals</th></tr></thead>
                     <tbody>
                         {% for s in top_scorers %}
                         <tr>
                             <td class="rank">{{ forloop.counter }}</td>
-                            <td style="font-weight: 700; color: #f0f6fc;">{{ s.player__first_name }} {{ s.player__last_name }}</td>
-                            <td style="color: #8b949e;">{{ s.player__team__short_name }}</td>
+                            <td style="font-weight: 700; color: #212529;">{{ s.player__first_name }} {{ s.player__last_name }}</td>
+                            <td style="color: #6c757d;">{{ s.player__team__short_name }}</td>
                             <td class="pts">{{ s.total_goals }}</td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" style="text-align:center; color:#8b949e; padding: 2rem;">No goals scored yet.</td></tr>
+                        <tr><td colspan="4" style="text-align:center; color:#6c757d; padding: 2rem;">No goals scored yet.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -151,19 +151,19 @@
 
             <!-- Assists -->
             <div class="glass-card" style="padding: 0; overflow: hidden;">
-                <div style="padding: 16px 20px; font-weight: 800; color: #f0f6fc; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 8px;">🎯 Top Assists</div>
+                <div style="padding: 16px 20px; font-weight: 800; color: #212529; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; gap: 8px;">🎯 Top Assists</div>
                 <table class="data-table">
                     <thead><tr><th class="rank">#</th><th>Player</th><th>Team</th><th class="pts" style="color: #f6c90e;">Assists</th></tr></thead>
                     <tbody>
                         {% for a in top_assists %}
                         <tr>
                             <td class="rank">{{ forloop.counter }}</td>
-                            <td style="font-weight: 700; color: #f0f6fc;">{{ a.player__first_name }} {{ a.player__last_name }}</td>
-                            <td style="color: #8b949e;">{{ a.player__team__short_name }}</td>
+                            <td style="font-weight: 700; color: #212529;">{{ a.player__first_name }} {{ a.player__last_name }}</td>
+                            <td style="color: #6c757d;">{{ a.player__team__short_name }}</td>
                             <td class="pts" style="color: #f6c90e;">{{ a.total_assists }}</td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" style="text-align:center; color:#8b949e; padding: 2rem;">No assists recorded yet.</td></tr>
+                        <tr><td colspan="4" style="text-align:center; color:#6c757d; padding: 2rem;">No assists recorded yet.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -173,15 +173,15 @@
         <!-- Cards -->
         {% if cards %}
         <div class="glass-card" style="padding: 0; overflow: hidden; margin-top: 1.5rem;">
-            <div style="padding: 16px 20px; font-weight: 800; color: #f0f6fc; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 8px;">🟨 Disciplinary Record</div>
+            <div style="padding: 16px 20px; font-weight: 800; color: #212529; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; gap: 8px;">🟨 Disciplinary Record</div>
             <table class="data-table">
                 <thead><tr><th class="rank">#</th><th>Player</th><th>Team</th><th style="text-align:center;">🟨</th><th style="text-align:center;">🟥</th></tr></thead>
                 <tbody>
                     {% for c in cards %}
                     <tr>
                         <td class="rank">{{ forloop.counter }}</td>
-                        <td style="font-weight: 700; color: #f0f6fc;">{{ c.player__first_name }} {{ c.player__last_name }}</td>
-                        <td style="color: #8b949e;">{{ c.player__team__short_name }}</td>
+                        <td style="font-weight: 700; color: #212529;">{{ c.player__first_name }} {{ c.player__last_name }}</td>
+                        <td style="color: #6c757d;">{{ c.player__team__short_name }}</td>
                         <td style="text-align:center; font-weight: 700; color: #f6c90e;">{{ c.total_yellows }}</td>
                         <td style="text-align:center; font-weight: 700; color: #f85149;">{{ c.total_reds }}</td>
                     </tr>
@@ -201,12 +201,12 @@
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem;">
                         <div style="width: 44px; height: 44px; background: {{ tt.team.primary_color }}; color: {{ tt.team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0;">{{ tt.team.short_name }}</div>
                         <div>
-                            <div style="font-weight: 700; color: #f0f6fc;">{{ tt.team.name }}</div>
-                            <div style="font-size: 0.75rem; color: #8b949e;">Coach: {{ tt.team.coach.username|default:"—" }}</div>
+                            <div style="font-weight: 700; color: #212529;">{{ tt.team.name }}</div>
+                            <div style="font-size: 0.75rem; color: #6c757d;">Coach: {{ tt.team.coach.username|default:"—" }}</div>
                         </div>
                     </div>
                     {% if request.user.is_staff or tt.team.coach == request.user %}
-                    <div style="font-size: 0.8rem; color: #8b949e;">{{ tt.team.players.count }} players registered</div>
+                    <div style="font-size: 0.8rem; color: #6c757d;">{{ tt.team.players.count }} players registered</div>
                     {% endif %}
                 </div>
             </a>

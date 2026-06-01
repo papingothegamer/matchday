@@ -14,7 +14,7 @@
     <div style="display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start;">
         <!-- Left: Squad List -->
         <div class="glass-card" style="padding: 0; overflow: hidden;">
-            <div style="padding: 16px 20px; font-weight: 800; color: #f0f6fc; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 8px;">📋 Squad & Tournament Stats</div>
+            <div style="padding: 16px 20px; font-weight: 800; color: #212529; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; gap: 8px;">📋 Squad & Tournament Stats</div>
             <table class="data-table">
                 <thead>
                     <tr>
@@ -31,14 +31,14 @@
                 <tbody>
                     {% for ps in player_stats %}
                     <tr>
-                        <td style="font-weight: 700; color: #8b949e;">{{ ps.player.jersey_number }}</td>
-                        <td style="font-weight: 700; color: #f0f6fc;">{{ ps.player.full_name }}</td>
+                        <td style="font-weight: 700; color: #6c757d;">{{ ps.player.jersey_number }}</td>
+                        <td style="font-weight: 700; color: #212529;">{{ ps.player.full_name }}</td>
                         <td><span class="badge badge-blue" style="font-size: 0.6rem;">{{ ps.player.position }}</span></td>
-                        <td style="text-align:center; font-weight: 700; color: {% if ps.goals > 0 %}#3fb950{% else %}#8b949e{% endif %};">{{ ps.goals }}</td>
-                        <td style="text-align:center; font-weight: 700; color: {% if ps.assists > 0 %}#f6c90e{% else %}#8b949e{% endif %};">{{ ps.assists }}</td>
-                        <td style="text-align:center; font-weight: 700; color: {% if ps.yellows > 0 %}#f6c90e{% else %}#8b949e{% endif %};">{{ ps.yellows }}</td>
-                        <td style="text-align:center; font-weight: 700; color: {% if ps.reds > 0 %}#f85149{% else %}#8b949e{% endif %};">{{ ps.reds }}</td>
-                        <td style="text-align:center; color: #8b949e;">{{ ps.minutes }}</td>
+                        <td style="text-align:center; font-weight: 700; color: {% if ps.goals > 0 %}#3fb950{% else %}#6c757d{% endif %};">{{ ps.goals }}</td>
+                        <td style="text-align:center; font-weight: 700; color: {% if ps.assists > 0 %}#f6c90e{% else %}#6c757d{% endif %};">{{ ps.assists }}</td>
+                        <td style="text-align:center; font-weight: 700; color: {% if ps.yellows > 0 %}#f6c90e{% else %}#6c757d{% endif %};">{{ ps.yellows }}</td>
+                        <td style="text-align:center; font-weight: 700; color: {% if ps.reds > 0 %}#f85149{% else %}#6c757d{% endif %};">{{ ps.reds }}</td>
+                        <td style="text-align:center; color: #6c757d;">{{ ps.minutes }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -48,7 +48,7 @@
         <!-- Right: Suggested Lineup (Pitch) -->
         <div>
             <div class="glass-card" style="padding: 1.25rem;">
-                <h3 style="font-size: 1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; text-align: center;">Suggested Lineup (4-4-2)</h3>
+                <h3 style="font-size: 1rem; font-weight: 800; color: #212529; margin-bottom: 1rem; text-align: center;">Suggested Lineup (4-4-2)</h3>
                 <div class="pitch">
                     <div class="pitch-lines"></div>
 

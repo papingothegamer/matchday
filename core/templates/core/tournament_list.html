@@ -17,21 +17,21 @@
 
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                     <div>
-                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #f0f6fc; margin-bottom: 0.3rem;">{{ t.name }}</h3>
-                        <div style="font-size: 0.8rem; color: #8b949e;">by {{ t.created_by.username }}</div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #212529; margin-bottom: 0.3rem;">{{ t.name }}</h3>
+                        <div style="font-size: 0.8rem; color: #6c757d;">by {{ t.created_by.username }}</div>
                     </div>
                     <span class="badge {% if t.format == 'LEAGUE' %}badge-blue{% else %}badge-purple{% endif %}">{{ t.get_format_display }}</span>
                 </div>
 
                 {% if t.description %}
-                <p style="font-size: 0.85rem; color: #8b949e; margin-bottom: 1rem; line-height: 1.5;">{{ t.description|truncatechars:100 }}</p>
+                <p style="font-size: 0.85rem; color: #6c757d; margin-bottom: 1rem; line-height: 1.5;">{{ t.description|truncatechars:100 }}</p>
                 {% endif %}
 
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; gap: 16px;">
                         <div style="font-size: 0.8rem;">
-                            <span style="font-weight: 800; color: #f0f6fc;">{{ t.num_teams }}</span>
-                            <span style="color: #8b949e;"> teams</span>
+                            <span style="font-weight: 800; color: #212529;">{{ t.num_teams }}</span>
+                            <span style="color: #6c757d;"> teams</span>
                         </div>
                     </div>
                     <span class="badge {% if t.status == 'ACTIVE' %}badge-green{% elif t.status == 'DRAFT' %}badge-yellow{% else %}badge-red{% endif %}">{{ t.get_status_display }}</span>

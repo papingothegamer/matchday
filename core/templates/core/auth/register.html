@@ -2,20 +2,20 @@
 {% block title %}Register — MatchDay{% endblock %}
 {% block extra_style %}
 <style>
-    .role-card { background: rgba(13,17,23,0.8); border: 2px solid #30363d; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all 0.25s; text-align: center; }
-    .role-card:hover { border-color: #8b949e; transform: translateY(-2px); }
+    .role-card { background: rgba(13,17,23,0.8); border: 2px solid #dee2e6; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all 0.25s; text-align: center; }
+    .role-card:hover { border-color: #6c757d; transform: translateY(-2px); }
     .role-card.selected { border-color: #3fb950; background: rgba(63,185,80,0.05); box-shadow: 0 0 0 1px #3fb950; }
     .role-card .role-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .role-card .role-title { font-size: 1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 0.25rem; }
-    .role-card .role-desc { font-size: 0.75rem; color: #8b949e; line-height: 1.4; }
+    .role-card .role-title { font-size: 1rem; font-weight: 800; color: #212529; margin-bottom: 0.25rem; }
+    .role-card .role-desc { font-size: 0.75rem; color: #6c757d; line-height: 1.4; }
 </style>
 {% endblock %}
 {% block content %}
 <div style="max-width: 500px; margin: 3rem auto;" class="animate-in">
     <div class="glass-card" style="padding: 2.5rem;">
         <div style="text-align: center; margin-bottom: 2rem;">
-            <h1 style="font-size: 1.8rem; font-weight: 900; color: #f0f6fc; margin-bottom: 0.5rem;">Create Account</h1>
-            <p style="color: #8b949e; font-size: 0.9rem;">Join MatchDay as a Coach or League Admin.</p>
+            <h1 style="font-size: 1.8rem; font-weight: 900; color: #212529; margin-bottom: 0.5rem;">Create Account</h1>
+            <p style="color: #6c757d; font-size: 0.9rem;">Join MatchDay as a Coach or League Admin.</p>
         </div>
 
         {% if error %}
@@ -29,7 +29,7 @@
 
             <!-- Role Selection -->
             <div style="margin-bottom: 1.5rem;">
-                <label style="font-size: 0.8rem; font-weight: 700; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.75rem;">Select Your Role</label>
+                <label style="font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.75rem;">Select Your Role</label>
                 <input type="hidden" name="role" id="role-input" value="coach">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="role-card selected" onclick="selectRole('coach', this)">
@@ -62,7 +62,7 @@
             <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px; margin-top: 0.5rem;">Create Account</button>
         </form>
 
-        <div style="text-align: center; margin-top: 1.5rem; color: #8b949e; font-size: 0.85rem;">
+        <div style="text-align: center; margin-top: 1.5rem; color: #6c757d; font-size: 0.85rem;">
             Already have an account? <a href="{% url 'login' %}" style="color: #58a6ff; font-weight: 700;">Sign In</a>
         </div>
     </div>

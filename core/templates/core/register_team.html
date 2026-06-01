@@ -2,7 +2,7 @@
 {% block title %}Register Team — MatchDay{% endblock %}
 {% block extra_style %}
 <style>
-    .player-row { display: grid; grid-template-columns: 1fr 1fr 120px 80px 40px; gap: 8px; align-items: end; margin-bottom: 8px; padding: 10px; background: rgba(13,17,23,0.5); border: 1px solid #21262d; border-radius: 10px; }
+    .player-row { display: grid; grid-template-columns: 1fr 1fr 120px 80px 40px; gap: 8px; align-items: end; margin-bottom: 8px; padding: 10px; background: rgba(13,17,23,0.5); border: 1px solid #e9ecef; border-radius: 10px; }
     .player-row .form-input, .player-row .form-select { padding: 8px 12px; font-size: 0.85rem; margin-bottom: 0; }
     .remove-btn { width: 32px; height: 32px; background: rgba(248,81,73,0.1); color: #f85149; border: 1px solid rgba(248,81,73,0.2); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; transition: 0.2s; }
     .remove-btn:hover { background: rgba(248,81,73,0.25); }
@@ -12,7 +12,7 @@
 <div class="animate-in" style="max-width: 800px; margin: 0 auto;">
     <div style="margin-bottom: 2rem;">
         <h1 class="section-title">📋 Register Your Team</h1>
-        <p class="section-subtitle">for <strong style="color: #f0f6fc;">{{ tournament.name }}</strong></p>
+        <p class="section-subtitle">for <strong style="color: #212529;">{{ tournament.name }}</strong></p>
     </div>
 
     {% if error %}
@@ -23,7 +23,7 @@
         {% csrf_token %}
         <!-- Team Info -->
         <div class="glass-card">
-            <h2 style="font-size: 1.1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1.25rem;">Team Details</h2>
+            <h2 style="font-size: 1.1rem; font-weight: 800; color: #212529; margin-bottom: 1.25rem;">Team Details</h2>
             <div style="display: grid; grid-template-columns: 1fr 120px; gap: 1rem;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>Team Name</label>
@@ -49,15 +49,15 @@
         <!-- Players -->
         <div class="glass-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h2 style="font-size: 1.1rem; font-weight: 800; color: #f0f6fc; margin: 0;">Squad</h2>
+                <h2 style="font-size: 1.1rem; font-weight: 800; color: #212529; margin: 0;">Squad</h2>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="addPlayer()">+ Add Player</button>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 120px 80px 40px; gap: 8px; padding: 0 10px; margin-bottom: 8px;">
-                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">First Name</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">Last Name</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">Position</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: #8b949e; text-transform: uppercase;">Jersey #</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #6c757d; text-transform: uppercase;">First Name</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #6c757d; text-transform: uppercase;">Last Name</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #6c757d; text-transform: uppercase;">Position</span>
+                <span style="font-size: 0.7rem; font-weight: 700; color: #6c757d; text-transform: uppercase;">Jersey #</span>
                 <span></span>
             </div>
 

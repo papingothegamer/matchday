@@ -11,7 +11,7 @@
     {% if notifications %}
     <div class="glass-card" style="margin-bottom: 2rem; border-left: 4px solid #f6c90e; padding: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2 style="font-size: 1.2rem; font-weight: 800; color: #f0f6fc; margin: 0; display: flex; align-items: center; gap: 10px;">
+            <h2 style="font-size: 1.2rem; font-weight: 800; color: #212529; margin: 0; display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 1.3rem;">🔔</span> Recent Notifications
             </h2>
             <form method="post">
@@ -22,9 +22,9 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             {% for note in notifications %}
-            <div style="background: rgba(13,17,23,0.4); border-radius: 8px; padding: 1rem;">
-                <p style="margin: 0; color: #c9d1d9; font-weight: 600;">{{ note.message }}</p>
-                <small style="color: #8b949e; font-size: 0.75rem;">{{ note.created_at|timesince }} ago</small>
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem;">
+                <p style="margin: 0; color: #495057; font-weight: 600;">{{ note.message }}</p>
+                <small style="color: #6c757d; font-size: 0.75rem;">{{ note.created_at|timesince }} ago</small>
             </div>
             {% endfor %}
         </div>
@@ -35,11 +35,11 @@
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
         <div class="glass-card" style="text-align: center; padding: 1.5rem;">
             <div style="font-size: 2.5rem; font-weight: 900; color: #3fb950;">{{ my_teams|length }}</div>
-            <div style="font-size: 0.8rem; font-weight: 700; color: #8b949e; text-transform: uppercase; letter-spacing: 1px;">My Teams</div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: 1px;">My Teams</div>
         </div>
         <div class="glass-card" style="text-align: center; padding: 1.5rem;">
             <div style="font-size: 2.5rem; font-weight: 900; color: #58a6ff;">{{ my_tournaments|length }}</div>
-            <div style="font-size: 0.8rem; font-weight: 700; color: #8b949e; text-transform: uppercase; letter-spacing: 1px;">Tournaments Joined</div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: #6c757d; text-transform: uppercase; letter-spacing: 1px;">Tournaments Joined</div>
         </div>
         <div class="glass-card" style="text-align: center; padding: 1.5rem;">
             <a href="{% url 'tournament_list' %}" style="display: block;">
@@ -51,18 +51,18 @@
 
     <!-- My Teams -->
     <div class="glass-card">
-        <h2 style="font-size: 1.2rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: #212529; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.3rem;">⚽</span> My Teams
         </h2>
         {% if my_teams %}
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
             {% for team in my_teams %}
-            <div style="background: rgba(13,17,23,0.6); border: 1px solid #30363d; border-radius: 12px; padding: 1.25rem; border-left: 4px solid {{ team.primary_color }};">
+            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 12px; padding: 1.25rem; border-left: 4px solid {{ team.primary_color }};">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.75rem;">
                     <div style="width: 40px; height: 40px; background: {{ team.primary_color }}; color: {{ team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">{{ team.short_name }}</div>
                     <div>
-                        <div style="font-weight: 700; color: #f0f6fc;">{{ team.name }}</div>
-                        <div style="font-size: 0.75rem; color: #8b949e;">{{ team.players.count }} players</div>
+                        <div style="font-weight: 700; color: #212529;">{{ team.name }}</div>
+                        <div style="font-size: 0.75rem; color: #6c757d;">{{ team.players.count }} players</div>
                     </div>
                 </div>
             </div>
@@ -80,18 +80,18 @@
     <!-- My Tournaments -->
     {% if my_tournaments %}
     <div class="glass-card">
-        <h2 style="font-size: 1.2rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: #212529; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.3rem;">🏆</span> My Tournaments
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
             {% for t in my_tournaments %}
             <a href="{% url 'tournament_detail' t.pk %}" style="display: block;">
-                <div style="background: rgba(13,17,23,0.6); border: 1px solid #30363d; border-radius: 12px; padding: 1.25rem; transition: all 0.2s; border-left: 4px solid #238636;">
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 12px; padding: 1.25rem; transition: all 0.2s; border-left: 4px solid #238636;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 700; color: #f0f6fc;">{{ t.name }}</span>
+                        <span style="font-weight: 700; color: #212529;">{{ t.name }}</span>
                         <span class="badge {% if t.format == 'LEAGUE' %}badge-blue{% else %}badge-purple{% endif %}">{{ t.get_format_display }}</span>
                     </div>
-                    <div style="font-size: 0.8rem; color: #8b949e;">
+                    <div style="font-size: 0.8rem; color: #6c757d;">
                         Status: <span class="badge {% if t.status == 'ACTIVE' %}badge-green{% elif t.status == 'DRAFT' %}badge-yellow{% else %}badge-red{% endif %}">{{ t.get_status_display }}</span>
                     </div>
                 </div>
@@ -104,18 +104,18 @@
     <!-- Available Tournaments -->
     {% if available_tournaments %}
     <div class="glass-card">
-        <h2 style="font-size: 1.2rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: #212529; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.3rem;">📢</span> Available to Join
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
             {% for t in available_tournaments %}
             <a href="{% url 'tournament_detail' t.pk %}" style="display: block;">
-                <div style="background: rgba(13,17,23,0.6); border: 1px solid #30363d; border-radius: 12px; padding: 1.25rem; transition: all 0.2s; border-left: 4px solid #58a6ff;">
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 12px; padding: 1.25rem; transition: all 0.2s; border-left: 4px solid #58a6ff;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 700; color: #f0f6fc;">{{ t.name }}</span>
+                        <span style="font-weight: 700; color: #212529;">{{ t.name }}</span>
                         <span class="badge {% if t.format == 'LEAGUE' %}badge-blue{% else %}badge-purple{% endif %}">{{ t.get_format_display }}</span>
                     </div>
-                    <div style="font-size: 0.8rem; color: #8b949e; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 0.8rem; color: #6c757d; display: flex; justify-content: space-between; align-items: center;">
                         <span>Status: <span class="badge badge-yellow">{{ t.get_status_display }}</span></span>
                         <span class="badge badge-green">Open</span>
                     </div>

@@ -26,28 +26,28 @@
         </div>
         {% for round_label, match_list in rounds.items %}
         <div class="glass-card">
-            <h3 style="font-size: 1rem; font-weight: 800; color: #f0f6fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+            <h3 style="font-size: 1rem; font-weight: 800; color: #212529; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
                 <span style="color: #58a6ff;">📋</span> {{ round_label }}
             </h3>
             {% for match in match_list %}
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #21262d; {% if forloop.last %}border-bottom: none;{% endif %}">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e9ecef; {% if forloop.last %}border-bottom: none;{% endif %}">
                 <div style="display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end;">
-                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.home_team.name|default:"TBD" }}</span>
+                    <span style="font-weight: 700; color: #212529;">{{ match.home_team.name|default:"TBD" }}</span>
                     <div style="width: 28px; height: 28px; background: {{ match.home_team.primary_color }}; color: {{ match.home_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.home_team.short_name|default:"?" }}</div>
                 </div>
 
                 <div style="min-width: 80px; text-align: center; padding: 0 16px;">
                     {% if match.is_played %}
-                    <div style="font-size: 1.2rem; font-weight: 900; color: #f0f6fc;">{{ match.home_score }} - {{ match.away_score }}</div>
+                    <div style="font-size: 1.2rem; font-weight: 900; color: #212529;">{{ match.home_score }} - {{ match.away_score }}</div>
                     <div style="font-size: 0.65rem; color: #3fb950; font-weight: 700;">FT</div>
                     {% else %}
-                    <div style="font-size: 0.8rem; color: #8b949e; font-weight: 600;">vs</div>
+                    <div style="font-size: 0.8rem; color: #6c757d; font-weight: 600;">vs</div>
                     {% endif %}
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
                     <div style="width: 28px; height: 28px; background: {{ match.away_team.primary_color }}; color: {{ match.away_team.secondary_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800;">{{ match.away_team.short_name|default:"?" }}</div>
-                    <span style="font-weight: 700; color: #f0f6fc;">{{ match.away_team.name|default:"TBD" }}</span>
+                    <span style="font-weight: 700; color: #212529;">{{ match.away_team.name|default:"TBD" }}</span>
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-left: 12px;">
@@ -65,7 +65,7 @@
                         </form>
                         {% endif %}
                     {% else %}
-                        <span style="color: #8b949e; font-size: 0.8rem;">Awaiting Teams</span>
+                        <span style="color: #6c757d; font-size: 0.8rem;">Awaiting Teams</span>
                     {% endif %}
                 </div>
             </div>

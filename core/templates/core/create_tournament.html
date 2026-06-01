@@ -26,7 +26,7 @@
             <div class="form-group" id="league_legs_group">
                 <label>League Legs</label>
                 <input type="number" name="league_legs" class="form-input" min="1" max="4" value="{{ tournament.league_legs|default:1 }}">
-                <small style="color: #8b949e; font-size: 0.75rem; margin-top: 4px;">Number of times each team plays each other.</small>
+                <small style="color: #6c757d; font-size: 0.75rem; margin-top: 4px;">Number of times each team plays each other.</small>
             </div>
 
             <div class="form-group" id="ko_progression_group" style="display: none;">
@@ -36,7 +36,7 @@
                     <option value="AGGREGATE" {% if tournament.ko_progression == 'AGGREGATE' %}selected{% endif %}>Two Legs (Aggregate)</option>
                     <option value="GOLDEN_GOAL" {% if tournament.ko_progression == 'GOLDEN_GOAL' %}selected{% endif %}>Golden Goal (Single Leg)</option>
                 </select>
-                <small style="color: #8b949e; font-size: 0.75rem; margin-top: 4px;">Note: The Final is always a single leg match.</small>
+                <small style="color: #6c757d; font-size: 0.75rem; margin-top: 4px;">Note: The Final is always a single leg match.</small>
             </div>
 
             {% if edit_mode %}

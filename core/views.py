@@ -49,7 +49,10 @@ def auth_login(request):
             return redirect('index')
         else:
             error = 'Invalid username or password.'
-    return render(request, 'core/auth/login.html', {'error': error})
+    return render(request, 'core/auth/login.html', {
+        # 'error': String containing error message if authentication fails (displayed above login form)
+        'error': error
+    })
 
 
 def auth_register(request):
@@ -83,7 +86,10 @@ def auth_register(request):
             if role == 'admin':
                 return redirect('admin_dashboard')
             return redirect('index')
-    return render(request, 'core/auth/register.html', {'error': error})
+    return render(request, 'core/auth/register.html', {
+        # 'error': String containing validation error message if registration fails (displayed above register form)
+        'error': error
+    })
 
 
 def auth_logout(request):
@@ -117,9 +123,13 @@ def index(request):
     notifications = Notification.objects.filter(user=request.user, is_read=False)
 
     return render(request, 'core/index.html', {
+        # 'my_teams': QuerySet of Team instances owned by user (rendered in Quick Stats and My Teams grid)
         'my_teams': my_teams,
+        # 'my_tournaments': QuerySet of Tournament instances the user's teams are in (rendered in My Tournaments grid)
         'my_tournaments': my_tournaments,
+        # 'available_tournaments': QuerySet of DRAFT Tournament instances the user hasn't joined (rendered in Available to Join grid)
         'available_tournaments': available_tournaments,
+        # 'notifications': QuerySet of unread Notification instances for the user (rendered in Recent Notifications panel)
         'notifications': notifications,
     })
 
@@ -138,6 +148,7 @@ def tournament_list(request):
         t.num_teams = t.tournament_teams.count()
 
     return render(request, 'core/tournament_list.html', {
+        # 'tournaments': QuerySet of all Tournament instances with team_count annotated (rendered as a list of tournaments to browse)
         'tournaments': tournaments,
     })
 
@@ -171,14 +182,23 @@ def tournament_detail(request, tournament_id):
             ko_rounds.append({'round': r, 'fixtures': fixtures})
 
     return render(request, 'core/tournament_detail.html', {
+        # 'tournament': The Tournament instance being viewed (rendered in header)
         'tournament': tournament,
+        # 'standings': QuerySet of Standing instances for this tournament (rendered in League Table)
         'standings': standings,
+        # 'matches': QuerySet of all Match instances for this tournament (rendered in fixtures list)
         'matches': matches,
+        # 'teams': QuerySet of TournamentTeam instances representing registered teams (rendered in Teams grid)
         'teams': teams,
+        # 'top_scorers': List of dicts containing top goal scorers (rendered in Top Scorers table)
         'top_scorers': top_scorers,
+        # 'top_assists': List of dicts containing top assist providers (rendered in Top Assists table)
         'top_assists': top_assists_list,
+        # 'cards': List of dicts containing top card recipients (rendered in Cards table)
         'cards': cards,
+        # 'user_registered': Boolean indicating if the current coach has a team in this tournament (controls display of Register button)
         'user_registered': user_registered,
+        # 'ko_rounds': List of dicts containing KnockoutRound and its fixtures (rendered in Knockout Bracket)
         'ko_rounds': ko_rounds,
     })
 
@@ -245,6 +265,7 @@ def register_team(request, tournament_id):
         return redirect('tournament_detail', tournament_id=tournament.pk)
 
     return render(request, 'core/register_team.html', {
+        # 'tournament': The Tournament instance the user is registering for (rendered in header/breadcrumbs)
         'tournament': tournament,
     })
 
@@ -290,9 +311,13 @@ def team_detail(request, tournament_id, team_id):
     }
 
     return render(request, 'core/team_detail.html', {
+        # 'tournament': The Tournament context for this team view (rendered in breadcrumbs)
         'tournament': tournament,
+        # 'team': The Team instance being viewed (rendered in team info header)
         'team': team,
+        # 'player_stats': List of dicts containing player stats for this tournament (rendered in Roster table)
         'player_stats': player_stats,
+        # 'lineup': Dict grouping top players by position for the pitch view (rendered in Suggested Lineup pitch)
         'lineup': lineup,
     })
 
@@ -317,6 +342,7 @@ def admin_dashboard(request):
         t.num_matches_total = t.matches.count()
 
     return render(request, 'core/admin_dashboard.html', {
+        # 'tournaments': QuerySet of Tournament instances created by this admin (rendered in Admin Tournaments list)
         'tournaments': my_tournaments,
     })
 
@@ -348,7 +374,9 @@ def create_tournament(request):
             )
             return redirect('admin_dashboard')
 
-    return render(request, 'core/create_tournament.html')
+    return render(request, 'core/create_tournament.html', {
+        # No extra context passed for simple create view
+    })
 
 
 @login_required
@@ -372,7 +400,9 @@ def edit_tournament(request, tournament_id):
         return redirect('admin_dashboard')
 
     return render(request, 'core/create_tournament.html', {
+        # 'tournament': The Tournament instance being edited (used to prepopulate form fields)
         'tournament': tournament,
+        # 'edit_mode': Boolean flag indicating to the template that this is an edit operation
         'edit_mode': True,
     })
 
@@ -469,8 +499,11 @@ def manage_fixtures(request, tournament_id):
         rounds[m.round_label].append(m)
 
     return render(request, 'core/manage_fixtures.html', {
+        # 'tournament': The Tournament instance being managed (rendered in header)
         'tournament': tournament,
+        # 'rounds': Dict grouping matches by round_label (rendered as match blocks per round)
         'rounds': rounds,
+        # 'has_fixtures': Boolean indicating if fixtures have been generated (controls Generate button display)
         'has_fixtures': matches.exists(),
     })
 
@@ -540,10 +573,15 @@ def enter_match_result(request, match_id):
         existing_stats[ps.player_id] = ps
 
     return render(request, 'core/enter_result.html', {
+        # 'match': The Match instance being updated (rendered in header)
         'match': match,
+        # 'tournament': The Tournament context (rendered in breadcrumbs)
         'tournament': tournament,
+        # 'home_players': QuerySet of Player instances for the home team (rendered in Home Team Stats form)
         'home_players': home_players,
+        # 'away_players': QuerySet of Player instances for the away team (rendered in Away Team Stats form)
         'away_players': away_players,
+        # 'existing_stats': Dict mapping player IDs to PlayerStat instances (used to prepopulate stats inputs)
         'existing_stats': existing_stats,
     })
 
